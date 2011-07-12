@@ -3,6 +3,7 @@ Bundler.setup
 
 require 'json'
 require 'logger'
+require 'sqlite3'
 #require 'tzinfo'
 
 require 'sinatra/base'
@@ -28,4 +29,11 @@ class HTTPCron < Sinatra::Base
     slim :index
   end
 
+  get '/tasks.json' do
+    tasks = Task.all.to_json
+    halt 200, {'Content-Type' => 'application/json'}, tasks
+  end
+
 end
+
+require_relative 'lib/models'
