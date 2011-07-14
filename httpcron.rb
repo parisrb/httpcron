@@ -3,27 +3,27 @@ Bundler.setup
 
 require 'json'
 require 'logger'
-require 'sqlite3'
-#require 'tzinfo'
 
 require 'sinatra/base'
+require 'sinatra'
+require 'sinatra/sequel'
+require 'sequel/extensions/named_timezones'
+
+require 'slim'
 
 ENV['DATABASE_URL'] ||= "sqlite://#{Dir.pwd}/httpcron.sqlite3"
 
-require 'sinatra'
-require 'sinatra/sequel'
+require_relative 'config'
 
-#require 'sequel/extensions/named_timezones'
-#Sequel.default_timezone = TZInfo::Timezone.get(ENV['TIMEZONE'])
+Sequel.default_timezone = TZInfo::Timezone.get(HttpCronConfig::INSTANCE.server_timezone)
 Sequel::Model.raise_on_save_failure = true
-require 'slim'
 
 class HTTPCron < Sinatra::Base
 
   set :views, File.dirname(__FILE__) + '/views'
   set :public, File.dirname(__FILE__) + '/public'
-  set :raise_errors, true
-  set :show_exceptions, :true
+#  set :raise_errors, true
+#  set :show_exceptions, :true
 
   get '/' do
     slim :index
