@@ -29,6 +29,7 @@ migration 'create tables tasks/users/executions' do
     boolean :enabled, :null => false, :index => true, :default => true
 
     String :cron, :size => 50, :null => false
+    String :timezone, :size => 25, :null => false
     DateTime :next_execution, :null => false
 
     DateTime :created_at, :null => false
@@ -52,18 +53,18 @@ class User < Sequel::Model
 
   def before_validation
     super
-    timezone ||= HttpCronConfig.server_timezone
+    self.timezone ||= HttpCronConfig.server_timezone
   end
 
   def validate
     super
-    validates_presence :username
+    validates_presence [:username, :timezone]
     validates_unique :username
 
     begin
-      TZInfo::Timezone.get(timezone)
-    rescue InvalidTimezoneIdentifier
-      errors.add('timezone', "[#{timezone} is not a valid timezone")
+      TZInfo::Timezone.get(self.timezone)
+    rescue TZInfo::InvalidTimezoneIdentifier
+      errors.add('timezone', "[#{self.timezone}] is not a valid timezone")
     end
 
   end
@@ -71,21 +72,22 @@ class User < Sequel::Model
 end
 
 class Task < Sequel::Model
+  
   many_to_one :user
   one_to_many :executions
 
   def validate
     super
-    validates_presence [:name, :url, :cron, :user_id]
+    validates_presence [:name, :url, :cron, :user_id, :timezone]
     begin
-      URI.parse url
+      URI.parse self.url
     rescue URI::InvalidURIError
-      errors.add('url', "[#{url} is not a valid url")
+      errors.add('url', "[#{self.url} is not a valid url")
     end
   end
 
   def before_save
-    self.next_execution = Rufus::CronLine.new("#{cron} #{user.timezone}").next_time
+    self.next_execution = Rufus::CronLine.new("#{self.cron} #{self.timezone}").next_time
   end
 
 end

@@ -12,8 +12,6 @@ require 'rufus-scheduler'
 
 require 'slim'
 
-ENV['DATABASE_URL'] ||= "sqlite://#{Dir.pwd}/httpcron.sqlite3"
-
 require_relative 'config'
 
 Sequel.default_timezone = TZInfo::Timezone.get(HttpCronConfig.server_timezone)
@@ -36,26 +34,31 @@ class HTTPCron < Sinatra::Base
     slim :index
   end
 
-  get '/tasks.json' do
-    content_type :json
-    Task.all.to_json
-  end
-
   get '/users.json' do
     content_type :json
     User.all.to_json
   end
 
+  get '/tasks.json' do
+    content_type :json
+    Task.all.to_json
+  end
+
   post '/tasks.json' do
+    check_parameter_for_blank :name, :url, :cron, :user_id
+
     user = User.where(:id => params[:user_id]).first
     unless user
-      halt 500, "User [#{params[:user_id]}] not found"
+      halt 500, "User with id [#{params[:user_id]}] not found"
     end
-    check_parameter_for_blank :name, :url, :cron
+
     t = Task.create(:user => user,
-                :name => params[:name],
-                :url => params[:url],
-                :cron => params[:cron])
+                    :name => params[:name],
+                    :url => params[:url],
+                    :cron => params[:cron],
+                    :timezone => (params[:timezone] || user.timezone))
+    t.save
+
     content_type :json
     t.to_json
   end
@@ -66,10 +69,10 @@ class HTTPCron < Sinatra::Base
     params_names.each do |param_name|
       if params[param_name]
         if params[param_name].blank?
-          halt 500, "Parameter #{param_name} is blank"
+          halt 500, "Parameter [#{param_name}] is blank"
         end
       else
-        halt 500, "No #{param_name} parameter"
+        halt 500, "No [#{param_name}] parameter"
       end
     end
   end

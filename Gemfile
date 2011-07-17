@@ -7,4 +7,12 @@ gem 'rufus-scheduler', '~> 2.0'
 gem 'tzinfo', '~>0.3'
 gem 'slim', '~> 0.9'
 
-gem 'sqlite3'
+group :development do
+  gem 'sqlite3'
+end
+
+group :test do
+  gem 'sqlite3'
+  gem 'rspec'
+  gem 'rack-test', '~> 0.6'
+end
