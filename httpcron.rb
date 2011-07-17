@@ -65,7 +65,7 @@ class HTTPCron < Sinatra::Base
 
     begin
       t.save
-    rescue Error => e
+    rescue Exception => e
       halt 500, e.message
     end
 

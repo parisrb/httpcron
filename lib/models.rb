@@ -47,7 +47,21 @@ migration 'create tables tasks/users/executions' do
   end
 end
 
+module ModelWithTimezone
+
+  def validate_timezone
+    begin
+      TZInfo::Timezone.get(self.timezone)
+    rescue TZInfo::InvalidTimezoneIdentifier
+      errors.add('timezone', "[#{self.timezone}] is not a valid timezone")
+    end
+  end
+
+end
+
 class User < Sequel::Model
+
+  include ModelWithTimezone
 
   one_to_many :tasks
 
@@ -60,19 +74,15 @@ class User < Sequel::Model
     super
     validates_presence [:username, :timezone]
     validates_unique :username
-
-    begin
-      TZInfo::Timezone.get(self.timezone)
-    rescue TZInfo::InvalidTimezoneIdentifier
-      errors.add('timezone', "[#{self.timezone}] is not a valid timezone")
-    end
-
+    validate_timezone
   end
 
 end
 
 class Task < Sequel::Model
   
+  include ModelWithTimezone
+
   many_to_one :user
   one_to_many :executions
 
@@ -84,6 +94,7 @@ class Task < Sequel::Model
     rescue URI::InvalidURIError
       errors.add('url', "[#{self.url}] is not a valid url")
     end
+    validate_timezone
   end
 
   def before_save

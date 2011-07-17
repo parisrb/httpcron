@@ -99,7 +99,35 @@ describe 'admin task' do
 
       post '/tasks.json', 'user_id' => 1, 'name' => 'test', 'url' => 'http://example.com', 'cron' => '0 0 1 1 *'
       last_response.status.must_equal 200
-      last_response.json_body.timezone.must_equal 'UTC'
+      last_response.json_body.timezone.must_equal HttpCronConfig.server_timezone
+
+      post '/tasks.json', 'user_id' => 1, 'name' => 'test', 'url' => 'http://example.com', 'cron' => '0 0 1 1 *', 'timezone' => 'Atlantic/Bermuda'
+      last_response.status.must_equal 200
+      last_response.json_body.timezone.must_equal 'Atlantic/Bermuda'
+
+      post '/tasks.json', 'user_id' => 1, 'name' => 'test', 'url' => 'http://example.com', 'cron' => '0 0 1 1 *', 'timezone' => 'Mordor'
+      last_response.status.must_equal 500
+      last_response.body.must_equal '[Mordor] is not a valid timezone'
+
+      raise(Sequel::Rollback)
+    end
+  end
+
+
+  it 'can specify if task is enabled' do
+    database.transaction do
+
+      post '/tasks.json', 'user_id' => 1, 'name' => 'test', 'url' => 'http://example.com', 'cron' => '0 0 1 1 *'
+      last_response.status.must_equal 200
+      last_response.json_body.enabled.must_equal true
+
+      post '/tasks.json', 'user_id' => 1, 'name' => 'test', 'url' => 'http://example.com', 'cron' => '0 0 1 1 *', 'enabled' => true
+      last_response.status.must_equal 200
+      last_response.json_body.enabled.must_equal true
+
+      post '/tasks.json', 'user_id' => 1, 'name' => 'test', 'url' => 'http://example.com', 'cron' => '0 0 1 1 *', 'enabled' => false
+      last_response.status.must_equal 200
+      last_response.json_body.enabled.must_equal false
 
       raise(Sequel::Rollback)
     end
