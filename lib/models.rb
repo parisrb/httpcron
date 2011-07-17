@@ -99,8 +99,15 @@ class Task < Sequel::Model
     validate_timezone
   end
 
-  def before_save
-    self.next_execution = Rufus::CronLine.new("#{self.cron} #{self.timezone}").next_time
+  def before_create
+    super
+    if self.enabled
+      recalculate_cron
+    end
+  end
+
+  def recalculate_cron from = nil
+    self.next_execution = Rufus::CronLine.new("#{self.cron} #{self.timezone}").next_time(from)
   end
 
 end

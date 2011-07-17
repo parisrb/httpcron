@@ -6,6 +6,7 @@ gem 'sinatra-sequel', '~> 0.9', :require => 'sinatra/sequel'
 gem 'rufus-scheduler', '~> 2.0'
 gem 'tzinfo', '~>0.3'
 gem 'slim', '~> 0.9'
+gem 'eventmachine', '~> 0.12.10'
 
 group :development do
   gem 'sqlite3'
