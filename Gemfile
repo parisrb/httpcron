@@ -13,6 +13,5 @@ end
 
 group :test do
   gem 'sqlite3'
-  gem 'rspec'
   gem 'rack-test', '~> 0.6'
 end

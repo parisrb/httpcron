@@ -1,6 +1,6 @@
-require_relative 'helper_test'
+require_relative 'helper'
 
-describe 'tasks administration' do
+describe 'admin task' do
 
   def app
     HTTPCron
@@ -9,8 +9,8 @@ describe 'tasks administration' do
   it 'has no task by default' do
     database.transaction do
       get '/tasks.json'
-      last_response.json_body.length.should == 0
-      last_response.status.should == 200
+      last_response.json_body.length.must_equal 0
+      last_response.status.must_equal 200
       raise(Sequel::Rollback)
     end
   end
@@ -18,8 +18,8 @@ describe 'tasks administration' do
   it 'can create a task' do
     database.transaction do
       post '/tasks.json', 'user_id' => 1, 'name' => 'test', 'url' => 'http://example.com', 'cron' => '0 0 1 1 *'
-      last_response.status.should == 200
-      last_response.json_body.id.should == 1
+      last_response.status.must_equal 200
+      last_response.json_body.id.must_equal 1
       raise(Sequel::Rollback)
     end
   end
@@ -27,8 +27,8 @@ describe 'tasks administration' do
   it 'requires a user id' do
     database.transaction do
       post '/tasks.json', 'name' => 'test', 'url' => 'http://example.com', 'cron' => '0 0 1 1 *'
-      last_response.status.should == 500
-      last_response.body.should == 'No [user_id] parameter'
+      last_response.status.must_equal 500
+      last_response.body.must_equal 'No [user_id] parameter'
       raise(Sequel::Rollback)
     end
   end
@@ -36,8 +36,8 @@ describe 'tasks administration' do
   it 'requires a valid user id' do
     database.transaction do
       post '/tasks.json', 'user_id' => 2, 'name' => 'test', 'url' => 'http://example.com', 'cron' => '0 0 1 1 *'
-      last_response.status.should == 500
-      last_response.body.should == 'User with id [2] not found'
+      last_response.status.must_equal 500
+      last_response.body.must_equal 'User with id [2] not found'
       raise(Sequel::Rollback)
     end
   end
@@ -45,8 +45,8 @@ describe 'tasks administration' do
   it 'requires a name' do
     database.transaction do
       post '/tasks.json', 'user_id' => 1, 'url' => 'http://example.com', 'cron' => '0 0 1 1 *'
-      last_response.status.should == 500
-      last_response.body.should == 'No [name] parameter'
+      last_response.status.must_equal 500
+      last_response.body.must_equal 'No [name] parameter'
       raise(Sequel::Rollback)
     end
   end
@@ -54,36 +54,53 @@ describe 'tasks administration' do
   it 'requires an url' do
     database.transaction do
       post '/tasks.json', 'user_id' => 1, 'name' => 'test', 'cron' => '0 0 1 1 *'
-      last_response.status.should == 500
-      last_response.body.should == 'No [url] parameter'
+      last_response.status.must_equal 500
+      last_response.body.must_equal 'No [url] parameter'
       raise(Sequel::Rollback)
     end
   end
 
   it 'requires a valid url' do
     database.transaction do
+
       buggy_url = 'http:|?example.com'
-      post '/tasks.json', 'user_id' => 1, 'name' => 'test', 'url' => buggy_url , 'cron' => '0 0 1 1 *'
-      last_response.status.should == 500
-      last_response.body.should == "[#{buggy_url}] is not a valid url"
+      post '/tasks.json', 'user_id' => 1, 'name' => 'test', 'url' => buggy_url, 'cron' => '0 0 1 1 *'
+      last_response.status.must_equal 500
+      last_response.body.must_equal "[#{buggy_url}] is not a valid url"
+
       raise(Sequel::Rollback)
     end
   end
 
   it 'requires a cron' do
     database.transaction do
+
       post '/tasks.json', 'user_id' => 1, 'name' => 'test', 'url' => 'http://example.com'
-      last_response.status.should == 500
-      last_response.body.should == 'No [cron] parameter'
+      last_response.status.must_equal 500
+      last_response.body.must_equal 'No [cron] parameter'
+
       raise(Sequel::Rollback)
     end
   end
 
   it 'calculates the next execution' do
     database.transaction do
+
       post '/tasks.json', 'user_id' => 1, 'name' => 'test', 'url' => 'http://example.com', 'cron' => '0 0 1 1 *'
-      last_response.status.should == 200
-      last_response.json_body.next_execution.should_not == nil
+      last_response.status.must_equal 200
+      last_response.json_body.next_execution.wont_be_nil
+
+      raise(Sequel::Rollback)
+    end
+  end
+
+  it 'can specify a timezone' do
+    database.transaction do
+
+      post '/tasks.json', 'user_id' => 1, 'name' => 'test', 'url' => 'http://example.com', 'cron' => '0 0 1 1 *'
+      last_response.status.must_equal 200
+      last_response.json_body.timezone.must_equal 'UTC'
+
       raise(Sequel::Rollback)
     end
   end

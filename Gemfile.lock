@@ -1,18 +1,9 @@
 GEM
   remote: http://rubygems.org/
   specs:
-    diff-lcs (1.1.2)
     rack (1.3.1)
     rack-test (0.6.0)
       rack (>= 1.0)
-    rspec (2.6.0)
-      rspec-core (~> 2.6.0)
-      rspec-expectations (~> 2.6.0)
-      rspec-mocks (~> 2.6.0)
-    rspec-core (2.6.4)
-    rspec-expectations (2.6.0)
-      diff-lcs (~> 1.1.2)
-    rspec-mocks (2.6.0)
     rufus-scheduler (2.0.10)
       tzinfo (>= 0.3.23)
     sequel (3.25.0)
@@ -35,7 +26,6 @@ PLATFORMS
 
 DEPENDENCIES
   rack-test (~> 0.6)
-  rspec
   rufus-scheduler (~> 2.0)
   sequel (~> 3.25)
   sinatra (~> 1.2)

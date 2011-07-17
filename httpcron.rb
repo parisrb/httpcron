@@ -53,14 +53,22 @@ class HTTPCron < Sinatra::Base
     end
 
     t = Task.new(:user => user,
-                    :name => params[:name],
-                    :url => params[:url],
-                    :cron => params[:cron],
-                    :timezone => (params[:timezone] || user.timezone))
+                 :name => params[:name],
+                 :url => params[:url],
+                 :cron => params[:cron],
+                 :timezone => (params[:timezone] || user.timezone),
+                 :enabled => (params[:enabled] || true))
+
     unless t.valid?
       halt 500, t.errors.values.join("\n")
     end
-    t.save
+
+    begin
+      t.save
+    rescue Error => e
+      halt 500, e.message
+    end
+
 
     content_type :json
     t.to_json

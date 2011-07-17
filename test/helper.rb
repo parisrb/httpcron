@@ -1,12 +1,8 @@
-ENV['RACK_ENV'] = 'test'
-
 require_relative '../httpcron'
-require 'rspec'
+require 'test/unit'
 require 'rack/test'
-
-RSpec.configure do |conf|
-  conf.include Rack::Test::Methods
-end
+require 'minitest/spec'
+include Rack::Test::Methods
 
 module Rack
   class MockResponse
