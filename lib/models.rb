@@ -82,7 +82,7 @@ class Task < Sequel::Model
     begin
       URI.parse self.url
     rescue URI::InvalidURIError
-      errors.add('url', "[#{self.url} is not a valid url")
+      errors.add('url', "[#{self.url}] is not a valid url")
     end
   end
 

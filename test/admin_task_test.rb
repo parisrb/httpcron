@@ -42,4 +42,50 @@ describe 'tasks administration' do
     end
   end
 
+  it 'requires a name' do
+    database.transaction do
+      post '/tasks.json', 'user_id' => 1, 'url' => 'http://example.com', 'cron' => '0 0 1 1 *'
+      last_response.status.should == 500
+      last_response.body.should == 'No [name] parameter'
+      raise(Sequel::Rollback)
+    end
+  end
+
+  it 'requires an url' do
+    database.transaction do
+      post '/tasks.json', 'user_id' => 1, 'name' => 'test', 'cron' => '0 0 1 1 *'
+      last_response.status.should == 500
+      last_response.body.should == 'No [url] parameter'
+      raise(Sequel::Rollback)
+    end
+  end
+
+  it 'requires a valid url' do
+    database.transaction do
+      buggy_url = 'http:|?example.com'
+      post '/tasks.json', 'user_id' => 1, 'name' => 'test', 'url' => buggy_url , 'cron' => '0 0 1 1 *'
+      last_response.status.should == 500
+      last_response.body.should == "[#{buggy_url}] is not a valid url"
+      raise(Sequel::Rollback)
+    end
+  end
+
+  it 'requires a cron' do
+    database.transaction do
+      post '/tasks.json', 'user_id' => 1, 'name' => 'test', 'url' => 'http://example.com'
+      last_response.status.should == 500
+      last_response.body.should == 'No [cron] parameter'
+      raise(Sequel::Rollback)
+    end
+  end
+
+  it 'calculates the next execution' do
+    database.transaction do
+      post '/tasks.json', 'user_id' => 1, 'name' => 'test', 'url' => 'http://example.com', 'cron' => '0 0 1 1 *'
+      last_response.status.should == 200
+      last_response.json_body.next_execution.should_not == nil
+      raise(Sequel::Rollback)
+    end
+  end
+
 end

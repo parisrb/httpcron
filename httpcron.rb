@@ -22,10 +22,10 @@ class HTTPCron < Sinatra::Base
   set :views, File.dirname(__FILE__) + '/views'
   set :public, File.dirname(__FILE__) + '/public'
   set :raise_errors, true
-  set :show_exceptions, :true
   set :dump_errors, true
 
   configure :development do
+    set :show_exceptions, :true
     set :logging, true
     database.loggers << Logger.new(STDOUT)
   end
@@ -52,11 +52,14 @@ class HTTPCron < Sinatra::Base
       halt 500, "User with id [#{params[:user_id]}] not found"
     end
 
-    t = Task.create(:user => user,
+    t = Task.new(:user => user,
                     :name => params[:name],
                     :url => params[:url],
                     :cron => params[:cron],
                     :timezone => (params[:timezone] || user.timezone))
+    unless t.valid?
+      halt 500, t.errors.values.join("\n")
+    end
     t.save
 
     content_type :json
