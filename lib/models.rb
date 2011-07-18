@@ -6,7 +6,7 @@ Sequel::Plugins::ValidationHelpers::DEFAULT_OPTIONS.merge!(
 Sequel::Model.plugin :timestamps, :update_on_create => true
 Sequel::Model.plugin :json_serializer
 
-max_timezone_length = TZInfo::Timezone.all_identifiers.max{|t1, t2| t1.length <=> t2.length}.length
+max_timezone_length = TZInfo::Timezone.all_identifiers.max { |t1, t2| t1.length <=> t2.length }.length
 
 migration 'create tables tasks/users/executions' do
 
@@ -28,6 +28,7 @@ migration 'create tables tasks/users/executions' do
 
     String :name, :size => 250, :null => true, :index => true
     String :url, :size => 255, :null => false
+    Integer :timeout, :null => false
     boolean :enabled, :null => false, :index => true, :default => true
 
     String :cron, :size => 50, :null => false
@@ -82,7 +83,7 @@ class User < Sequel::Model
 end
 
 class Task < Sequel::Model
-  
+
   include ModelWithTimezone
 
   many_to_one :user
@@ -90,7 +91,7 @@ class Task < Sequel::Model
 
   def validate
     super
-    validates_presence [:name, :url, :cron, :user_id, :timezone]
+    validates_presence [:name, :url, :timeout, :cron, :user_id, :timezone]
     begin
       URI.parse self.url
     rescue URI::InvalidURIError
@@ -101,12 +102,17 @@ class Task < Sequel::Model
 
   def before_create
     super
+    recalculate_cron
+  end
+
+  def before_update
+    super
     if self.enabled
       recalculate_cron
     end
   end
 
-  def recalculate_cron from = nil
+  def recalculate_cron from = Time.now
     self.next_execution = Rufus::CronLine.new("#{self.cron} #{self.timezone}").next_time(from)
   end
 
@@ -119,7 +125,6 @@ class Execution < Sequel::Model
     super
     validates_presence [:status, :duration, :run_at]
     validates_max_length 5000 => :response
-    validates_integer :status
   end
 end
 

@@ -19,7 +19,7 @@ require 'eventmachine'
 def run_task task
   p "Running task [#{task.name}]"
   start = DateTime.now
-  http = EventMachine::HttpRequest.new(task.url).get :redirects => 5, :timeout => 600
+  http = EventMachine::HttpRequest.new(task.url).get :redirects => 5, :timeout => task.timeout
   http.callback do
     Execution.create(:task => task,
                      :status => http.response_header.status,

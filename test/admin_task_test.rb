@@ -17,7 +17,7 @@ describe 'admin task' do
 
   it 'can create a task' do
     database.transaction do
-      post '/tasks.json', 'user_id' => 1, 'name' => 'test', 'url' => 'http://example.com', 'cron' => '0 0 1 1 *'
+      p post '/tasks.json', 'user_id' => 1, 'name' => 'test', 'url' => 'http://example.com', 'cron' => '0 0 1 1 *'
       last_response.status.must_equal 200
       last_response.json_body.id.must_equal 1
       raise(Sequel::Rollback)
@@ -83,6 +83,17 @@ describe 'admin task' do
     end
   end
 
+  it 'requires a valid cron' do
+    database.transaction do
+
+      post '/tasks.json', 'user_id' => 1, 'name' => 'test', 'url' => 'http://example.com', 'cron' => 'wft ??'
+      last_response.status.must_equal 500
+      last_response.body.must_equal "not a valid cronline : 'wft ?? UTC'"
+
+      raise(Sequel::Rollback)
+    end
+  end
+
   it 'calculates the next execution' do
     database.transaction do
 
@@ -113,7 +124,6 @@ describe 'admin task' do
     end
   end
 
-
   it 'can specify if task is enabled' do
     database.transaction do
 
@@ -128,6 +138,25 @@ describe 'admin task' do
       post '/tasks.json', 'user_id' => 1, 'name' => 'test', 'url' => 'http://example.com', 'cron' => '0 0 1 1 *', 'enabled' => false
       last_response.status.must_equal 200
       last_response.json_body.enabled.must_equal false
+
+      raise(Sequel::Rollback)
+    end
+  end
+
+  it 'can specify a timeout' do
+    database.transaction do
+
+      post '/tasks.json', 'user_id' => 1, 'name' => 'test', 'url' => 'http://example.com', 'cron' => '0 0 1 1 *'
+      last_response.status.must_equal 200
+      last_response.json_body.timeout.must_equal HttpCronConfig.default_timeout
+
+      post '/tasks.json', 'user_id' => 1, 'name' => 'test', 'url' => 'http://example.com', 'cron' => '0 0 1 1 *', 'timeout' => 13
+      last_response.status.must_equal 200
+      last_response.json_body.timeout.must_equal 13
+
+      post '/tasks.json', 'user_id' => 1, 'name' => 'test', 'url' => 'http://example.com', 'cron' => '0 0 1 1 *', 'timeout' => 50000
+      last_response.status.must_equal 500
+      last_response.body.must_equal 'Timeout [50000] can\'t be higher than 300'
 
       raise(Sequel::Rollback)
     end
