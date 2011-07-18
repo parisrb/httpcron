@@ -124,7 +124,9 @@ class Execution < Sequel::Model
   def validate
     super
     validates_presence [:status, :duration, :run_at]
-    validates_max_length 5000 => :response
+    if self.response
+      validates_max_length 5000, :response
+    end
   end
 end
 
