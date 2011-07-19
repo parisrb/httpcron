@@ -1,80 +1,57 @@
+
 // Create main namespace
 
 HttpCron = SC.Application.create({
-  store: SC.Store.create().from('HttpCron.DataSource')
+  store: SC.Store.create({commitRecordsAutomatically: true}).from('HttpCron.TaskDataSource')
 });
 
-// Define data source
-HttpCron.DataSource = SC.DataSource.extend({
-  fetch: function(store, query) {
-  }
+HttpCron.TaskDataSource = SC.ResourceDataSource.extend({
+  resourceName: 'tasks'
 });
 
 // Define model
 HttpCron.Task = SC.Record.extend({
+  primaryKey: 'id',
+
   name: SC.Record.attr(String),
-  url: SC.Record.attr(String)
+  url: SC.Record.attr(String),
+  cron: SC.Record.attr(String),
+  enabled: SC.Record.attr(Boolean)
 });
 
 // Define controllers
 HttpCron.TasksList = SC.ArrayProxy.create({
-  content: HttpCron.store.find(SC.Query.local(HttpCron.Task))
+  content: HttpCron.store.find(SC.Query.local(HttpCron.Task)),
+  isErrorBinding: 'content.isError'
 });
-
-// Define mixins
-SC.ControllerSupport = SC.Mixin.create({
-
-  controller: null,
-
-  _addController: function() {
-    var controller = this.get('controller');
-
-    if (SC.typeOf(controller) === "string") {
-      controller = SC.getPath(controller);
-      this.set('controller', controller); 
-    }
-
-    controller.set('view', this);
-  },
-
-  init: function() {
-    this._super();
-    this._addController();
-  }
-});
-
-SC.ControlledView = SC.View.extend(SC.ControllerSupport, {});
 
 HttpCron.NewTask = SC.Object.create({
-  content: {},
-  view: null,
+
+  attributes: ['name', 'url', 'cron'],
+  defaults: {
+    cron: '0 22 * * 1-5'
+  },
+
+  isVisibleBinding: 'view.isVisible',
 
   toggle: function() {
-    this.get('view').toggle();
+    this.get('view').toggleProperty('isVisible');
   },
 
   save: function() {
-    HttpCron.store.createRecord(HttpCron.Task, {
-      name: this.getPath('name'),
-      url: this.getPath('url')
-    });
-    this.setPath('name', '');
-    this.setPath('url', '');
+    var data = {};
+    this.attributes.forEach(function(name) {
+      data[name] = this.get(name);
+    }, this);
+    HttpCron.store.createRecord(HttpCron.Task, data);
     this.toggle();
-  }
-});
+  },
 
-// Define views
-HttpCron.TasksCollection = SC.CollectionView.extend({
-  tagName: 'ul',
-  contentBinding: 'HttpCron.TasksList'
-});
-
-HttpCron.NewTaskView = SC.ControlledView.extend({
-  isVisible: false,
-  controller: 'HttpCron.NewTask',
-
-  toggle: function() {
-    this.toggleProperty('isVisible');
-  }
+  reset: function() {
+    if (!this.getPath('view.isVisible')) {
+      this.attributes.forEach(function(name) {
+        this.set(name, this.defaults[name] || '');
+      }, this);
+    }
+  }.observes('view.isVisible')
 });

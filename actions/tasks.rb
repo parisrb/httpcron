@@ -43,4 +43,13 @@ class HTTPCron < Sinatra::Base
     t.to_json
   end
 
+  delete '/tasks/:id.json' do |id|
+    task = Task.find(id)
+    begin
+      task.destroy
+    rescue Exception => e
+      halt 500, e.message
+    end
+    halt 200
+  end
 end

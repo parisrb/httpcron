@@ -7,12 +7,17 @@ html
     script type="text/javascript" src="javascripts/libs/jquery-ui.js"
     script type="text/javascript" src="javascripts/libs/sproutcore.js"
     script type="text/javascript" src="javascripts/libs/sproutcore-datastore.js"
+    script type="text/javascript" src="javascripts/libs/sproutcore-ajax.js"
     script type="text/javascript" src="javascripts/libs/sproutcore-jui.js"
+    script type="text/javascript" src="javascripts/system.js"
     script type="text/javascript" src="javascripts/application.js"
-    link type="text/css" href="application.css" rel="stylesheet"
+    link type="text/css" href="stylesheets/boilerplate.css" rel="stylesheet"
+    link type="text/css" href="stylesheets/jquery-ui.css" rel="stylesheet"
+    link type="text/css" href="stylesheets/aristo.css" rel="stylesheet"
+    link type="text/css" href="stylesheets/application.css" rel="stylesheet"
   body
     header
+      h1 ="HTTP Cron"
     .main[role="main"]
       ==yield
     footer
-      |HTTP Cron

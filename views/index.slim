@@ -1,18 +1,26 @@
 script type="text/html"
-  | {{#collection HttpCron.TasksCollection}}
+  | {{#collection tagName="ul" contentBinding="HttpCron.TasksList"}}
       {{content.name}} - {{content.url}}
+      {{view JUI.Button label="Destroy" target="parentView.content" action="destroy"}}
+    {{else}}
+      {{#if parentView.content.isError}}
+        Error
+      {{else}}
+        No Tasks
+      {{/if}}
     {{/collection}}
-    {{#unless HttpCron.NewTask.view.isVisible}}
+    {{#unless HttpCron.NewTask.isVisible}}
       {{view JUI.Button label="Add Task" target="HttpCron.NewTask" action="toggle"}}
     {{/unless}}
-    {{#view HttpCron.NewTaskView}}
+    {{#view SC.ControlledView isVisible=false controller="HttpCron.NewTask" elementId="new-task"}}
       <div>
-        <label>Name :</label>
-        {{view SC.TextField valueBinding="parentView.controller.name"}}
+        {{view SC.TextField valueBinding="parentView.controller.name" placeholder="Name..."}}
       </div>
       <div>
-        <label>URL :</label>
-        {{view SC.TextField valueBinding="parentView.controller.url"}}
+        {{view SC.TextField valueBinding="parentView.controller.cron" placeholder="Cron line..."}}
+      </div>
+      <div>
+        {{view SC.TextField type="url" valueBinding="parentView.controller.url" placeholder="URL..."}}
       </div>
       <div>
         {{view JUI.Button label="Cancel" target="HttpCron.NewTask" action="toggle"}}
