@@ -3,11 +3,11 @@ require_relative 'helper'
 describe 'admin user' do
 
   def app
-    HTTPCron
+    HTTPCronApi
   end
 
   it 'has default user' do
-    get '/users.json'
+    get '/users'
     database.transaction do
       last_response.status.must_equal 200
       last_response.json_body.length.must_equal 1

@@ -1,4 +1,4 @@
-<script type="text/html">
+<script type="text/html" data-template-name="tasks-view">
   {{#unless HttpCron.NewTask.isVisible}}
     {{view JUI.Button label="Add Task" target="HttpCron.NewTask" action="toggle"}}
   {{/unless}}
@@ -27,4 +27,16 @@
       No Tasks
     {{/if}}
   {{/collection}}
+</script>
+
+<script type="text/html" data-template-name="login-view">
+  <div>
+    {{view SC.TextField valueBinding="parentView.controller.username" placeholder="Username..."}}
+  </div>
+  <div>
+    {{view SC.TextField valueBinding="parentView.controller.password" placeholder="Password..."}}
+  </div>
+  <div>
+    {{view JUI.Button label="LogIn" target="HttpCron.User" action="login"}}
+  </div>
 </script>

@@ -1,17 +1,12 @@
-class HTTPCron < Sinatra::Base
+class HTTPCronApi < Sinatra::Base
 
-  get '/tasks.json' do
+  get '/tasks' do
     content_type :json
     current_user.tasks.to_json
   end
 
-  post '/tasks.json' do
-    check_parameter_for_blank :name, :url, :cron #, :user_id
-
-    #user = User.where(:id => params[:user_id]).first
-    #unless user
-    #  halt 500, "User with id [#{params[:user_id]}] not found"
-    #end
+  post '/tasks' do
+    check_parameter_for_blank :name, :url, :cron
 
     if params[:timeout]
       if (timeout = params[:timeout].to_i) > HttpCronConfig.max_timeout
@@ -25,7 +20,7 @@ class HTTPCron < Sinatra::Base
                  :name => params[:name],
                  :url => params[:url],
                  :cron => params[:cron],
-                 :timezone => (params[:timezone] || user.timezone),
+                 :timezone => (params[:timezone] || current_user.timezone),
                  :enabled => (params[:enabled] || true),
                  :timeout => timeout)
 
@@ -43,7 +38,7 @@ class HTTPCron < Sinatra::Base
     t.to_json
   end
 
-  delete '/tasks/:id.json' do |id|
+  delete '/tasks/:id' do |id|
     task = Task.find(id)
     begin
       task.destroy

@@ -35,6 +35,19 @@ class HTTPCron < Sinatra::Base
     erb :index, :layout_engine => :slim
   end
 
+end
+
+class HTTPCronApi < Sinatra::Base
+
+  set :raise_errors, true
+  set :dump_errors, true
+
+  configure :development do
+    set :show_exceptions, :true
+    set :logging, true
+    database.loggers << Logger.new(STDOUT)
+  end
+
   private
 
   def check_parameter_for_blank *params_names
@@ -47,6 +60,10 @@ class HTTPCron < Sinatra::Base
         halt 500, "No [#{param_name}] parameter"
       end
     end
+  end
+
+  def current_user
+    User.first
   end
 end
 

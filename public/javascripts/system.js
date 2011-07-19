@@ -42,9 +42,9 @@ SC.ResourceDataSource = SC.DataSource.extend({
       id = store.idFor(storeKey); 
     }
     if (id) {
-      return '/%@/%@.json'.fmt(resourceName, id);
+      return '/%@/%@'.fmt(resourceName, id);
     }
-    return '/%@.json'.fmt(resourceName);
+    return '/%@'.fmt(resourceName);
   },
 
   // fetch
@@ -80,12 +80,10 @@ SC.ResourceDataSource = SC.DataSource.extend({
   },
 
   _createOrUpdateRecord: function(store, storeKey) {
-    var url = this.resourceURL(store, storeKey),
-        data = store.readDataHash(storeKey);
-    data.user_id = 1;
+    var url = this.resourceURL(store, storeKey);
     SC.Request.postUrl(url).json()
       .notify(this, '_didCreateOrUpdateTask', store, storeKey)
-      .send(data);
+      .send(store.readDataHash(storeKey));
     return true;
   },
 
