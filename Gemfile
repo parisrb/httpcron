@@ -11,6 +11,7 @@ gem 'em-http-request', '1.0.0.beta.4', :require => 'em-http'
 
 group :development do
   gem 'sqlite3'
+  gem 'rake'
 end
 
 group :test do
