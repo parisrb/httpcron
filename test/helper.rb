@@ -1,3 +1,5 @@
+ENV['RACK_ENV'] = 'test'
+
 require_relative '../httpcron'
 require 'test/unit'
 require 'rack/test'
