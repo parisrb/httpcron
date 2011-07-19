@@ -1,2 +1,21 @@
-section
-  |Hello World
+script type="text/html"
+  | {{#collection HttpCron.TasksCollection}}
+      {{content.name}} - {{content.url}}
+    {{/collection}}
+    {{#unless HttpCron.NewTask.view.isVisible}}
+      {{view JUI.Button label="Add Task" target="HttpCron.NewTask" action="toggle"}}
+    {{/unless}}
+    {{#view HttpCron.NewTaskView}}
+      <div>
+        <label>Name :</label>
+        {{view SC.TextField valueBinding="parentView.controller.name"}}
+      </div>
+      <div>
+        <label>URL :</label>
+        {{view SC.TextField valueBinding="parentView.controller.url"}}
+      </div>
+      <div>
+        {{view JUI.Button label="Cancel" target="HttpCron.NewTask" action="toggle"}}
+        {{view JUI.Button label="Save" target="HttpCron.NewTask" action="save"}}
+      </div>
+    {{/view}}
