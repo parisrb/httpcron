@@ -16,7 +16,8 @@ HttpCron.Task = SC.Record.extend({
   name: SC.Record.attr(String),
   url: SC.Record.attr(String),
   cron: SC.Record.attr(String),
-  enabled: SC.Record.attr(Boolean)
+  enabled: SC.Record.attr(Boolean),
+  created_at: SC.Record.attr(Number)
 });
 
 // Define controllers

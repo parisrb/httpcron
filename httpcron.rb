@@ -11,6 +11,7 @@ require 'sequel/extensions/named_timezones'
 require 'rufus-scheduler'
 
 require 'slim'
+require 'erb'
 
 require_relative 'config'
 
@@ -31,7 +32,7 @@ class HTTPCron < Sinatra::Base
   end
 
   get '/' do
-    slim :index
+    erb :index, :layout_engine => :slim
   end
 
   private
