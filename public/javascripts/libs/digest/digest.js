@@ -3,12 +3,13 @@
   var __hasProp = Object.prototype.hasOwnProperty;
   HTTPDigest = (function() {
     HTTPDigest.maxTryouts = 1;
-    function HTTPDigest(username, password) {
+    function HTTPDigest(username, password, ha1) {
       this.nc = 0;
       this.cnonce = "0a4f113b";
       this.username = username;
       this.password = password;
       this.unauthorizedCode = 401;
+      this._ha1 = ha1;
     }
     HTTPDigest.prototype.authenticate = function(headers) {
       var d, header, key, value, _i, _len, _ref, _ref2;

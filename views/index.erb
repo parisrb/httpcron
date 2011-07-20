@@ -2,7 +2,9 @@
   {{#unless HttpCron.NewTask.isVisible}}
     {{view JUI.Button label="Add Task" target="HttpCron.NewTask" action="toggle"}}
   {{/unless}}
-  {{#view SC.ControlledView isVisible=false controller="HttpCron.NewTask" elementId="new-task"}}
+  {{view JUI.Button label="Log Out" target="HttpCron.User" action="logout"}}
+  {{#view SC.ControlledView
+    isVisible=false controller="HttpCron.NewTask" elementId="new-task" toggleMethod="slideToggle"}}
     <div>
       {{view SC.TextField valueBinding="parentView.controller.name" placeholder="Name..."}}
     </div>
@@ -31,10 +33,19 @@
 
 <script type="text/html" data-template-name="login-view">
   <div>
-    {{view SC.TextField valueBinding="parentView.controller.username" placeholder="Username..."}}
+    {{view SC.TextField
+      valueBinding="parentView.controller.username"
+      placeholder="Username..."
+      attributeBindings="disabled"
+      disabledBinding="parentView.controller.isLoggingIn"}}
   </div>
   <div>
-    {{view SC.TextField valueBinding="parentView.controller.password" placeholder="Password..."}}
+    {{view SC.TextField
+      type="password"
+      valueBinding="parentView.controller.password"
+      placeholder="Password..."
+      attributeBindings="disabled"
+      disabledBinding="parentView.controller.isLoggingIn"}}
   </div>
   <div>
     {{view JUI.Button label="LogIn" target="HttpCron.User" action="login"}}

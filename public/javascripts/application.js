@@ -1,4 +1,3 @@
-
 // Create main namespace
 
 HttpCron = SC.Application.create({
@@ -57,26 +56,24 @@ HttpCron.NewTask = SC.Object.create({
   }.observes('view.isVisible')
 });
 
-HttpCron.User = SC.Object.create({
-  login: function() {
-    var username = this.get('username'),
-        password = this.get('password');
-    $.httpDigest = new HTTPDigest(username, password);
-    $.httpDigest.unauthorizedCode = 442;
-    SC.Request.headUrl('/api/authenticate').json()
-      .notify(this, '_didLogin')
-      .send();
+HttpCron.User = HTTPDigest.User.create({
+  storageName: 'httpcron.user',
+  url: '/api/authenticate',
+
+  didLoggedIn: function() {
+    HttpCron.LoginView.remove();
+    HttpCron.TasksView.append();
+    var query = HttpCron.store.find(SC.Query.local(HttpCron.Task));
+    HttpCron.TasksList.set('content', query);
   },
 
-  _didLogin: function(response) {
-    if (SC.ok(response)) {
-      HttpCron.LoginView.remove();
-      HttpCron.TasksView.append();
-      var query = HttpCron.store.find(SC.Query.local(HttpCron.Task));
-      HttpCron.TasksList.set('content', query);
-    } else {
-      
-    }
+  didLoggedOut: function() {
+    HttpCron.TasksView.remove();
+    HttpCron.LoginView.append();
+  },
+
+  didLoggedInFail: function() {
+    //console.log('login fail');
   }
 });
 
@@ -97,4 +94,5 @@ HttpCron.TasksView = SC.ControlledView.create({
 
 $(function() {
   HttpCron.LoginView.append();
+  HttpCron.User.login();
 });
