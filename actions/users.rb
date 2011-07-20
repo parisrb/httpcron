@@ -17,6 +17,18 @@ end
 
 class HTTPCronApi < Sinatra::Base
 
+  before do
+    digest_header = @env['HTTP_AUTHORIZATION']
+    tokens = digest_header.split(',')
+    username = tokens.detect do |token|
+      token.match(/^\s?username/)
+    end
+    if username
+      username = username.split('=').pop.gsub('"', '')
+      self.current_user = User.filter(:username => username).first
+    end
+  end
+
   get '/users' do
     content_type :json
     User.all.to_json

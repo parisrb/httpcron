@@ -48,6 +48,14 @@ class HTTPCronApi < Sinatra::Base
     database.loggers << Logger.new(STDOUT)
   end
 
+  def current_user
+    @current_user
+  end
+
+  def current_user=(user)
+    @current_user = user
+  end
+
   private
 
   def check_parameter_for_blank *params_names
@@ -60,10 +68,6 @@ class HTTPCronApi < Sinatra::Base
         halt 500, "No [#{param_name}] parameter"
       end
     end
-  end
-
-  def current_user
-    User.first
   end
 end
 
