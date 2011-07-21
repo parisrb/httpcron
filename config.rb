@@ -15,6 +15,10 @@ class HttpCronConfig
     @@max_timeout ||= get_value_i('DEFAULT_TIMEOUT', 300)
   end
 
+  def self.engine
+    @@engine ||= get_value('ENGINE', 'engine')
+  end
+
   private
 
   def self.get_value env_name, default_value

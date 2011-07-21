@@ -34,6 +34,7 @@ class HTTPCronApi < Sinatra::Base
       halt 500, e.message
     end
 
+    update_task t
     content_type :json
     t.to_json
   end

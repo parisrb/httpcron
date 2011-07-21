@@ -1,4 +1,5 @@
 ENV['RACK_ENV'] = 'test'
+ENV['ENGINE'] = 'none'
 
 require_relative '../httpcron'
 require 'test/unit'

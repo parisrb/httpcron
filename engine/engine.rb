@@ -13,7 +13,9 @@ Task.filter('enabled = ? and next_execution <= ?', true, DateTime.now).each do |
 end
 p "#{count} task(s) rescheduled"
 
-RUNNING_TASKS = {}
+@@running_tasks = {}
+@@next_execution = nil
+@@timer = nil
 
 def end_task http, start, task
   p "Ending task #{task.id} [#{task.name}] : #{http.response_header.status}"
@@ -26,13 +28,14 @@ def end_task http, start, task
   from += 60 - from.sec
   task.recalculate_cron(from)
   task.save
-  RUNNING_TASKS.delete task.id
+  @@running_tasks.delete task.id
+  possibly_add_next_execution task.next_execution
 end
 
 def run_task task
-  unless RUNNING_TASKS[task.id]
-    p "Starting task #{task.id} [#{task.name}]"
-    RUNNING_TASKS[task.id] = task
+  unless @@running_tasks[task.id]
+    p "Start task #{task.id} [#{task.name}]"
+    @@running_tasks[task.id] = task
     start = DateTime.now
     http = EventMachine::HttpRequest.new(task.url).get :redirects => 5, :timeout => task.timeout
     http.callback do
@@ -45,18 +48,64 @@ def run_task task
 end
 
 def run_tasks
-  p "Checking for tasks"
+  p "Start tasks"
   Task.filter('enabled = ? and next_execution <= ?', true, DateTime.now).each do |t|
     run_task t
   end
+  calculate_next_execution
 end
 
-if ENV['START_ENGINE']
-  Thread.start do
-    EventMachine.run do
-      EventMachine::add_periodic_timer(60) do
-        run_tasks
-      end
+def update_task task
+  p "Update task #{task}"
+  if task.enabled
+    possibly_add_next_execution task.next_execution
+  end
+end
+
+def possibly_add_next_execution next_execution
+  p "Possibly update timeout"
+  unless @@next_execution && (next_execution > @@next_execution)
+    add_next_execution next_execution
+  end
+end
+
+def add_next_execution next_execution
+  @@timer.cancel if @@timer
+  wait_time = (next_execution - DateTime.now) * SECONDS_IN_A_DAY
+  p "Setting new timeout: will wait #{wait_time.round} seconds"
+  @@timer = EventMachine::Timer.new(wait_time) { calculate_next_execution }
+  @@next_execution = next_execution
+end
+
+def calculate_next_execution
+  @@next_execution = nil
+  @@timer.cancel if @@timer
+
+  p "Calculate next execution"
+  if @@running_tasks.empty?
+    task = Task.filter('enabled = ?', true).order(:next_execution.asc).first
+  else
+    task = Task.filter('enabled = ? and id not in ?', true, @@running_tasks.keys).order(:next_execution.asc).first
+  end
+  if task
+    if task.next_execution < DateTime.now
+      # execution date is passed: run tasks
+      run_tasks
+    else
+      possibly_add_next_execution task.next_execution
+    end
+  else
+    p "No task, just waiting"
+    @@timer = EventMachine::Timer.new(300) { calculate_next_execution } unless @@timer
+  end
+end
+
+Thread.start do
+  EventMachine.run do
+    begin
+      run_tasks
+    rescue Exception => e
+      p e
     end
   end
 end

@@ -117,6 +117,10 @@ class Task < Sequel::Model
     self.next_execution = Rufus::CronLine.new("#{self.cron} #{self.timezone}").next_time(from)
   end
 
+  def to_s
+    "#{id} #{name} #{user_id } #{cron} #{timezone} #{url}"
+  end
+
 end
 
 class Execution < Sequel::Model
