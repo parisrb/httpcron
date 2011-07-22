@@ -4,6 +4,26 @@ require 'em-http'
 # recron past tasks
 SECONDS_IN_A_DAY = 24 * 60 * 60
 
+def create_task task
+  p "Create task #{task}"
+  if task.enabled
+    possibly_add_next_execution task.next_execution
+  end
+end
+
+def update_task task
+  p "Update task #{task}"
+  if task.enabled
+    possibly_add_next_execution task.next_execution
+  end
+end
+
+def delete_task task
+  p "Delete task #{task}"
+end
+
+private
+
 count = 0
 from = Time.now
 Task.filter('enabled = ? and next_execution <= ?', true, DateTime.now).each do |t|
@@ -53,13 +73,6 @@ def run_tasks
     run_task t
   end
   calculate_next_execution
-end
-
-def update_task task
-  p "Update task #{task}"
-  if task.enabled
-    possibly_add_next_execution task.next_execution
-  end
 end
 
 def possibly_add_next_execution next_execution

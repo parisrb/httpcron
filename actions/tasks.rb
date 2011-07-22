@@ -16,7 +16,7 @@ class HTTPCronApi < Sinatra::Base
       timeout = HttpCronConfig.default_timeout
     end
 
-    t = Task.new(:user => current_user,
+    task = Task.new(:user => current_user,
                  :name => params[:name],
                  :url => params[:url],
                  :cron => params[:cron],
@@ -24,19 +24,19 @@ class HTTPCronApi < Sinatra::Base
                  :enabled => (params[:enabled] || true),
                  :timeout => timeout)
 
-    unless t.valid?
-      halt 500, t.errors.values.join("\n")
+    unless task.valid?
+      halt 500, task.errors.values.join("\n")
     end
 
     begin
-      t.save
+      task.save
     rescue Exception => e
       halt 500, e.message
     end
 
-    update_task t
+    create_task task
     content_type :json
-    t.to_json
+    task.to_json
   end
 
   delete '/tasks/:id' do |id|
@@ -46,6 +46,7 @@ class HTTPCronApi < Sinatra::Base
     rescue Exception => e
       halt 500, e.message
     end
+    delete_task task
     halt 200
   end
 end
