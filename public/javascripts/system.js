@@ -265,13 +265,14 @@ HTTPDigest.User = SC.Object.extend({
   */
   _didLoggedIn: function(response) {
     this.set('isLoggingIn', false);
-    this._resetCredentials();
     if (SC.ok(response)) {
       this.set('isLoggedIn', true);
       this._saveDigest($.httpDigest.username, $.httpDigest.ha1(), $.httpDigest.digest.realm);
       this.didLoggedIn();
+      this._resetCredentials();
     } else {
       this.set('isLoggedIn', false);
+      this.set('password', '');
     }
   }
 });

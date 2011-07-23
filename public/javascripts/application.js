@@ -116,13 +116,16 @@ HttpCron.User = HTTPDigest.User.create({
   },
 
   didLoggedInFail: function() {
-    HttpCron.LoginView.append();
+    if (HttpCron.LoginView.state !== 'inDOM') {
+      HttpCron.LoginView.append();
+    }
   }
 });
 
 HttpCron.LoginView = SC.View.create({
   elementId: 'login-panel',
   templateName: 'login-view',
+  contentBinding: 'HttpCron.User',
   append: function() {
     this.appendTo('[role="main"]');
   }
@@ -136,7 +139,7 @@ HttpCron.TasksView = SC.View.create({
 });
 
 HttpCron.LoginTextField = SC.TextField.extend({
-  contentBinding: 'parentView.controller',
+  contentBinding: 'parentView.content',
   attributeBindings: ['disabled'],
   disabledBinding: 'content.isLoggingIn'
 });
