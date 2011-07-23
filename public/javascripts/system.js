@@ -9,35 +9,7 @@ SC.View.reopen({
     if (!method) { method = 'toggle'; }
     method.call(this.$(), this.get('isVisible'));
   }.observes('isVisible')
-})
-
-// SC.ControllerSupport
-
-SC.ControllerSupport = SC.Mixin.create({
-
-  controller: null,
-
-  _addController: function() {
-    var controller = this.get('controller');
-
-    if (SC.typeOf(controller) === "string") {
-      controller = SC.getPath(controller);
-      this.set('controller', controller); 
-    }
-    if (controller && controller.isObserverable) {
-      controller.set('view', this);
-    }
-  },
-
-  init: function() {
-    this._super();
-    this._addController();
-  }
 });
-
-// SC.ControlledView
-
-SC.ControlledView = SC.View.extend(SC.ControllerSupport);
 
 // SC.ResourceDataSource
 
@@ -64,12 +36,12 @@ SC.ResourceDataSource = SC.DataSource.extend({
   fetch: function(store, query) {
     var url = this.resourceURL(store);
     SC.Request.getUrl(url).json()
-      .notify(this, '_didFetchTasks', store, query)
+      .notify(this, 'fetchDidComplete', store, query)
       .send();
     return true;
   },
 
-  _didFetchTasks: function(response, store, query) {
+  fetchDidComplete: function(response, store, query) {
     if (SC.ok(response)) {
       var records = response.get('body');
       if (records.length > 0) {
@@ -88,18 +60,18 @@ SC.ResourceDataSource = SC.DataSource.extend({
   },
 
   updateRecord: function(store, storeKey) {
-    return this._createOrUpdateRecord(store, storeKey);
+    return this._createOrUpdateRecord(store, storeKey, true);
   },
 
-  _createOrUpdateRecord: function(store, storeKey) {
+  _createOrUpdateRecord: function(store, storeKey, update) {
     var url = this.resourceURL(store, storeKey);
-    SC.Request.postUrl(url).json()
-      .notify(this, '_didCreateOrUpdateTask', store, storeKey)
+    SC.Request[update ? 'putUrl' : 'postUrl'](url).json()
+      .notify(this, 'createOrUpdateRecordDidComplete', store, storeKey)
       .send(store.readDataHash(storeKey));
     return true;
   },
 
-  _didCreateOrUpdateTask: function(response, store, storeKey) {
+  createOrUpdateRecordDidComplete: function(response, store, storeKey) {
     if (SC.ok(response)) {
       var data = response.get('body');
       if (store.idFor(storeKey)) {
@@ -117,12 +89,12 @@ SC.ResourceDataSource = SC.DataSource.extend({
   destroyRecord: function(store, storeKey) {
     var url = this.resourceURL(store, storeKey);
     SC.Request.deleteUrl(url).json()
-      .notify(this, '_didDestroyTask', store, storeKey)
+      .notify(this, 'destroyRecordsDidComplete', store, storeKey)
       .send();
     return true;
   },
 
-  _didDestroyTask: function(response, store, storeKey) {
+  destroyRecordsDidComplete: function(response, store, storeKey) {
     if (SC.ok(response)) {
       store.dataSourceDidDestroy(storeKey);
     } else {

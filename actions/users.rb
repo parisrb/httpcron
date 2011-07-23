@@ -4,7 +4,8 @@ module Rack
       private
 
       def unauthorized(www_authenticate = challenge)
-        return [ 442,
+        code = 442 #@env['HTTP_X_DIGEST_UNAUTHORIZED']
+        return [ code || 401,
           { 'Content-Type' => 'text/plain',
             'Content-Length' => '0',
             'WWW-Authenticate' => www_authenticate.to_s },
@@ -19,7 +20,7 @@ class HTTPCronApi < Sinatra::Base
 
   before do
     digest_header = @env['HTTP_AUTHORIZATION']
-    tokens = digest_header.split(',')
+    tokens = digest_header.gsub('Digest', '').split(',')
     username = tokens.detect do |token|
       token.match(/^\s?username/)
     end
@@ -32,6 +33,11 @@ class HTTPCronApi < Sinatra::Base
   get '/users' do
     content_type :json
     User.all.to_json
+  end
+
+  post '/users' do
+    # TODO: Create user
+    halt 200
   end
 
   head '/authenticate' do

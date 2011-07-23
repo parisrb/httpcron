@@ -12,11 +12,51 @@ HttpCron.TaskDataSource = SC.ResourceDataSource.extend({
 HttpCron.Task = SC.Record.extend({
   primaryKey: 'id',
 
-  name: SC.Record.attr(String),
-  url: SC.Record.attr(String),
-  cron: SC.Record.attr(String),
-  enabled: SC.Record.attr(Boolean),
-  created_at: SC.Record.attr(Number)
+  name: SC.Record.attr(String, {isRequired: true}),
+  url: SC.Record.attr(String, {isRequired: true}),
+  cron: SC.Record.attr(String, {isRequired: true, defaultValue: '0 22 * * 1-5'}),
+  enabled: SC.Record.attr(Boolean, {isRequired: true, defaultValue: true}),
+  created_at: SC.Record.attr(Number),
+  timeout: SC.Record.attr(Number, {defaultValue: 60}),
+
+  isEditing: false,
+  isNotEditingBinding: SC.Binding.not('isEditing'),
+
+  cleanUrl: function() {
+    return this.get('url').replace(/^http:\/\//, '');
+  }.property('url').cacheable(),
+
+  nested: null,
+  nestedContent: null,
+
+  toggle: function() {
+    this.toggleProperty('isEditing');
+  },
+
+  save: function() {
+    this.toggle();
+    this.get('nested').commitChanges();
+    HttpCron.store.commitRecords();
+  },
+
+  cancel: function() {
+    this.toggle();
+    this.get('nested').discardChanges();
+  },
+
+  edit: function() {
+    if (this.get('isEditing')) { return false; }
+    var nested = this.get('nested');
+    if (!nested) {
+      var nested = HttpCron.store.chain();
+      var task = nested.find(this);
+      this.set('nestedContent', task);
+      this.set('nested', nested);
+    } else {
+      this.get('nested').reset();
+    }
+    this.toggle();
+  }
 });
 
 // Define controllers
@@ -27,15 +67,18 @@ HttpCron.TasksList = SC.ArrayProxy.create({
 
 HttpCron.NewTask = SC.Object.create({
 
-  attributes: ['name', 'url', 'cron'],
+  attributes: ['name', 'url', 'cron', 'enabled', 'timeout'],
   defaults: {
-    cron: '0 22 * * 1-5'
+    cron: '0 22 * * 1-5',
+    enabled: true,
+    timeout: 60
   },
 
-  isVisibleBinding: 'view.isVisible',
+  isVisible: false,
+  isInvisibleBinding: SC.Binding.not('isVisible'),
 
   toggle: function() {
-    this.get('view').toggleProperty('isVisible');
+    this.toggleProperty('isVisible');
   },
 
   save: function() {
@@ -48,12 +91,12 @@ HttpCron.NewTask = SC.Object.create({
   },
 
   reset: function() {
-    if (!this.getPath('view.isVisible')) {
+    if (!this.get('isVisible')) {
       this.attributes.forEach(function(name) {
         this.set(name, this.defaults[name] || '');
       }, this);
     }
-  }.observes('view.isVisible')
+  }.observes('isVisible')
 });
 
 HttpCron.User = HTTPDigest.User.create({
@@ -73,26 +116,48 @@ HttpCron.User = HTTPDigest.User.create({
   },
 
   didLoggedInFail: function() {
-    //console.log('login fail');
+    HttpCron.LoginView.append();
   }
 });
 
-HttpCron.LoginView = SC.ControlledView.create({
+HttpCron.LoginView = SC.View.create({
+  elementId: 'login-panel',
   templateName: 'login-view',
-  controller: 'HttpCron.User',
   append: function() {
     this.appendTo('[role="main"]');
   }
 });
 
-HttpCron.TasksView = SC.ControlledView.create({
+HttpCron.TasksView = SC.View.create({
   templateName: 'tasks-view',
   append: function() {
     this.appendTo('[role="main"]');
   }
 });
 
+HttpCron.LoginTextField = SC.TextField.extend({
+  contentBinding: 'parentView.controller',
+  attributeBindings: ['disabled'],
+  disabledBinding: 'content.isLoggingIn'
+});
+
+HttpCron.TasksCollection = SC.CollectionView.extend({
+  contentBinding: 'HttpCron.TasksList',
+  tagName: 'ul',
+  classNames: 'tasks-list',
+  itemViewClass: SC.View.extend({
+    doubleClick: function() {
+      this.get('content').edit();
+    },
+    mouseEnter: function() {
+      this.$('.show-task button').show();
+    },
+    mouseLeave: function() {
+      this.$('.show-task button').hide();
+    }
+  })
+})
+
 $(function() {
-  HttpCron.LoginView.append();
   HttpCron.User.login();
 });

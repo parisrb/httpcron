@@ -39,10 +39,42 @@ class HTTPCronApi < Sinatra::Base
     task.to_json
   end
 
-  delete '/tasks/:id' do |id|
-    task = Task.find(id)
+  put '/tasks/:id' do |id|
+    check_parameter_for_blank :name, :url, :cron
+
+    if params[:timeout]
+      if (timeout = params[:timeout].to_i) > HttpCronConfig.max_timeout
+        halt 500, "Timeout [#{timeout}] can't be higher than #{HttpCronConfig.max_timeout}"
+      end
+    else
+      timeout = HttpCronConfig.default_timeout
+    end
+
+    t = Task.find(id)
+    t[:name] = params[:name]
+    t[:url] = params[:url]
+    t[:cron] = params[:cron]
+    t[:enabled] = params[:enabled]
+    t[:timeout] = timeout
+
     begin
-      task.destroy
+      t.save
+    rescue Exception => e
+      halt 500, e.message
+    end
+
+    unless t.valid?
+      halt 500, t.errors.values.join("\n")
+    end
+
+    content_type :json
+    t.to_json
+  end
+
+  delete '/tasks/:id' do |id|
+    t = Task.find(id)
+    begin
+      t.destroy
     rescue Exception => e
       halt 500, e.message
     end

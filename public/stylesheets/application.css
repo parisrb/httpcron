@@ -1,3 +1,93 @@
-#new-task > input:last-child {
+.new-task > input:last-child {
   display:none;
+}
+
+body {
+  font-size:1em;
+}
+
+[role="main"] > .sc-view {
+  padding:5px;
+}
+
+header {
+  color:#333;
+  padding:5px;
+}
+
+.fields input {
+  display:block;
+}
+
+.new-task {
+  margin-top:5px;
+  padding:5px;
+  border-radius:5px;
+  border:1px solid #ccc;
+  width: 500px;
+}
+
+.new-task input {
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  -ms-box-sizing: border-box;
+  box-sizing: border-box;
+  width:100%;
+  margin-bottom:5px;
+  margin-right:5px;
+}
+
+.show-task button {
+  display:none;
+}
+
+.tasks-list {
+  list-style:none;
+  padding-top:5px;
+  margin:0;
+  width: 700px;
+}
+
+.tasks-list li {
+  margin:0;
+  padding:5px 0 5px 5px;
+  border-radius:2px;
+  border:1px solid #ccc;
+  overflow:hidden;
+}
+
+.tasks-list li .content, .tasks-list li .fields {
+  float:left;
+}
+
+.tasks-list li button, .tasks-list li .buttons {
+  float:right;
+  margin-right:5px;
+}
+
+#login-panel {
+  width: 300px;
+  height: 90px;
+  border-radius:5px;
+  border:1px solid #ccc;
+  position:absolute;
+  top:50%;
+  left:50%;
+  margin-left:-150px;
+  margin-top:-100px;
+  padding:15px;
+}
+
+#login-panel input {
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  -ms-box-sizing: border-box;
+  box-sizing: border-box;
+  width:100%;
+  margin-bottom:10px;
+  margin-right:15px;
+}
+
+#login-panel div:last-child {
+  text-align:right;
 }

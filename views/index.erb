@@ -1,30 +1,49 @@
 <script type="text/html" data-template-name="tasks-view">
-  {{#unless HttpCron.NewTask.isVisible}}
-    {{view JUI.Button label="Add Task" target="HttpCron.NewTask" action="toggle"}}
-  {{/unless}}
-  {{view JUI.Button label="Log Out" target="HttpCron.User" action="logout"}}
-  {{#view SC.ControlledView
-    isVisible=false controller="HttpCron.NewTask" elementId="new-task" toggleMethod="slideToggle"}}
-    <div>
-      {{view SC.TextField valueBinding="parentView.controller.name" placeholder="Name..."}}
+  {{view JUI.Button label="Log Out"
+    target="HttpCron.User" action="logout"}}
+  {{view JUI.Button label="Add Task"
+    target="HttpCron.NewTask" action="toggle"
+    isVisibleBinding="HttpCron.NewTask.isInvisible"}}
+  {{#view classNames="new-task" contentBinding="HttpCron.NewTask"
+    isVisibleBinding="content.isVisible" toggleMethod="slideToggle"}}
+    <div class="fields">
+      {{view SC.TextField valueBinding="parentView.content.name" placeholder="Name..."}}
+      {{view SC.TextField valueBinding="parentView.content.cron" placeholder="Cron line..."}}
+      {{view SC.TextField type="url" valueBinding="parentView.content.url" placeholder="URL..."}}
+      {{view SC.Checkbox title="Enabled" valueBinding="parentView.content.enabled"}}
     </div>
-    <div>
-      {{view SC.TextField valueBinding="parentView.controller.cron" placeholder="Cron line..."}}
-    </div>
-    <div>
-      {{view SC.TextField type="url" valueBinding="parentView.controller.url" placeholder="URL..."}}
-    </div>
-    <div>
-      {{view JUI.Button label="Cancel" target="HttpCron.NewTask" action="toggle"}}
-      {{view JUI.Button label="Save" target="HttpCron.NewTask" action="save"}}
+    <div class="buttons">
+      {{view JUI.Button label="Cancel" target="parentView.content" action="toggle"}}
+      {{view JUI.Button label="Save" target="parentView.content" action="save"}}
     </div>
   {{/view}}
-  {{#collection tagName="ul" contentBinding="HttpCron.TasksList"}}
-    {{content.name}} - {{content.url}}
-    {{view JUI.Button label="Destroy" target="parentView.content" action="destroy"}}
+  {{#collection HttpCron.TasksCollection}}
+    {{#view classNames="show-task" contentBinding="parentView.content"
+      isVisibleBinding="content.isNotEditing"}}
+      <div class="content">
+        {{content.name}}<br/>
+        <em>{{content.cron}}</em><br/>
+        <strong>http://</strong>{{content.cleanUrl}}
+      </div>
+      {{view JUI.Button label="Destroy" target="parentView.content" action="destroy"}}
+      {{view JUI.Button label="Edit" target="parentView.content" action="edit"}}
+    {{/view}}
+    {{#view classNames="edit-task" contentBinding="parentView.content"
+      isVisibleBinding="content.isEditing" nestedContentBinding="content.nestedContent"}}
+      <div class="fields">
+        {{view SC.TextField valueBinding="parentView.nestedContent.name" placeholder="Name..."}}
+        {{view SC.TextField valueBinding="parentView.nestedContent.cron" placeholder="Cron line..."}}
+        {{view SC.TextField type="url" valueBinding="parentView.nestedContent.url" placeholder="URL..."}}
+        {{view SC.Checkbox title="Enabled" valueBinding="parentView.nestedContent.enabled"}}
+      </div>
+      <div class="buttons">
+        {{view JUI.Button label="Update" target="parentView.content" action="save"}}
+        {{view JUI.Button label="Cancel" target="parentView.content" action="cancel"}}
+      </div>
+    {{/view}}
   {{else}}
     {{#if parentView.content.isError}}
-      Error
+      Error : {{parentView.content.errorValue}}
     {{else}}
       No Tasks
     {{/if}}
@@ -33,19 +52,15 @@
 
 <script type="text/html" data-template-name="login-view">
   <div>
-    {{view SC.TextField
-      valueBinding="parentView.controller.username"
-      placeholder="Username..."
-      attributeBindings="disabled"
-      disabledBinding="parentView.controller.isLoggingIn"}}
+    {{view HttpCron.LoginTextField
+      valueBinding="content.username"
+      placeholder="Username..."}}
   </div>
   <div>
-    {{view SC.TextField
+    {{view HttpCron.LoginTextField
       type="password"
-      valueBinding="parentView.controller.password"
-      placeholder="Password..."
-      attributeBindings="disabled"
-      disabledBinding="parentView.controller.isLoggingIn"}}
+      valueBinding="content.password"
+      placeholder="Password..."}}
   </div>
   <div>
     {{view JUI.Button label="LogIn" target="HttpCron.User" action="login"}}

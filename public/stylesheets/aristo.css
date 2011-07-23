@@ -414,31 +414,9 @@ input.ui-button {
   box-shadow: rgba(0, 0, 0, 0.6) 0 2px 12px; }
 
 /* SC Controls */
-.sc-checkbox input[type="checkbox"], .ui-slider .ui-slider-handle {
+.ui-slider .ui-slider-handle {
   background-image: url('data:image/png;base64,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');
   background-repeat: no-repeat; }
-
-.sc-checkbox input[type="checkbox"] {
-  width: 23px;
-  height: 23px;
-  background-position: 0 0;
-  -moz-appearance: none;
-  -webkit-appearance: none;
-  appearance: none; }
-  .sc-checkbox input[type="checkbox"]:hover {
-    background-position: -46px 0; }
-  .sc-checkbox input[type="checkbox"]:active {
-    background-position: -69px 0; }
-  .sc-checkbox input[type="checkbox"]:disabled {
-    background-position: -184px 0; }
-  .sc-checkbox input[type="checkbox"]:checked {
-    background-position: -92px 0; }
-    .sc-checkbox input[type="checkbox"]:checked:hover {
-      background-position: -138px 0; }
-    .sc-checkbox input[type="checkbox"]:checked:active {
-      background-position: -161px 0; }
-    .sc-checkbox input[type="checkbox"]:checked:disabled {
-      background-position: -207px 0; }
 
 textarea.sc-text-area, input.sc-text-field {
   border: 1px solid #a7a7a7;

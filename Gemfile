@@ -17,4 +17,6 @@ end
 group :test do
   gem 'sqlite3'
   gem 'rack-test', '~> 0.6'
+  gem 'capybara-webkit'
+  gem 'steak'
 end
