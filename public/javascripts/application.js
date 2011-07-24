@@ -56,6 +56,11 @@ HttpCron.Task = SC.Record.extend({
       this.get('nested').reset();
     }
     this.toggle();
+  },
+
+  logs: function() {
+    HttpCron.ExecutionsView.append();
+    HttpCron.ExecutionsList.fetch(this);
   }
 });
 
@@ -63,6 +68,25 @@ HttpCron.Task = SC.Record.extend({
 HttpCron.TasksList = SC.ArrayProxy.create({
   content: [],
   isErrorBinding: 'content.isError'
+});
+
+HttpCron.ExecutionsList = SC.ArrayProxy.create({
+  content: [],
+  isErrorBinding: 'content.isError',
+  fetch: function(record) {
+    var id = record.get('id');
+    var title = record.get('name');
+    this.set('title', title);
+    this.set('content', []);
+    SC.Request.getUrl('/api/tasks/'+id+'/executions').json()
+      .notify(this, 'fetchDidComplete')
+      .send();
+  },
+  fetchDidComplete: function(response) {
+    if (SC.ok(response)) {
+      this.set('content', response.get('body'))
+    }
+  }
 });
 
 HttpCron.NewTask = SC.Object.create({
@@ -104,39 +128,47 @@ HttpCron.User = HTTPDigest.User.create({
   url: '/api/authenticate',
 
   didLoggedIn: function() {
-    HttpCron.LoginView.remove();
     HttpCron.TasksView.append();
     var query = HttpCron.store.find(SC.Query.local(HttpCron.Task));
     HttpCron.TasksList.set('content', query);
   },
 
   didLoggedOut: function() {
-    HttpCron.TasksView.remove();
     HttpCron.LoginView.append();
   },
 
   didLoggedInFail: function() {
-    if (HttpCron.LoginView.state !== 'inDOM') {
-      HttpCron.LoginView.append();
+    HttpCron.LoginView.append();
+  }
+});
+
+HttpCron.PageView = SC.View.extend({
+  append: function() {
+    if (HttpCron.PageView.currentPage && HttpCron.PageView.currentPage.state === 'inDOM') {
+      HttpCron.PageView.currentPage.remove();
+    }
+    if (this.state !== 'inDOM') {
+      HttpCron.PageView.currentPage = this;
+      this.appendTo('[role="main"]');
     }
   }
 });
 
-HttpCron.LoginView = SC.View.create({
-  elementId: 'login-panel',
-  templateName: 'login-view',
-  contentBinding: 'HttpCron.User',
-  append: function() {
-    this.appendTo('[role="main"]');
-  }
+HttpCron.LoginView = HttpCron.PageView.create({
+  classNames: 'login-page',
+  templateName: 'login-page',
+  contentBinding: 'HttpCron.User'
 });
 
-HttpCron.TasksView = SC.View.create({
-  templateName: 'tasks-view',
-  append: function() {
-    this.appendTo('[role="main"]');
-  }
+HttpCron.TasksView = HttpCron.PageView.create({
+  templateName: 'tasks-page'
 });
+
+HttpCron.ExecutionsView = HttpCron.PageView.create({
+  classNames: 'executions-page',
+  templateName: 'executions-page',
+  titleBinding: 'HttpCron.ExecutionsList.title'
+})
 
 HttpCron.LoginTextField = SC.TextField.extend({
   contentBinding: 'parentView.content',
@@ -147,7 +179,7 @@ HttpCron.LoginTextField = SC.TextField.extend({
 HttpCron.TasksCollection = SC.CollectionView.extend({
   contentBinding: 'HttpCron.TasksList',
   tagName: 'ul',
-  classNames: 'tasks-list',
+  classNames: ['tasks-list', 'list'],
   itemViewClass: SC.View.extend({
     doubleClick: function() {
       this.get('content').edit();
@@ -159,7 +191,13 @@ HttpCron.TasksCollection = SC.CollectionView.extend({
       this.$('.show-task button').hide();
     }
   })
-})
+});
+
+HttpCron.ExecutionsCollection = SC.CollectionView.extend({
+  contentBinding: 'HttpCron.ExecutionsList',
+  tagName: 'ul',
+  classNames: ['executions-list', 'list']
+});
 
 $(function() {
   HttpCron.User.login();

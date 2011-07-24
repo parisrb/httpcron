@@ -41,14 +41,14 @@ header {
   display:none;
 }
 
-.tasks-list {
+.list {
   list-style:none;
   padding-top:5px;
   margin:0;
   width: 700px;
 }
 
-.tasks-list li {
+.list li {
   margin:0;
   padding:5px 0 5px 5px;
   border-radius:2px;
@@ -65,7 +65,7 @@ header {
   margin-right:5px;
 }
 
-#login-panel {
+.login-page {
   width: 300px;
   height: 90px;
   border-radius:5px;
@@ -78,7 +78,7 @@ header {
   padding:15px;
 }
 
-#login-panel input {
+.login-page input {
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
   -ms-box-sizing: border-box;
@@ -88,6 +88,6 @@ header {
   margin-right:15px;
 }
 
-#login-panel div:last-child {
+.login-page div:last-child {
   text-align:right;
 }

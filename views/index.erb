@@ -1,4 +1,4 @@
-<script type="text/html" data-template-name="tasks-view">
+<script type="text/html" data-template-name="tasks-page">
   {{view JUI.Button label="Log Out"
     target="HttpCron.User" action="logout"}}
   {{view JUI.Button label="Add Task"
@@ -27,6 +27,7 @@
       </div>
       {{view JUI.Button label="Destroy" target="parentView.content" action="destroy"}}
       {{view JUI.Button label="Edit" target="parentView.content" action="edit"}}
+      {{view JUI.Button label="Logs" target="parentView.content" action="logs"}}
     {{/view}}
     {{#view classNames="edit-task" contentBinding="parentView.content"
       isVisibleBinding="content.isEditing" nestedContentBinding="content.nestedContent"}}
@@ -50,7 +51,19 @@
   {{/collection}}
 </script>
 
-<script type="text/html" data-template-name="login-view">
+<script type="text/html" data-template-name="executions-page">
+  <h1>{{title}}</h1>
+  {{view JUI.Button label="Back" target="HttpCron.TasksView" action="append"}}
+  {{#collection HttpCron.ExecutionsCollection}}
+    {{content.status}}<br/>
+    {{content.run_at}}<br/>
+    {{content.duration}}
+  {{else}}
+    Not executed yiet...
+  {{/collection}}
+</script>
+
+<script type="text/html" data-template-name="login-page">
   <div>
     {{view HttpCron.LoginTextField
       valueBinding="content.username"
