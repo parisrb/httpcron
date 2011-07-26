@@ -1,5 +1,6 @@
 require 'eventmachine'
 require 'em-http'
+# this engine use less memory but rely more on the database
 
 # recron past tasks
 SECONDS_IN_A_DAY = 24 * 60 * 60

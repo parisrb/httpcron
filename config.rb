@@ -15,8 +15,9 @@ class HttpCronConfig
     @@max_timeout ||= get_value_i('DEFAULT_TIMEOUT', 300)
   end
 
+  # The engine to use, possible values are database or memory
   def self.engine
-    @@engine ||= get_value('ENGINE', 'engine')
+    @@engine ||= get_value('ENGINE', 'database')
   end
 
   private
