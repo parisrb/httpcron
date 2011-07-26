@@ -5,15 +5,6 @@ class HTTPCronApi < Sinatra::Base
     current_user.tasks.to_json
   end
 
-  get '/tasks/:id/executions' do |id|
-    t = Task.find(id)
-    unless t.user.admin || t.user == current_user
-      halt 403, 'This Task do not belongs to you!'
-    end
-    content_type :json
-    t.executions.to_json
-  end
-
   post '/tasks' do
     check_parameter_for_blank :name, :url, :cron
 
