@@ -6,6 +6,10 @@ describe 'admin task' do
     HTTPCronApi
   end
 
+  before do
+     digest_authorize 'httpcronadmin', 'httpcronadmin'
+  end
+
   it 'has no task by default' do
     database.transaction do
       get '/tasks'

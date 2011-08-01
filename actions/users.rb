@@ -1,16 +1,18 @@
-module Rack
-  module Auth
-    class AbstractHandler
-      private
+unless 'test' == ENV['RACK_ENV']
+  module Rack
+    module Auth
+      class AbstractHandler
+        private
 
-      def unauthorized(www_authenticate = challenge)
-        code = 442 #@env['HTTP_X_DIGEST_UNAUTHORIZED']
-        return [ code || 401,
-          { 'Content-Type' => 'text/plain',
-            'Content-Length' => '0',
-            'WWW-Authenticate' => www_authenticate.to_s },
-          []
-        ]
+        def unauthorized(www_authenticate = challenge)
+          code = 442 #@env['HTTP_X_DIGEST_UNAUTHORIZED']
+          return [ code || 401,
+            { 'Content-Type' => 'text/plain',
+              'Content-Length' => '0',
+              'WWW-Authenticate' => www_authenticate.to_s },
+            []
+          ]
+        end
       end
     end
   end
@@ -45,7 +47,6 @@ class HTTPCronApi < Sinatra::Base
   end
 
   def self.new(*)
-    return super if test?
     app = Rack::Auth::Digest::MD5.new(super) do |username|
       user = User.filter(:username => username).first
       user.password if user

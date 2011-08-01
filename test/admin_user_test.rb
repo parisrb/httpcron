@@ -6,6 +6,10 @@ describe 'admin user' do
     HTTPCronApi
   end
 
+  before do
+     digest_authorize 'httpcronadmin', 'httpcronadmin'
+  end
+
   it 'has default user' do
     get '/users'
     database.transaction do
