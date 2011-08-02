@@ -8,14 +8,14 @@ SECONDS_IN_A_DAY = 24 * 60 * 60
 def create_task task
   p "Create task #{task}"
   if task.enabled
-    possibly_add_next_execution task.next_execution
+    possibly_set_next_execution task.next_execution
   end
 end
 
 def update_task task
   p "Update task #{task}"
   if task.enabled
-    possibly_add_next_execution task.next_execution
+    possibly_set_next_execution task.next_execution
   end
 end
 
@@ -25,6 +25,7 @@ end
 
 private
 
+# reschedule tasks whose execution date is in the past
 count = 0
 from = Time.now
 Task.filter('enabled = ? and next_execution <= ?', true, DateTime.now).each do |t|
@@ -38,6 +39,10 @@ p "#{count} task(s) rescheduled"
 @@next_execution = nil
 @@timer = nil
 
+# Called when a task as ended
+# http:: the http request
+# start:: starting date
+# task:: the corresponding task
 def end_task http, start, task
   p "Ending task #{task.id} [#{task.name}] : #{http.response_header.status}"
   Execution.create(:task => task,
@@ -50,10 +55,11 @@ def end_task http, start, task
   task.recalculate_cron(from)
   task.save
   @@running_tasks.delete task.id
-  possibly_add_next_execution task.next_execution
+  possibly_set_next_execution task.next_execution
 end
 
-def run_task task
+# Start a task
+def start_task task
   unless @@running_tasks[task.id]
     p "Start task #{task.id} [#{task.name}]"
     @@running_tasks[task.id] = task
@@ -68,30 +74,34 @@ def run_task task
   end
 end
 
-def run_tasks
+# Start all pending tasks
+def start_tasks
   p "Start tasks"
   Task.filter('enabled = ? and next_execution <= ?', true, DateTime.now).each do |t|
-    run_task t
+    start_task t
   end
-  calculate_next_execution
+  wakeup
 end
 
-def possibly_add_next_execution next_execution
+# Update the next execution time of it is before the current one
+def possibly_set_next_execution next_execution
   p "Possibly update timeout"
   unless @@next_execution && (next_execution > @@next_execution)
-    add_next_execution next_execution
+    set_next_execution next_execution
   end
 end
 
-def add_next_execution next_execution
+# Set the next execution time
+def set_next_execution next_execution
   @@timer.cancel if @@timer
   wait_time = (next_execution - DateTime.now) * SECONDS_IN_A_DAY
   p "Setting new timeout: will wait #{wait_time.round} seconds"
-  @@timer = EventMachine::Timer.new(wait_time) { calculate_next_execution }
+  @@timer = EventMachine::Timer.new(wait_time) { wakeup }
   @@next_execution = next_execution
 end
 
-def calculate_next_execution
+# Trigger the pending tasks
+def wakeup
   @@next_execution = nil
   @@timer.cancel if @@timer
 
@@ -104,20 +114,20 @@ def calculate_next_execution
   if task
     if task.next_execution < DateTime.now
       # execution date is passed: run tasks
-      run_tasks
+      start_tasks
     else
-      possibly_add_next_execution task.next_execution
+      possibly_set_next_execution task.next_execution
     end
   else
     p "No task, just waiting"
-    @@timer = EventMachine::Timer.new(300) { calculate_next_execution } unless @@timer
+    @@timer = EventMachine::Timer.new(300) { wakeup } unless @@timer
   end
 end
 
 Thread.start do
   EventMachine.run do
     begin
-      run_tasks
+      start_tasks
     rescue Exception => e
       p e
     end
