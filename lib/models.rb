@@ -89,6 +89,10 @@ class User < Sequel::Model
     validate_timezone
   end
 
+  def to_json(*a)
+    super(:except => :password)
+  end
+
 end
 
 class Task < Sequel::Model
@@ -127,6 +131,10 @@ class Task < Sequel::Model
     self.next_execution = Rufus::CronLine.new("#{self.cron} #{self.timezone}").next_time(from)
   end
 
+  def to_json(*a)
+    super(:except => :user_id)
+  end
+
   def to_s
     "#{id} #{name} #{user_id } #{cron} #{timezone} #{url}"
   end
@@ -145,6 +153,11 @@ class Execution < Sequel::Model
       validates_max_length 5000, :response
     end
   end
+
+  def to_json(*a)
+    super(:except => :task_id)
+  end
+
 end
 
 if User.count == 0

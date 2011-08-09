@@ -26,7 +26,7 @@ describe 'admin user' do
       post '/users', 'username' => 'testuser', 'password' => 'testpassword'
       last_response.status.must_equal 200
       last_response.json_body.username.must_equal 'testuser'
-      #last_response.json_body.password.must_equal nil
+      last_response.json_body.password.must_equal nil
       last_response.json_body.admin.must_equal false
       raise(Sequel::Rollback)
     end
