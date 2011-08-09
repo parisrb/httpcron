@@ -1,3 +1,4 @@
+# Access the configuration
 class HttpCronConfig
 
   # The server timezone
@@ -20,8 +21,9 @@ class HttpCronConfig
     @@engine ||= get_value('ENGINE', 'database')
   end
 
-  def self.pagination_limit
-    @@pagination_limit ||= get_value_i('PAGINATION_LIMIT', 100)
+  # Max pagination limit
+  def self.max_pagination_limit
+    @@max_pagination_limit ||= get_value_i('MAX_PAGINATION_LIMIT', 100)
   end
 
   private

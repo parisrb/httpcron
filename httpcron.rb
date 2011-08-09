@@ -74,8 +74,8 @@ class HTTPCronApi < Sinatra::Base
       @limit = params[:limit].to_i
       if @limit <= 0
         halt 500, "Limit is [#{@limit}] but shouldn't be <= 0"
-      elsif @limit > HttpCronConfig.pagination_limit
-        halt 500, "Limit is [#{@limit}] but should be <= #{HttpCronConfig.pagination_limit}"
+      elsif @limit > HttpCronConfig.max_pagination_limit
+        halt 500, "Limit is [#{@limit}] but should be <= #{HttpCronConfig.max_pagination_limit}"
       end
     else
       @limit = 100
