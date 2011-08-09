@@ -1,8 +1,7 @@
 class HTTPCronApi < Sinatra::Base
 
   get '/tasks' do
-    content_type :json
-    current_user.tasks.to_json
+    tasks_for_user current_user
   end
 
   get '/tasks/:id' do |id|
@@ -19,8 +18,8 @@ class HTTPCronApi < Sinatra::Base
     unless user
       halt 404, "User [#{id}] not found"
     end
-    content_type :json
-    user.task.to_json
+
+    tasks_for_user user
   end
 
   post '/tasks' do
@@ -111,6 +110,13 @@ class HTTPCronApi < Sinatra::Base
     else
       task
     end
+  end
+
+  def tasks_for_user user
+    pagination_params
+    content_type :json
+    tasks = Task.filter(:user => user).paginate(@offset + 1, @limit)
+    {:total => tasks.pagination_record_count, :tasks => tasks}.to_json
   end
 
 end

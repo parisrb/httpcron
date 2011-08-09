@@ -20,6 +20,10 @@ class HttpCronConfig
     @@engine ||= get_value('ENGINE', 'database')
   end
 
+  def self.pagination_limit
+    @@pagination_limit ||= get_value_i('PAGINATION_LIMIT', 100)
+  end
+
   private
 
   def self.get_value env_name, default_value

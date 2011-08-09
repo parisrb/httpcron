@@ -13,7 +13,7 @@ describe 'admin task' do
   it 'has no task by default' do
     database.transaction do
       get '/tasks'
-      last_response.json_body.length.must_equal 0
+      last_response.json_body['total'].must_equal 0
       last_response.status.must_equal 200
       raise(Sequel::Rollback)
     end

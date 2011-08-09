@@ -14,9 +14,10 @@ describe 'admin user' do
     get '/users'
     database.transaction do
       last_response.status.must_equal 200
-      last_response.json_body.length.must_equal 1
-      last_response.json_body[0].username.must_equal 'httpcronadmin'
-      last_response.json_body[0].admin.must_equal true
+      last_response.json_body['total'].must_equal 1
+      last_response.json_body['users'].length.must_equal 1
+      last_response.json_body['users'][0].username.must_equal 'httpcronadmin'
+      last_response.json_body['users'][0].admin.must_equal true
       raise(Sequel::Rollback)
     end
   end

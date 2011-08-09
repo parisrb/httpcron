@@ -32,8 +32,11 @@ class HTTPCronApi < Sinatra::Base
 
   get '/users' do
     check_admin
+    pagination_params
+
     content_type :json
-    User.all.to_json
+    users = User.paginate(@offset + 1, @limit)
+    {:total => users.pagination_record_count, :users => users}.to_json
   end
 
   get '/users/current' do

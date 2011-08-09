@@ -10,8 +10,11 @@ class HTTPCronApi < Sinatra::Base
   get '/executions/task/:id' do |id|
     task = task_if_allowed(id)
 
+    pagination_params
     content_type :json
-    task.executions.to_json
+
+    executions = Execution.filter(:task => task).paginate(@offset + 1, @limit)
+    {:total => executions.pagination_record_count, :executions => executions}.to_json
   end
 
   delete '/executions/:id' do |id|

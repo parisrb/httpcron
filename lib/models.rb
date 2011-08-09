@@ -6,6 +6,7 @@ Sequel::Plugins::ValidationHelpers::DEFAULT_OPTIONS.merge!(
 Sequel::Model.plugin :timestamps, :update_on_create => true
 Sequel::Model.plugin :json_serializer
 Sequel::Model.plugin :association_dependencies
+Sequel.extension :pagination
 
 max_timezone_length = TZInfo::Timezone.all_identifiers.max { |t1, t2| t1.length <=> t2.length }.length
 
