@@ -6,11 +6,11 @@ unless 'test' == ENV['RACK_ENV']
 
         def unauthorized(www_authenticate = challenge)
           code = 442 #@env['HTTP_X_DIGEST_UNAUTHORIZED']
-          return [ code || 401,
-            { 'Content-Type' => 'text/plain',
-              'Content-Length' => '0',
-              'WWW-Authenticate' => www_authenticate.to_s },
-            []
+          return [code || 401,
+                  {'Content-Type' => 'text/plain',
+                   'Content-Length' => '0',
+                   'WWW-Authenticate' => www_authenticate.to_s},
+                  []
           ]
         end
       end
@@ -33,13 +33,51 @@ class HTTPCronApi < Sinatra::Base
   end
 
   get '/users' do
+    check_admin
     content_type :json
     User.all.to_json
   end
 
+  get '/users/current' do
+    content_type :json
+    current_user.to_json
+  end
+
+  get '/users/:id' do |id|
+    check_admin
+    if current_user.id != id
+      user = User.find(id)
+      unless user
+        halt 404, "User [#{id}] does not exist"
+      end
+      content_type :json
+      user.to_json
+    else
+      content_type :json
+      current_user.to_json
+    end
+
+  end
+
   post '/users' do
-    # TODO: Create user
-    halt 200
+    check_admin
+    user = User.new(:username => params[:username],
+                    :admin=> 'true' == params[:admin],
+                    :timezone => (params[:timezone] || HttpCronConfig.server_timezone),
+                    :password => parasm[:password])
+
+    unless user.valid?
+      halt 500, user.errors.values.join("\n")
+    end
+
+    begin
+      user.save
+    rescue Exception => e
+      halt 500, e.message
+    end
+
+    content_type :json
+    user.to_json
   end
 
   head '/authenticate' do

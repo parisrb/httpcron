@@ -1,12 +1,39 @@
 class HTTPCronApi < Sinatra::Base
 
-  get '/tasks/:id/executions' do |id|
-    t = Task.find(id)
-    unless t.user.admin || t.user == current_user
-      halt 403, 'This Task do not belongs to you!'
-    end
+  get '/executions/:id' do |id|
+    execution = execution_if_allowed(id)
+
     content_type :json
-    t.executions.to_json
+    execution.to_json
+  end
+
+  get '/executions/task/:id' do |id|
+    task = task_if_allowed(id)
+
+    content_type :json
+    task.executions.to_json
+  end
+
+  delete '/executions/:id' do |id|
+    execution = execution_if_allowed(id)
+
+    begin
+      t.destroy
+    rescue Exception => e
+      halt 500, e.message
+    end
+    halt 200, "Execution [#{id}] deleted"
+  end
+
+  def execution_if_allowed id
+    execution = Execution.find(id)
+    if !execution
+      halt 404, "Execution [#{id}] not found"
+    elsif (execution.task.user != current_user) && (!current_user.admin)
+      halt 403, "Execution [#{id}] is not allowed to you"
+    else
+      execution
+    end
   end
 
 end

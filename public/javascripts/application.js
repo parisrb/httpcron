@@ -78,7 +78,7 @@ HttpCron.ExecutionsList = SC.ArrayProxy.create({
     var title = record.get('name');
     this.set('title', title);
     this.set('content', []);
-    SC.Request.getUrl('/api/tasks/'+id+'/executions').json()
+    SC.Request.getUrl('/api/tasks/executions/'+id).json()
       .notify(this, 'fetchDidComplete')
       .send();
   },
@@ -168,7 +168,7 @@ HttpCron.ExecutionsView = HttpCron.PageView.create({
   classNames: 'executions-page',
   templateName: 'executions-page',
   titleBinding: 'HttpCron.ExecutionsList.title'
-})
+});
 
 HttpCron.LoginTextField = SC.TextField.extend({
   contentBinding: 'parentView.content',

@@ -74,6 +74,11 @@ class User < Sequel::Model
     self.timezone ||= HttpCronConfig.server_timezone
   end
 
+  def before_destroy
+    self.tasks.executions.delete
+    self.tasks.delete
+  end
+
   def validate
     super
     validates_presence [:username, :timezone]
@@ -111,6 +116,11 @@ class Task < Sequel::Model
     if self.enabled
       recalculate_cron
     end
+  end
+
+  def before_destroy
+    super
+    self.executions.delete
   end
 
   def recalculate_cron from = Time.now

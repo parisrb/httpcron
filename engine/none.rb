@@ -1,8 +1,12 @@
 # empty engine for tests
-def create_task task
+def notify_create_task task
 
 end
 
-def update_task task
+def notify_delete_task task
+
+end
+
+def notify_update_task task
 
 end

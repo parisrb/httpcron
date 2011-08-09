@@ -5,22 +5,22 @@ require 'em-http'
 # recron past tasks
 SECONDS_IN_A_DAY = 24 * 60 * 60
 
-def create_task task
+def notify_create_task task
   p "Create task #{task}"
   if task.enabled
     possibly_set_next_execution task.next_execution
   end
 end
 
-def update_task task
+def notify_delete_task task
+  p "Delete task #{task}"
+end
+
+def notify_update_task task
   p "Update task #{task}"
   if task.enabled
     possibly_set_next_execution task.next_execution
   end
-end
-
-def delete_task task
-  p "Delete task #{task}"
 end
 
 private

@@ -169,7 +169,7 @@ HTTPDigest.User = SC.Object.extend({
   username: '',
   password: '',
   url: '/authenticate',
-  loginMethods: ['challange', 'password'],
+  loginMethods: ['challenge', 'password'],
 
   didLoggedIn: SC.K,
   didLoggedOut: SC.K,
@@ -212,7 +212,7 @@ HTTPDigest.User = SC.Object.extend({
   /*
     @private
   */
-  _loginFrom_challange: function() {
+  _loginFrom_challenge: function() {
     var storage = this.get('storage'),
         username = storage.get('username'),
         ha1 = storage.get('ha1');

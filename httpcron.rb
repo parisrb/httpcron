@@ -58,6 +58,12 @@ class HTTPCronApi < Sinatra::Base
 
   private
 
+  def check_admin
+    unless current_user.admin
+      halt 403
+    end
+  end
+
   def check_parameter_for_blank *params_names
     params_names.each do |param_name|
       if params[param_name]
