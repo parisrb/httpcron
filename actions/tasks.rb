@@ -93,7 +93,6 @@ class HTTPCronApi < Sinatra::Base
 
   delete '/tasks/:id' do |id|
     task = task_if_allowed(id)
-
     begin
       task.destroy
     rescue Exception => e

@@ -75,8 +75,9 @@ class User < Sequel::Model
   end
 
   def before_destroy
-    self.tasks.executions.delete
-    self.tasks.delete
+    tasks = Task.filter(:user => self)
+    Execution.filter(:task => tasks).delete
+    tasks.delete
   end
 
   def validate
@@ -120,7 +121,7 @@ class Task < Sequel::Model
 
   def before_destroy
     super
-    self.executions.delete
+    Execution.filter(:task => self).delete
   end
 
   def recalculate_cron from = Time.now
