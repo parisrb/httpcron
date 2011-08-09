@@ -5,6 +5,7 @@ Sequel::Plugins::ValidationHelpers::DEFAULT_OPTIONS.merge!(
 
 Sequel::Model.plugin :timestamps, :update_on_create => true
 Sequel::Model.plugin :json_serializer
+Sequel::Model.plugin :association_dependencies
 
 max_timezone_length = TZInfo::Timezone.all_identifiers.max { |t1, t2| t1.length <=> t2.length }.length
 
@@ -68,6 +69,7 @@ class User < Sequel::Model
   include ModelWithTimezone
 
   one_to_many :tasks
+  one_to_many :executions, :through => :tasks
 
   def before_validation
     super
@@ -96,6 +98,8 @@ class Task < Sequel::Model
   many_to_one :user
   one_to_many :executions
 
+  add_association_dependencies :executions => :delete
+
   def validate
     super
     validates_presence [:name, :url, :timeout, :cron, :user_id, :timezone]
@@ -119,11 +123,6 @@ class Task < Sequel::Model
     end
   end
 
-  def before_destroy
-    super
-    Execution.filter(:task => self).delete
-  end
-
   def recalculate_cron from = Time.now
     self.next_execution = Rufus::CronLine.new("#{self.cron} #{self.timezone}").next_time(from)
   end
@@ -135,7 +134,9 @@ class Task < Sequel::Model
 end
 
 class Execution < Sequel::Model
+
   many_to_one :task
+  many_to_one :user, :through => :task
 
   def validate
     super
