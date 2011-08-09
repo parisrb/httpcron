@@ -3,13 +3,11 @@ unless 'test' == ENV['RACK_ENV']
     module Auth
       class AbstractHandler
         private
-
         def unauthorized(www_authenticate = challenge)
-          code = 442 #@env['HTTP_X_DIGEST_UNAUTHORIZED']
-          return [code || 401,
+          return [ 401,
                   {'Content-Type' => 'text/plain',
                    'Content-Length' => '0',
-                   'WWW-Authenticate' => www_authenticate.to_s},
+                   'X-WWW-Authenticate' => www_authenticate.to_s},
                   []
           ]
         end

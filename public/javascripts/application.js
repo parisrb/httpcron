@@ -123,7 +123,7 @@ HttpCron.NewTask = SC.Object.create({
   }.observes('isVisible')
 });
 
-HttpCron.User = HTTPDigest.User.create({
+HttpCron.User = DigestAuthentication.User.create({
   storageName: 'httpcron.user',
   url: '/api/authenticate',
 

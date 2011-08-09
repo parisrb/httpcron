@@ -5,41 +5,40 @@
     target="HttpCron.NewTask" action="toggle"
     isVisibleBinding="HttpCron.NewTask.isInvisible"}}
   {{#view classNames="new-task" contentBinding="HttpCron.NewTask"
-    isVisibleBinding="content.isVisible" toggleMethod="slideToggle"}}
+    isVisibleBinding="HttpCron.NewTask.isVisible" toggleMethod="slideToggle"}}
     <div class="fields">
-      {{view SC.TextField valueBinding="parentView.content.name" placeholder="Name..."}}
-      {{view SC.TextField valueBinding="parentView.content.cron" placeholder="Cron line..."}}
-      {{view SC.TextField type="url" valueBinding="parentView.content.url" placeholder="URL..."}}
-      {{view SC.Checkbox title="Enabled" valueBinding="parentView.content.enabled"}}
+      {{view SC.TextField valueBinding="content.name" placeholder="Name..."}}
+      {{view SC.TextField valueBinding="content.cron" placeholder="Cron line..."}}
+      {{view SC.TextField type="url" valueBinding="content.url" placeholder="URL..."}}
+      {{view SC.Checkbox title="Enabled" valueBinding="content.enabled"}}
     </div>
     <div class="buttons">
-      {{view JUI.Button label="Cancel" target="parentView.content" action="toggle"}}
-      {{view JUI.Button label="Save" target="parentView.content" action="save"}}
+      {{view JUI.Button label="Cancel" targetBinding="content" action="toggle"}}
+      {{view JUI.Button label="Save" targetBinding="content" action="save"}}
     </div>
   {{/view}}
   {{#collection HttpCron.TasksCollection}}
-    {{#view classNames="show-task" contentBinding="parentView.content"
-      isVisibleBinding="content.isNotEditing"}}
+    {{#view classNames="show-task" isVisibleBinding="content.isNotEditing" contentBinding="content"}}
       <div class="content">
         {{content.name}}<br/>
         <em>{{content.cron}}</em><br/>
         <strong>http://</strong>{{content.cleanUrl}}
       </div>
-      {{view JUI.Button label="Destroy" target="parentView.content" action="destroy"}}
-      {{view JUI.Button label="Edit" target="parentView.content" action="edit"}}
-      {{view JUI.Button label="Logs" target="parentView.content" action="logs"}}
+      {{view JUI.Button label="Destroy" targetBinding="content" action="destroy"}}
+      {{view JUI.Button label="Edit" targetBinding="content" action="edit"}}
+      {{view JUI.Button label="Logs" targetBinding="content" action="logs"}}
     {{/view}}
-    {{#view classNames="edit-task" contentBinding="parentView.content"
+    {{#view classNames="edit-task" contentBinding="content"
       isVisibleBinding="content.isEditing" nestedContentBinding="content.nestedContent"}}
       <div class="fields">
-        {{view SC.TextField valueBinding="parentView.nestedContent.name" placeholder="Name..."}}
-        {{view SC.TextField valueBinding="parentView.nestedContent.cron" placeholder="Cron line..."}}
-        {{view SC.TextField type="url" valueBinding="parentView.nestedContent.url" placeholder="URL..."}}
-        {{view SC.Checkbox title="Enabled" valueBinding="parentView.nestedContent.enabled"}}
+        {{view SC.TextField valueBinding="nestedContent.name" placeholder="Name..."}}
+        {{view SC.TextField valueBinding="nestedContent.cron" placeholder="Cron line..."}}
+        {{view SC.TextField type="url" valueBinding="nestedContent.url" placeholder="URL..."}}
+        {{view SC.Checkbox title="Enabled" valueBinding="nestedContent.enabled"}}
       </div>
       <div class="buttons">
-        {{view JUI.Button label="Update" target="parentView.content" action="save"}}
-        {{view JUI.Button label="Cancel" target="parentView.content" action="cancel"}}
+        {{view JUI.Button label="Update" targetBinding="content" action="save"}}
+        {{view JUI.Button label="Cancel" targetBinding="content" action="cancel"}}
       </div>
     {{/view}}
   {{else}}

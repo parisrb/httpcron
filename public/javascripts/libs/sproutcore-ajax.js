@@ -367,7 +367,7 @@ SC.XHRResponse = SC.Response.extend({
 
     return rawRequest;
   },
-  
+
   /**
     Creates the jqXHR object.
 
