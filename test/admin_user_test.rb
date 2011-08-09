@@ -33,7 +33,7 @@ describe 'admin user' do
     end
   end
 
-  it 'can destroy user' do
+  it 'can delete a user' do
     database.transaction do
       post '/users', 'username' => 'testuser', 'password' => 'testpassword'
       user_id = last_response.json_body.id
