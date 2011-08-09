@@ -18,7 +18,7 @@ class HTTPCronApi < Sinatra::Base
     execution = execution_if_allowed(id)
 
     begin
-      t.destroy
+      execution.destroy
     rescue Exception => e
       halt 500, e.message
     end
