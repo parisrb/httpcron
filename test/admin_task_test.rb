@@ -21,9 +21,18 @@ describe 'admin task' do
 
   it 'can create a task' do
     database.transaction do
-      p post '/tasks', 'user_id' => 1, 'name' => 'test', 'url' => 'http://example.com', 'cron' => '0 0 1 1 *'
+      post '/tasks', 'user_id' => 1, 'name' => 'test', 'url' => 'http://example.com', 'cron' => '0 0 1 1 *'
       last_response.status.must_equal 200
       last_response.json_body.id.must_equal 1
+      raise(Sequel::Rollback)
+    end
+  end
+
+  it 'can delete a task' do
+    database.transaction do
+      post '/tasks', 'user_id' => 1, 'name' => 'test', 'url' => 'http://example.com', 'cron' => '0 0 1 1 *'
+      delete "/tasks/#{last_response.json_body.id}"
+      last_response.status.must_equal 200
       raise(Sequel::Rollback)
     end
   end

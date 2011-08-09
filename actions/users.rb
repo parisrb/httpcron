@@ -60,9 +60,9 @@ class HTTPCronApi < Sinatra::Base
   post '/users' do
     check_admin
     user = User.new(:username => params[:username],
-                    :admin=> 'true' == params[:admin],
+                    :admin => 'true' == params[:admin],
                     :timezone => (params[:timezone] || HttpCronConfig.server_timezone),
-                    :password => parasm[:password])
+                    :password => params[:password])
 
     unless user.valid?
       halt 500, user.errors.values.join("\n")
@@ -76,6 +76,20 @@ class HTTPCronApi < Sinatra::Base
 
     content_type :json
     user.to_json
+  end
+
+  delete '/users/:id' do |id|
+    check_admin || current_user.id == id
+    user = User.find(id)
+    unless user
+      halt 404, "User [#{id}] does not exist"
+    end
+    begin
+      user.destroy
+    rescue Exception => e
+      halt 500, e.message
+    end
+    halt 200, "User [#{id}] deleted"
   end
 
   head '/authenticate' do

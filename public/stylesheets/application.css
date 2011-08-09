@@ -54,6 +54,7 @@ header {
   border-radius:2px;
   border:1px solid #ccc;
   overflow:hidden;
+  margin-bottom:5px;
 }
 
 .tasks-list li .content, .tasks-list li .fields {
