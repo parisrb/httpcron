@@ -6,19 +6,19 @@ module Rack
         alias :org_call :call
 
         def call(env)
-          @x_digest_authentication = env['HTTP_X_DIGEST_AUTHENTICATION']
+          @requested_with = env['HTTP_X_REQUESTED_WITH']
           org_call(env)
         end
 
-        def x_digest_authentication?
-          @x_digest_authentication
+        def xhr?
+          @requested_with == 'XMLHttpRequest'
         end
 
         private
 
         def unauthorized(www_authenticate = challenge)
           headers = {'Content-Type' => 'text/plain', 'Content-Length' => '0'}
-          if x_digest_authentication?
+          if xhr?
             headers['X-WWW-Authenticate'] = www_authenticate.to_s
           else
             headers['WWW-Authenticate'] = www_authenticate.to_s
