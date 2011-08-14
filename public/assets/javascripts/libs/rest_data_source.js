@@ -33,10 +33,8 @@ SC.RestDataSource = SC.DataSource.extend({
 
   fetchDidComplete: function(response, store, query) {
     if (SC.ok(response)) {
-      var data = response.get('body'),
-          recordType = query.get('recordType');
-      var records = (SC.typeOf(data) === 'array') ? data : (data.records || []);
-      store.loadRecords(query.get('recordType'), records);
+      var data = response.get('body');
+      store.loadRecords(query.get('recordType'), data);
       store.dataSourceDidFetchQuery(query);
     } else {
       store.dataSourceDidErrorQuery(query, response);
@@ -48,12 +46,12 @@ SC.RestDataSource = SC.DataSource.extend({
   retrieveRecord: function(store, storeKey, id) {
     var url = this.resourceURL(store.recordTypeFor(storeKey), store, storeKey);
     SC.Request.getUrl(url).json()
-      .notify(this, 'retrieveDidComplete', store, storeKey)
+      .notify(this, 'retrieveRecordDidComplete', store, storeKey)
       .send();
     return true;
   },
 
-  retrieveDidComplete: function(response, store, storeKey) {
+  retrieveRecordDidComplete: function(response, store, storeKey) {
     if (SC.ok(response)) {
       var data = response.get('body');
       store.dataSourceDidComplete(storeKey, data);
@@ -75,12 +73,12 @@ SC.RestDataSource = SC.DataSource.extend({
   _createOrUpdateRecord: function(store, storeKey, update) {
     var url = this.resourceURL(store.recordTypeFor(storeKey), store, storeKey);
     SC.Request[update ? 'putUrl' : 'postUrl'](url).json()
-      .notify(this, 'writeDidComplete', store, storeKey)
+      .notify(this, 'writeRecordDidComplete', store, storeKey)
       .send(store.readDataHash(storeKey));
     return true;
   },
 
-  writeDidComplete: function(response, store, storeKey) {
+  writeRecordDidComplete: function(response, store, storeKey) {
     if (SC.ok(response)) {
       var data = response.get('body');
       if (store.idFor(storeKey)) {
@@ -98,12 +96,12 @@ SC.RestDataSource = SC.DataSource.extend({
   destroyRecord: function(store, storeKey) {
     var url = this.resourceURL(store.recordTypeFor(storeKey), store, storeKey);
     SC.Request.deleteUrl(url).json()
-      .notify(this, 'destroyRecordsDidComplete', store, storeKey)
+      .notify(this, 'destroyRecordDidComplete', store, storeKey)
       .send();
     return true;
   },
 
-  destroyRecordsDidComplete: function(response, store, storeKey) {
+  destroyRecordDidComplete: function(response, store, storeKey) {
     if (SC.ok(response)) {
       store.dataSourceDidDestroy(storeKey);
     } else {

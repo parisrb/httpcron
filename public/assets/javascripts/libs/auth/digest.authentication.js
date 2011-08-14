@@ -222,6 +222,7 @@ DigestAuthentication.XMLHttpRequest = function() {
     for (name in _headers) {
       _xhr.setRequestHeader(name, _headers[name]);
     }
+    _xhr.setRequestHeader('X-Digest-Authentication', 'header');
     _xhr.send(_data);
   };
 
@@ -256,6 +257,7 @@ DigestAuthentication.XMLHttpRequest = function() {
     } else {
       data = null;
     }
+     _xhr.setRequestHeader('X-Digest-Authentication', 'header');
     _xhr.send(data);
   };
 

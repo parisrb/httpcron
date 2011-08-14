@@ -1,15 +1,29 @@
-unless 'test' == ENV['RACK_ENV']
-  module Rack
-    module Auth
-      class AbstractHandler
+module Rack
+  module Auth
+    module Digest
+      class MD5 < AbstractHandler
+
+        alias :org_call :call
+
+        def call(env)
+          @x_digest_authentication = env['HTTP_X_DIGEST_AUTHENTICATION']
+          org_call(env)
+        end
+
+        def x_digest_authentication?
+          @x_digest_authentication
+        end
+
         private
+
         def unauthorized(www_authenticate = challenge)
-          return [ 401,
-                  {'Content-Type' => 'text/plain',
-                   'Content-Length' => '0',
-                   'X-WWW-Authenticate' => www_authenticate.to_s},
-                  []
-          ]
+          headers = {'Content-Type' => 'text/plain', 'Content-Length' => '0'}
+          if x_digest_authentication?
+            headers['X-WWW-Authenticate'] = www_authenticate.to_s
+          else
+            headers['WWW-Authenticate'] = www_authenticate.to_s
+          end
+          return [401, headers, []]
         end
       end
     end
@@ -106,8 +120,8 @@ class HTTPCronApi < Sinatra::Base
       user = User.filter(:username => username).first
       user.password if user
     end
-    app.realm = 'HTTPCron Realm'
-    app.opaque = 'secretkey'
+    app.realm = 'CromagnonApi'
+    app.opaque = '1hj540cdui23j43l3578nkm8634ruso5443lmg'
     app
   end
 

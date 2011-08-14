@@ -122,6 +122,8 @@ DigestAuthentication.User = SC.Object.extend({
     } else {
       this.set('isLoggedIn', false);
       this.set('password', '');
+      this._resetDigest();
+      this.didLoggedInFail();
     }
   }
 });
