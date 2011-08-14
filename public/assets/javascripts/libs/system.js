@@ -21,59 +21,55 @@ SC.View.reopen({
   }
 });
 
-SC.LocalStorage = SC.Object.extend({
+DigestAuthentication.registerInterface();
 
-  storagePrefix: 'sproutcore.local.storage.',
+DigestAuthentication.User = SC.Object.extend({
+  username: '',
+  password: '',
+  rememberMe: true,
 
-  storageName: 'default',
+  url: '/authenticate',
+  authenticateMethod: 'HEAD',
 
-  storageKey: function(data) {
-    return this.get('storagePrefix')+this.get('storageName');
-  }.property('storagePrefix', 'storageName').cacheable(),
+  didLoggedIn: SC.K,
+  didLoggedOut: SC.K,
+  loginDidFail: SC.K,
 
-  init: function() {
-    this._super();
-    var data = this.get('data');
-    for (var key in data) {
-      this.set(key, data[key]);
+  login: function() {
+    this.set('isLoggingIn', true);
+    var username = this.get('username'),
+        password = this.get('password');
+    if (!SC.empty(username) && !SC.empty(password)) {
+      DigestAuthentication.persistent = this.get('rememberMe');
+      DigestAuthentication.registerCredentials(username, password);
     }
+    var method = "%@Url".fmt(this.get('authenticateMethod').toLowerCase());
+    SC.Request[method](this.get('url')).json()
+      .notify(this, '_didLoggedIn')
+      .send();
   },
 
-  setUnknownProperty: function(keyName, value) {
-    this.addObserver(keyName, this, this.contentPropertyDidChange);
-    this.set(keyName, value);
+  logout: function() {
+    this.setProperties({'username': '', 'password': ''});
+    DigestAuthentication.reset();
+    this.set('isLoggedIn', false);
+    this.didLoggedOut();
   },
 
-  contentPropertyDidChange: function(target, keyName, value) {
-    var data = this.get('data');
-    data[keyName] = value;
-    this.set('data', data);
-  },
-
-  removeData: function(key) {
-    if (key === undefined) {
-      var storageKey = this.get('storageKey');
-      localStorage.removeItem(storageKey);
+  /*
+    @private
+  */
+  _didLoggedIn: function(response) {
+    this.set('isLoggingIn', false);
+    if (SC.ok(response)) {
+      this.set('isLoggedIn', true);
+      this.didLoggedIn(response);
+      this.setProperties({'username': '', 'password': ''});
     } else {
-      var data = this.get('data');
-      delete data[key];
-      this.set('data', data);
+      this.set('isLoggedIn', false);
+      this.set('password', '');
+      DigestAuthentication.reset();
+      this.loginDidFail();
     }
-  },
-
-  data: function(key, value) {
-    var storageKey = this.get('storageKey');
-    if (value !== undefined) {
-      localStorage.setItem(storageKey, JSON.stringify(value));
-      return value;
-    } else {
-      var data = localStorage.getItem(storageKey);
-      if (data) {
-        return JSON.parse(data);
-      } else {
-        return {};
-      }
-    }
-  }.property()
-
+  }
 });

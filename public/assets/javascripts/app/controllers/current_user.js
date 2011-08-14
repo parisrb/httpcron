@@ -1,5 +1,4 @@
 HttpCron.User = DigestAuthentication.User.create({
-  storageName: 'httpcron.user',
   url: '/api/authenticate',
 
   didLoggedIn: function() {
@@ -11,7 +10,7 @@ HttpCron.User = DigestAuthentication.User.create({
     HttpCron.LoginView.append();
   },
 
-  didLoggedInFail: function() {
+  loginDidFail: function() {
     HttpCron.LoginView.append();
   }
 });
