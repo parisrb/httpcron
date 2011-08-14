@@ -1,5 +1,13 @@
+// ==========================================================================
+// Project:   SproutCore Bricks
+// Copyright: ©2011 Paul Chavard
+// Author :   Paul Chavard
+//
+// rest_data_source.js
+// ==========================================================================
+SB = this.SB || {};
 
-ST.RestDataSource = SC.DataSource.extend({
+SB.RestDataSource = SC.DataSource.extend({
 
   resourcePrefix: 'api',
 

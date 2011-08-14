@@ -1,7 +1,5 @@
 
-HttpCron.TasksView = ST.PaneView.create({
-  name: 'tasks'
-});
+HttpCron.createPanes(['Tasks']);
 
 HttpCron.TasksCollection = SC.CollectionView.extend({
   contentBinding: 'HttpCron.TasksList',

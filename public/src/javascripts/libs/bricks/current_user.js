@@ -1,5 +1,13 @@
+// ==========================================================================
+// Project:   SproutCore Bricks
+// Copyright: ©2011 Paul Chavard
+// Author :   Paul Chavard
+//
+// current_user.js
+// ==========================================================================
+SB = this.SB || {};
 
-ST.CurrentUser = SC.Object.extend({
+SB.CurrentUser = SC.Object.extend({
   username: '',
   password: '',
   rememberMe: true,

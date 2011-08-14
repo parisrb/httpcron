@@ -1,11 +1,11 @@
 
 DigestAuthentication.registerInterface();
 
-HttpCron.CurrentUser = ST.CurrentUser.create({
+HttpCron.CurrentUser = SB.CurrentUser.create({
   url: '/api/authenticate',
 
   didLoggedIn: function() {
-    HttpCron.TasksView.append();
+    HttpCron.TasksPaneView.append();
     HttpCron.TasksList.fetch();
   },
 

@@ -1,5 +1,13 @@
+// ==========================================================================
+// Project:   SproutCore Bricks
+// Copyright: ©2011 Paul Chavard
+// Author :   Paul Chavard
+//
+// paginated_array.js
+// ==========================================================================
+SB = this.SB || {};
 
-ST.PaginatedArray = SC.ArrayProxy.extend({
+SB.PaginatedArray = SC.ArrayProxy.extend({
   content: [],
 
   limit: 100,

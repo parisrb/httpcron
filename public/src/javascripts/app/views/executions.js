@@ -1,5 +1,5 @@
 
-HttpCron.ExecutionsView = ST.PaneView.create({
+HttpCron.ExecutionsView = SB.PaneView.create({
   name: 'executions',
   titleBinding: 'HttpCron.ExecutionsList.title'
 });

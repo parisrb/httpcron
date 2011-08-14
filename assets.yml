@@ -23,23 +23,24 @@ javascripts:
     - public/src/javascripts/libs/auth/digest.authentication.js
     - public/src/javascripts/libs/auth/md5.js
     # sproutcore tools
-    - public/src/javascripts/libs/tools/main.js
-    - public/src/javascripts/libs/tools/current_user.js
-    - public/src/javascripts/libs/tools/paginated_array.js
-    - public/src/javascripts/libs/tools/rest_data_source.js
-    - public/src/javascripts/libs/tools/view.js
-    - public/src/javascripts/libs/tools/pane_view.js
+    - public/src/javascripts/libs/bricks/current_user.js
+    - public/src/javascripts/libs/bricks/paginated_array.js
+    - public/src/javascripts/libs/bricks/rest_data_source.js
+    - public/src/javascripts/libs/bricks/pane_view.js
+    - public/src/javascripts/libs/bricks/pagination_button.js
     # application
     - public/src/javascripts/app/main.js
     - public/src/javascripts/app/models/task.js
+
     - public/src/javascripts/app/controllers/editable_task.js
     - public/src/javascripts/app/controllers/new_task.js
     - public/src/javascripts/app/controllers/current_user.js
-    - public/src/javascripts/app/collections/executions.js
+
     - public/src/javascripts/app/collections/tasks.js
+    - public/src/javascripts/app/collections/executions.js
     - public/src/javascripts/app/collections/users.js
+
     - public/src/javascripts/app/views/login.js
     - public/src/javascripts/app/views/tasks.js
     - public/src/javascripts/app/views/executions.js
     - public/src/javascripts/app/views/users.js
-    - public/src/javascripts/app/views/pagination_button.js

@@ -1,5 +1,5 @@
 
-HttpCron.LoginView = ST.PaneView.create({
+HttpCron.LoginView = SB.PaneView.create({
   name: 'login',
   contentBinding: 'HttpCron.CurrentUser'
 });
