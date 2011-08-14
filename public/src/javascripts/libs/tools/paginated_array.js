@@ -1,4 +1,5 @@
-SC.PaginatedArray = SC.ArrayProxy.extend({
+
+ST.PaginatedArray = SC.ArrayProxy.extend({
   content: [],
 
   limit: 100,

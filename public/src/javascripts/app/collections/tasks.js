@@ -1,5 +1,5 @@
 
-HttpCron.TasksList = SC.PaginatedArray.create({
+HttpCron.TasksList = ST.PaginatedArray.create({
   isLoading: true,
   limit: 10,
   fetch: function() {

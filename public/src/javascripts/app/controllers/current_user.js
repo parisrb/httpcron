@@ -1,4 +1,7 @@
-HttpCron.User = DigestAuthentication.User.create({
+
+DigestAuthentication.registerInterface();
+
+HttpCron.CurrentUser = ST.CurrentUser.create({
   url: '/api/authenticate',
 
   didLoggedIn: function() {
@@ -10,11 +13,19 @@ HttpCron.User = DigestAuthentication.User.create({
     HttpCron.LoginView.append();
   },
 
-  loginDidFail: function() {
+  loginError: function() {
     HttpCron.LoginView.append();
-  }
+  },
+
+  setCredentials: function(username, password) {
+    DigestAuthentication.registerCredentials(username, password);
+  },
+
+  resetCredentials: function() {
+    DigestAuthentication.reset();
+  },
 });
 
-$(function() {
-  HttpCron.User.login();
+SC.$(document).ready(function() {
+  HttpCron.CurrentUser.login();
 });

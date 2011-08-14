@@ -1,5 +1,5 @@
 
-HttpCron.ExecutionsList = SC.PaginatedArray.create({
+HttpCron.ExecutionsList = ST.PaginatedArray.create({
   fetch: function(task) {
     this.set('task', task);
     this.reset();

@@ -20,11 +20,15 @@ javascripts:
 
   application:
     # libs
-    - public/src/javascripts/libs/paginated_array.js
-    - public/src/javascripts/libs/rest_data_source.js
-    - public/src/javascripts/libs/auth/md5.js
     - public/src/javascripts/libs/auth/digest.authentication.js
-    - public/src/javascripts/libs/system.js
+    - public/src/javascripts/libs/auth/md5.js
+    # sproutcore tools
+    - public/src/javascripts/libs/tools/main.js
+    - public/src/javascripts/libs/tools/current_user.js
+    - public/src/javascripts/libs/tools/paginated_array.js
+    - public/src/javascripts/libs/tools/rest_data_source.js
+    - public/src/javascripts/libs/tools/view.js
+    - public/src/javascripts/libs/tools/pane_view.js
     # application
     - public/src/javascripts/app/main.js
     - public/src/javascripts/app/models/task.js
@@ -34,5 +38,8 @@ javascripts:
     - public/src/javascripts/app/collections/executions.js
     - public/src/javascripts/app/collections/tasks.js
     - public/src/javascripts/app/collections/users.js
-    - public/src/javascripts/app/views.js
+    - public/src/javascripts/app/views/login.js
+    - public/src/javascripts/app/views/tasks.js
+    - public/src/javascripts/app/views/executions.js
+    - public/src/javascripts/app/views/users.js
     - public/src/javascripts/app/views/pagination_button.js

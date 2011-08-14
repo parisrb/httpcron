@@ -2390,15 +2390,14 @@ header {
   border-radius: 5px;
   border: 1px solid #ccc;
   width: 500px; }
-
-.new-task input {
-  -moz-box-sizing: border-box;
-  -webkit-box-sizing: border-box;
-  -ms-box-sizing: border-box;
-  box-sizing: border-box;
-  width: 100%;
-  margin-bottom: 5px;
-  margin-right: 5px; }
+  .new-task input {
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -ms-box-sizing: border-box;
+    box-sizing: border-box;
+    width: 100%;
+    margin-bottom: 5px;
+    margin-right: 5px; }
 
 .show-task button {
   display: none; }
@@ -2408,26 +2407,23 @@ header {
   padding-top: 5px;
   margin: 0;
   width: 700px; }
-
-.list li {
-  margin: 0;
-  padding: 5px 0 5px 5px;
-  border-radius: 2px;
-  border: 1px solid #ccc;
-  overflow: hidden;
-  margin-bottom: 5px; }
+  .list li {
+    margin: 0;
+    padding: 5px 0 5px 5px;
+    border-radius: 2px;
+    border: 1px solid #ccc;
+    overflow: hidden;
+    margin-bottom: 5px; }
 
 .tasks-list li .content, .tasks-list li .fields {
   float: left; }
-
 .tasks-list li button, .tasks-list li .buttons {
   float: right;
   margin-right: 5px; }
-
 .tasks-list.is-loading li {
   background-color: #ccc; }
 
-.login-page {
+.login-pane {
   width: 300px;
   height: 90px;
   border-radius: 5px;
@@ -2438,15 +2434,13 @@ header {
   margin-left: -150px;
   margin-top: -100px;
   padding: 15px; }
-
-.login-page input {
-  -moz-box-sizing: border-box;
-  -webkit-box-sizing: border-box;
-  -ms-box-sizing: border-box;
-  box-sizing: border-box;
-  width: 100%;
-  margin-bottom: 10px;
-  margin-right: 15px; }
-
-.login-page div:last-child {
-  text-align: right; }
+  .login-pane input {
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -ms-box-sizing: border-box;
+    box-sizing: border-box;
+    width: 100%;
+    margin-bottom: 10px;
+    margin-right: 15px; }
+  .login-pane div:last-child {
+    text-align: right; }

@@ -1,5 +1,5 @@
 
-SC.RestDataSource = SC.DataSource.extend({
+ST.RestDataSource = SC.DataSource.extend({
 
   resourcePrefix: 'api',
 
