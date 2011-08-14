@@ -7,8 +7,7 @@
 {{view SB.PreviousButton target="HttpCron.TasksList"}}
 {{view SB.NextButton target="HttpCron.TasksList"}}
 
-{{#view classNames="new-task" contentBinding="HttpCron.NewTask"
-  isVisibleBinding="HttpCron.NewTask.isVisible" toggleMethod="slideToggle"}}
+{{#view HttpCron.NewTaskView}}
   <div class="fields">
     {{view SC.TextField valueBinding="content.name" placeholder="Name..."}}
     {{view SC.TextField valueBinding="content.cron" placeholder="Cron line..."}}

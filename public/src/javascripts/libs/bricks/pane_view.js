@@ -7,19 +7,24 @@
 // ==========================================================================
 SB = this.SB || {};
 
-SB.PaneView = SC.View.extend({
-  init: function() {
-    this._super();
-    var paneName = this.get('name');
-    this.set('classNames', [paneName + '-pane']);
-    var templateName = SB.PaneView.templatesPath;
-    if (templateName) {
-      templateName += '_' + paneName;
-    } else {
-      templateName = paneName;
+SB.PaneView = SC.View.extend(SB.ToggleViewSupport, {
+  templateNamePrefix: null,
+  rootElement: '[role="application"]',
+  classNames: ['pane'],
+  classNameBindings: ['paneClassName'],
+
+  templateName: function() {
+    var prefix = this.get('templateNamePrefix');
+    if (prefix) {
+      return prefix + '_' + this.get('name');
     }
-    this.set('templateName', templateName);
-  },
+    return this.get('name');
+  }.property('templateNamePrefix', 'name').cacheable(),
+
+  paneClassName: function() {
+    return this.get('name') + '-pane';
+  }.property('name').cacheable(),
+
   append: function() {
     var currentPane = SB.PaneView.currentPane;
     if (currentPane && currentPane.state === 'inDOM') {
@@ -28,44 +33,21 @@ SB.PaneView = SC.View.extend({
     if (this.state === 'inDOM') {
       this.show();
     } else {
-      this.appendTo(SB.PaneView.selector); 
+      this.appendTo(this.get('rootElement')); 
     }
     SB.PaneView.currentPane = this;
   }
 });
 
 SC.Application.reopen({
+  paneViewClass: SB.PaneView,
+
   createPanes: function(panes) {
+    var paneViewClass = this.get('paneViewClass');
     (panes || []).forEach(function(paneName) {
-      this["%@PaneView".fmt(paneName)] = SB.PaneView.create({
+      this["%@PaneView".fmt(paneName)] = paneViewClass.create({
         name: paneName.toLowerCase()
       });
     }, this);
-  }
-});
-
-SB.PaneView.reopenClass({
-  templatesPath: null,
-  selector: '[role="application"]',
-  currentPane: null
-});
-
-SC.View.reopen({
-  toggleMethod: 'toggle',
-
-  _isVisibleDidChange: function() {
-    var method = this.$()[this.get('toggleMethod')];
-    if (!method) { method = 'toggle'; }
-    method.call(this.$(), this.get('isVisible'));
-  }.observes('isVisible'),
-
-  show: function() {
-    this.set('isVisible', true);
-  },
-  hide: function() {
-    this.set('isVisible', false);
-  },
-  toggle: function() {
-    this.toggleProperty('isVisible');
   }
 });
