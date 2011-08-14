@@ -83,11 +83,12 @@ class HTTPCronApi < Sinatra::Base
 
     if params[:offset]
       @offset = params[:offset].to_i
-      if @offset <= 0
-        halt 500, "Offset is [#{@offset}] but shouldn't be <= 0"
+      if @offset < 0
+        halt 500, "Offset is [#{@offset}] but shouldn't be < 0"
       end
+      @offset += 1
     else
-      @offset = 0
+      @offset = 1
     end
   end
 

@@ -3,7 +3,16 @@
 }
 
 body {
-  font-size:1em;
+  font-size:0.9em;
+}
+
+h1 {
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+ul {
+  padding:0;
 }
 
 [role="main"] > .sc-view {
@@ -64,6 +73,10 @@ header {
 .tasks-list li button, .tasks-list li .buttons {
   float:right;
   margin-right:5px;
+}
+
+.tasks-list.is-loading li {
+  background-color:#ccc;
 }
 
 .login-page {

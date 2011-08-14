@@ -3,29 +3,40 @@ html
   head
     title
       |HTTP Cron
-    script type="text/javascript" src="javascripts/libs/jquery.js"
-    script type="text/javascript" src="javascripts/libs/jquery-ui.js"
+    script type="text/javascript" src="assets/javascripts/libs/jquery.js"
+    script type="text/javascript" src="assets/javascripts/libs/jquery-ui.js"
 
     // SproutCore
-    script type="text/javascript" src="javascripts/libs/sproutcore.js"
-    script type="text/javascript" src="javascripts/libs/sproutcore-datastore.js"
-    script type="text/javascript" src="javascripts/libs/sproutcore-ajax.js"
-    script type="text/javascript" src="javascripts/libs/sproutcore-jui.js"
+    script type="text/javascript" src="assets/javascripts/libs/sproutcore.js"
+    script type="text/javascript" src="assets/javascripts/libs/sproutcore-datastore.js"
+    script type="text/javascript" src="assets/javascripts/libs/sproutcore-ajax.js"
+    script type="text/javascript" src="assets/javascripts/libs/sproutcore-jui.js"
 
-    script type="text/javascript" src="javascripts/libs/local_storage.js"
+    script type="text/javascript" src="assets/javascripts/libs/local_storage.js"
+    script type="text/javascript" src="assets/javascripts/libs/paginated_array.js"
+    script type="text/javascript" src="assets/javascripts/libs/rest_data_source.js"
 
     // Digest Auth
-    script type="text/javascript" src="javascripts/libs/auth/md5.js"
-    script type="text/javascript" src="javascripts/libs/auth/digest.authentication.js"
-    script type="text/javascript" src="javascripts/libs/auth/digest.user.js"
+    script type="text/javascript" src="assets/javascripts/libs/auth/md5.js"
+    script type="text/javascript" src="assets/javascripts/libs/auth/digest.authentication.js"
+    script type="text/javascript" src="assets/javascripts/libs/auth/digest.user.js"
 
-    script type="text/javascript" src="javascripts/system.js"
-    script type="text/javascript" src="javascripts/application.js"
+    script type="text/javascript" src="assets/javascripts/libs/system.js"
+    script type="text/javascript" src="assets/javascripts/app/main.js"
 
-    link type="text/css" href="stylesheets/boilerplate.css" rel="stylesheet"
-    link type="text/css" href="stylesheets/jquery-ui.css" rel="stylesheet"
-    link type="text/css" href="stylesheets/aristo.css" rel="stylesheet"
-    link type="text/css" href="stylesheets/application.css" rel="stylesheet"
+    script type="text/javascript" src="assets/javascripts/app/models/task.js"
+    script type="text/javascript" src="assets/javascripts/app/controllers/editable_task.js"
+    script type="text/javascript" src="assets/javascripts/app/controllers/current_user.js"
+    script type="text/javascript" src="assets/javascripts/app/controllers/new_task.js"
+    script type="text/javascript" src="assets/javascripts/app/collections/executions.js"
+    script type="text/javascript" src="assets/javascripts/app/collections/tasks.js"
+    script type="text/javascript" src="assets/javascripts/app/collections/users.js"
+
+    script type="text/javascript" src="assets/javascripts/app/views.js"
+    script type="text/javascript" src="assets/javascripts/app/views/pagination_button.js"
+
+    link type="text/css" href="assets/stylesheets/boilerplate.css" rel="stylesheet"
+    link type="text/css" href="assets/stylesheets/application.css" rel="stylesheet"
   body
     header
       h1 ="HTTP Cron"

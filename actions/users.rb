@@ -35,8 +35,8 @@ class HTTPCronApi < Sinatra::Base
     pagination_params
 
     content_type :json
-    users = User.paginate(@offset + 1, @limit)
-    {:total => users.pagination_record_count, :users => users}.to_json
+    users = User.paginate(@offset, @limit)
+    {:total => users.pagination_record_count, :records => users}.to_json
   end
 
   get '/users/current' do
@@ -47,7 +47,7 @@ class HTTPCronApi < Sinatra::Base
   get '/users/:id' do |id|
     check_admin
     if current_user.id != id
-      user = User.find(id)
+      user = User[id]
       unless user
         halt 404, "User [#{id}] does not exist"
       end
@@ -83,7 +83,7 @@ class HTTPCronApi < Sinatra::Base
 
   delete '/users/:id' do |id|
     check_admin || current_user.id == id
-    user = User.find(id)
+    user = User[id]
     unless user
       halt 404, "User [#{id}] does not exist"
     end
@@ -92,10 +92,12 @@ class HTTPCronApi < Sinatra::Base
     rescue Exception => e
       halt 500, e.message
     end
-    halt 200, "User [#{id}] deleted"
+    content_type :json
+    halt 200
   end
 
   head '/authenticate' do
+    content_type :json
     halt 200
   end
 

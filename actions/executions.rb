@@ -13,8 +13,8 @@ class HTTPCronApi < Sinatra::Base
     pagination_params
     content_type :json
 
-    executions = Execution.filter(:task => task).paginate(@offset + 1, @limit)
-    {:total => executions.pagination_record_count, :executions => executions}.to_json
+    executions = Execution.filter(:task => task).paginate(@offset, @limit)
+    {:total => executions.pagination_record_count, :records => executions}.to_json
   end
 
   delete '/executions/:id' do |id|

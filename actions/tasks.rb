@@ -98,11 +98,12 @@ class HTTPCronApi < Sinatra::Base
       halt 500, e.message
     end
     notify_delete_task task
-    halt 200, "Task [#{id}] deleted"
+    content_type :json
+    halt 200
   end
 
   def task_if_allowed id
-    task = Task.find(id)
+    task = Task[id]
     if !task
       halt 500, "Task [#{id}] does not exist"
     elsif (task.user != current_user) && (!current_user.admin)
@@ -115,8 +116,8 @@ class HTTPCronApi < Sinatra::Base
   def tasks_for_user user
     pagination_params
     content_type :json
-    tasks = Task.filter(:user => user).paginate(@offset + 1, @limit)
-    {:total => tasks.pagination_record_count, :tasks => tasks}.to_json
+    tasks = Task.filter(:user => user).paginate(@offset, @limit)
+    {:total => tasks.pagination_record_count, :records => tasks}.to_json
   end
 
 end

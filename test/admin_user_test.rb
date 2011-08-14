@@ -15,9 +15,9 @@ describe 'admin user' do
     database.transaction do
       last_response.status.must_equal 200
       last_response.json_body['total'].must_equal 1
-      last_response.json_body['users'].length.must_equal 1
-      last_response.json_body['users'][0].username.must_equal 'httpcronadmin'
-      last_response.json_body['users'][0].admin.must_equal true
+      last_response.json_body['records'].length.must_equal 1
+      last_response.json_body['records'][0].username.must_equal 'httpcronadmin'
+      last_response.json_body['records'][0].admin.must_equal true
       raise(Sequel::Rollback)
     end
   end
@@ -39,7 +39,6 @@ describe 'admin user' do
       user_id = last_response.json_body.id
       delete "/users/#{user_id}"
       last_response.status.must_equal 200
-      last_response.body.must_equal "User [#{user_id}] deleted"
       raise(Sequel::Rollback)
     end
   end

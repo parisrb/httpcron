@@ -1,4 +1,5 @@
 
+
 (function(exports) {
 // ==========================================================================
 // Project:   SproutCore - JavaScript Application Framework
@@ -275,7 +276,7 @@ SC.Response = SC.Object.extend(
   */
   toString: function() {
     var ret = this._super();
-    return "%@<%@ %@, status=%@".fmt(ret, this.get('type'), this.get('address'), this.get('status'));
+    return "%@<%@ %@, status=%@".fmt(ret, this.get('type'), this.get('url'), this.get('status'));
   },
 
   /**
@@ -329,7 +330,7 @@ SC.XHRResponse = SC.Response.extend({
           key, value;
       if (idx>=0) {
         key = header.slice(0,idx);
-        value = SC.String.trim(header.slice(idx+1));
+        value = header.slice(idx+1).trim();
         ret[key] = value ;
       }
     }, this);
@@ -342,7 +343,7 @@ SC.XHRResponse = SC.Response.extend({
   */
   header: function(key) {
     var rawRequest = get(this, 'rawRequest');
-    return rawRequest ? rawRequest.getResponseHeader(key) : null;    
+    return rawRequest ? rawRequest.getResponseHeader(key) : null;
   },
 
   /**
@@ -367,7 +368,7 @@ SC.XHRResponse = SC.Response.extend({
 
     return rawRequest;
   },
-
+  
   /**
     Creates the jqXHR object.
 
@@ -412,6 +413,8 @@ SC.XHRResponse = SC.Response.extend({
           if (statusText === 'timeout') {
             set(this, 'timedOut', true);
             this.cancelTransport();
+          } else {
+            this._loadErrorContent();
           }
           var error = new SC.Error('%@ Request %@'.fmt(statusText, status));
           set(error, 'errorValue', this);
@@ -423,6 +426,21 @@ SC.XHRResponse = SC.Response.extend({
       return true;
     }
     return false;
+  },
+
+  _loadErrorContent: function() {
+    var data = get(this, 'rawRequest').responseText,
+        contentType = this.header('Content-Type');
+    if (contentType) {
+      try {
+        if (contentType.match(/json/)) {
+          data = SC.$.parseJSON(data);
+        } else if (contentType.match(/xml/)) {
+          data = SC.$.parseXML(data);
+        }
+      } catch (e) {}
+    }
+    set(this, 'body', data);
   },
 
   /**
@@ -443,6 +461,8 @@ SC.ok = function(ret) {
 };
 
 })({});
+
+
 
 
 (function(exports) {
@@ -1056,16 +1076,5 @@ SC.Request.manager = SC.Object.create({
   }
 
 });
-
-})({});
-
-
-(function(exports) {
-// ==========================================================================
-// Project:   SproutCore AJAX
-// Copyright: ©2011 Paul Chavard
-// License:   Licensed under MIT license (see license.js)
-// ==========================================================================
-
 
 })({});

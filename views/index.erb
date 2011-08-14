@@ -4,6 +4,10 @@
   {{view JUI.Button label="Add Task"
     target="HttpCron.NewTask" action="toggle"
     isVisibleBinding="HttpCron.NewTask.isInvisible"}}
+
+  {{view HttpCron.PreviousButton target="HttpCron.TasksList"}}
+  {{view HttpCron.NextButton target="HttpCron.TasksList"}}
+
   {{#view classNames="new-task" contentBinding="HttpCron.NewTask"
     isVisibleBinding="HttpCron.NewTask.isVisible" toggleMethod="slideToggle"}}
     <div class="fields">
@@ -17,6 +21,7 @@
       {{view JUI.Button label="Save" targetBinding="content" action="save"}}
     </div>
   {{/view}}
+
   {{#collection HttpCron.TasksCollection}}
     {{#view classNames="show-task" isVisibleBinding="content.isNotEditing" contentBinding="content"}}
       <div class="content">
@@ -28,22 +33,23 @@
       {{view JUI.Button label="Edit" targetBinding="content" action="edit"}}
       {{view JUI.Button label="Logs" targetBinding="content" action="logs"}}
     {{/view}}
-    {{#view classNames="edit-task" contentBinding="content"
-      isVisibleBinding="content.isEditing" nestedContentBinding="content.nestedContent"}}
+    {{#view classNames="edit-task" targetBinding="content"
+      isVisibleBinding="content.isEditing" contentBinding="content.nested"}}
       <div class="fields">
-        {{view SC.TextField valueBinding="nestedContent.name" placeholder="Name..."}}
-        {{view SC.TextField valueBinding="nestedContent.cron" placeholder="Cron line..."}}
-        {{view SC.TextField type="url" valueBinding="nestedContent.url" placeholder="URL..."}}
-        {{view SC.Checkbox title="Enabled" valueBinding="nestedContent.enabled"}}
+        {{view SC.TextField valueBinding="content.name" placeholder="Name..."}}
+        {{view SC.TextField valueBinding="content.cron" placeholder="Cron line..."}}
+        {{view SC.TextField type="url" valueBinding="content.url" placeholder="URL..."}}
+        {{view SC.Checkbox title="Enabled" valueBinding="content.enabled"}}
       </div>
       <div class="buttons">
-        {{view JUI.Button label="Update" targetBinding="content" action="save"}}
-        {{view JUI.Button label="Cancel" targetBinding="content" action="cancel"}}
+        {{view JUI.Button label="Update" targetBinding="target" action="save"}}
+        {{view JUI.Button label="Cancel" targetBinding="target" action="cancel"}}
       </div>
     {{/view}}
   {{else}}
-    {{#if parentView.content.isError}}
-      Error : {{parentView.content.errorValue}}
+    {{#if HttpCron.TasksList.isLoading}}
+      Loading...
+      {{view JUI.Throbber}}
     {{else}}
       No Tasks
     {{/if}}
@@ -53,6 +59,9 @@
 <script type="text/html" data-template-name="executions-page">
   <h1>{{title}}</h1>
   {{view JUI.Button label="Back" target="HttpCron.TasksView" action="append"}}
+  {{view HttpCron.PreviousButton target="HttpCron.ExecutionsList"}}
+  {{view HttpCron.NextButton target="HttpCron.ExecutionsList"}}
+
   {{#collection HttpCron.ExecutionsCollection}}
     {{content.status}}<br/>
     {{content.run_at}}<br/>
