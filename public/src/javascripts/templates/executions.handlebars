@@ -1,0 +1,12 @@
+<h1>{{title}}</h1>
+{{view JUI.Button label="Back" target="HttpCron.TasksView" action="append"}}
+{{view HttpCron.PreviousButton target="HttpCron.ExecutionsList"}}
+{{view HttpCron.NextButton target="HttpCron.ExecutionsList"}}
+
+{{#collection HttpCron.ExecutionsCollection}}
+  {{content.status}}<br/>
+  {{content.run_at}}<br/>
+  {{content.duration}}
+{{else}}
+  Not executed yiet...
+{{/collection}}

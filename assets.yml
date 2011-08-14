@@ -1,0 +1,38 @@
+javascript_compressor: uglifier
+
+template_function: SC.Handlebars.compile
+template_namespace: SC.TEMPLATES
+template_extension: handlebars
+
+javascripts:
+  sproutcore:
+    - public/src/javascripts/libs/jquery.js
+    - public/src/javascripts/libs/jquery-ui.js
+    - public/src/javascripts/libs/sproutcore.js
+    - public/src/javascripts/libs/sproutcore-datastore.js
+    - public/src/javascripts/libs/sproutcore-ajax.js
+    - public/src/javascripts/libs/sproutcore-jui.js
+
+  templates:
+    - public/src/javascripts/templates/login.handlebars
+    - public/src/javascripts/templates/tasks.handlebars
+    - public/src/javascripts/templates/executions.handlebars
+
+  application:
+    # libs
+    - public/src/javascripts/libs/paginated_array.js
+    - public/src/javascripts/libs/rest_data_source.js
+    - public/src/javascripts/libs/auth/md5.js
+    - public/src/javascripts/libs/auth/digest.authentication.js
+    - public/src/javascripts/libs/system.js
+    # application
+    - public/src/javascripts/app/main.js
+    - public/src/javascripts/app/models/task.js
+    - public/src/javascripts/app/controllers/editable_task.js
+    - public/src/javascripts/app/controllers/new_task.js
+    - public/src/javascripts/app/controllers/current_user.js
+    - public/src/javascripts/app/collections/executions.js
+    - public/src/javascripts/app/collections/tasks.js
+    - public/src/javascripts/app/collections/users.js
+    - public/src/javascripts/app/views.js
+    - public/src/javascripts/app/views/pagination_button.js

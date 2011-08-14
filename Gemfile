@@ -12,6 +12,9 @@ gem 'em-http-request', '1.0.0.beta.4', :require => 'em-http'
 group :test, :development do
   gem 'sqlite3'
   gem 'rake'
+  gem 'jammit'
+  gem 'sass'
+  gem 'compass'
   gem 'rack-test', '~> 0.6'
   gem 'capybara-webkit', '~> 1.0.0.beta'
 end

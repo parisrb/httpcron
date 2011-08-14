@@ -15,17 +15,17 @@ HttpCron.PageView = SC.View.extend({
 
 HttpCron.LoginView = HttpCron.PageView.create({
   classNames: 'login-page',
-  templateName: 'login-page',
+  templateName: 'login',
   contentBinding: 'HttpCron.User'
 });
 
 HttpCron.TasksView = HttpCron.PageView.create({
-  templateName: 'tasks-page'
+  templateName: 'tasks'
 });
 
 HttpCron.ExecutionsView = HttpCron.PageView.create({
   classNames: 'executions-page',
-  templateName: 'executions-page',
+  templateName: 'executions',
   titleBinding: 'HttpCron.ExecutionsList.title'
 });
 

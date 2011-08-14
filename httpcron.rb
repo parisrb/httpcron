@@ -11,7 +11,6 @@ require 'sequel/extensions/named_timezones'
 require 'rufus-scheduler'
 
 require 'slim'
-require 'erb'
 
 require_relative 'config'
 
@@ -32,7 +31,23 @@ class HTTPCron < Sinatra::Base
   end
 
   get '/' do
-    erb :index, :layout_engine => :slim
+    slim :index
+  end
+
+  helpers do
+    def javascript_incudes
+      html = ''
+      if development?
+        require 'yaml'
+        assets = YAML::load(File.read(File.dirname(__FILE__) + '/assets.yml'))
+        assets['javascripts']['application'].each do |file|
+          html += '<script src="'+file.gsub(/^public/, '')+'" type="text/javascript"></script>'
+        end
+      else
+        html = '<script src="assets/application.js" type="text/javascript"></script>'
+      end
+      html
+    end
   end
 
 end
@@ -48,6 +63,8 @@ class HTTPCronApi < Sinatra::Base
     database.loggers << Logger.new(STDOUT)
   end
 
+  private
+
   def current_user
     @current_user
   end
@@ -55,8 +72,6 @@ class HTTPCronApi < Sinatra::Base
   def current_user=(user)
     @current_user = user
   end
-
-  private
 
   # Check if the current user is an admin
   # raise a 403 elsewhere
@@ -100,6 +115,40 @@ class HTTPCronApi < Sinatra::Base
         end
       else
         halt 500, "No [#{param_name}] parameter"
+      end
+    end
+  end
+end
+
+# mokey patch Rack to work with xhr digest
+
+module Rack
+  module Auth
+    module Digest
+      class MD5 < AbstractHandler
+
+        alias :org_call :call
+
+        def call(env)
+          @requested_with = env['HTTP_X_REQUESTED_WITH']
+          org_call(env)
+        end
+
+        def xhr?
+          @requested_with == 'XMLHttpRequest'
+        end
+
+        private
+
+        def unauthorized(www_authenticate = challenge)
+          headers = {'Content-Type' => 'text/plain', 'Content-Length' => '0'}
+          if xhr?
+            headers['X-WWW-Authenticate'] = www_authenticate.to_s
+          else
+            headers['WWW-Authenticate'] = www_authenticate.to_s
+          end
+          return [401, headers, []]
+        end
       end
     end
   end
