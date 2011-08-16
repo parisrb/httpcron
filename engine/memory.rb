@@ -1,5 +1,7 @@
 require 'eventmachine'
 require 'em-http'
+
+require_relative 'common'
 # this engine use less memory but rely more on the database
 
 # recron past tasks
@@ -54,7 +56,7 @@ def end_task http, start, task
                    :status => http.response_header.status,
                    :run_at => start,
                    :duration => (SECONDS_IN_A_DAY * (DateTime.now - start)).to_i,
-                   :response => http.response[0...4000])
+                   :response => response_content(http))
   from = Time.now
   from += 60 - from.sec
   task.recalculate_cron(from)
