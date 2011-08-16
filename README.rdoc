@@ -26,8 +26,8 @@ The API use json data and require the digest authentication method, most http qu
 
   curl --digest --user httpcronadmin:httpcronadmin http://localhost:9292/api/users
 
-[§] this method requires admin rights
-[°] this value can be configured
+- § this method requires admin rights
+- # this value can be configured in the /config.rb file
 
 === Pagination
 
@@ -37,8 +37,8 @@ All methods returning a list of data are paginated thus the results looks like:
 
 Pagination parameters:
 
-[limit] the max number of records to return, default and max value is 100 (configurable)
-[offset] index of the first item to be returned
+- limit the max number of records to return, default and max value is 100#
+- offset index of the first item to be returned
 
 ==== Ordering
 
@@ -67,10 +67,10 @@ Get the current user
 === post /api/users §
 Create a user, parameters:
 
-[username] mandatory, max size 250, unique
-[password] mandatory
-[admin] optional, default to false
-[timezone] optional, default to "UTC"°
+- username mandatory, max size 250, unique
+- password mandatory
+- admin optional, default to false
+- timezone optional, default to "UTC"#
 
 === delete /api/users/:id
 Delete the user with the corresponding id, admin users can delete anybody, non-adminc an only delete themselves. Deleting a user delete all his tasks.
@@ -102,12 +102,12 @@ Get the tasks for the user with the specified id
 === post /api/tasks
 Create a task, parameters:
 
-[name] mandatory, max size to 250
-[url] mandatory, max size to 250
-[cron] mandatory, the cron expression
-[timeout] optional, in seconds, default to 60°, max to 300°
-[enabled] optional, default to false
-[timezone] optional, default to the user's timezone
+- name mandatory, max size to 250
+- url mandatory, max size to 250
+- cron mandatory, the cron expression
+- timeout optional, in seconds, default to 60#, max to 300#
+- enabled optional, default to false
+- timezone optional, default to the user's timezone
 
 === put /api/tasks/:id
 Edit the task with the specified id, non-admin users can only edit their own tasks, see above for parameters
