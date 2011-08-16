@@ -2433,3 +2433,8 @@ header {
     margin-right: 15px; }
   .login-pane div:last-child {
     text-align: right; }
+
+.executions-list li p {
+  margin: 0 0 5px 0; }
+.executions-list li blockquote {
+  background-color: #ccc; }

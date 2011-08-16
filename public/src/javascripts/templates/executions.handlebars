@@ -4,9 +4,13 @@
 {{view SB.NextButton target="HttpCron.ExecutionsList"}}
 
 {{#collection HttpCron.ExecutionsCollection}}
-  <b>Status :</b> {{content.status}}<br/>
-  <b>Run at :</b> {{content.run_at}}<br/>
-  <b>Duration :</b> {{content.duration}}
+  <p><strong>Status :</strong> {{content.status}}</p>
+  <p><strong>Start at :</strong> {{content.start_at}}</p>
+  <p><strong>Duration :</strong> {{content.duration}}</p>
+  <p><strong>Response :</strong></p>
+  <blockquote>
+    {{content.response}}
+  </blockquote>
 {{else}}
   Not executed yiet...
 {{/collection}}

@@ -123,3 +123,12 @@ header {
     text-align:right;
   }
 }
+
+.executions-list li {
+  p {
+    margin:0 0 5px 0;
+  }
+  blockquote {
+    background-color:#ccc;
+  }
+}
