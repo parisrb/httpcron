@@ -17,7 +17,7 @@ class HTTPCronApi < Sinatra::Base
     pagination_params
 
     content_type :json
-    users = User.paginate(@offset, @limit)
+    users = User.order(:id).paginate(@offset, @limit)
     {:total => users.pagination_record_count, :records => users}.to_json
   end
 
