@@ -4,7 +4,7 @@ Sequel::Plugins::ValidationHelpers::DEFAULT_OPTIONS.merge!(
 )
 
 Sequel::Model.plugin :timestamps, :update_on_create => true
-Sequel::Model.plugin :json_serializer
+Sequel::Model.plugin :json_serializer, :naked => true
 Sequel::Model.plugin :association_dependencies
 Sequel.extension :pagination
 
