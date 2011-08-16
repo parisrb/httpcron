@@ -4,15 +4,17 @@
   target="HttpCron.NewTask" action="toggle"
   isVisibleBinding="HttpCron.NewTask.isInvisible"}}
 
-{{view SB.PreviousButton target="HttpCron.TasksList"}}
-{{view SB.NextButton target="HttpCron.TasksList"}}
+<div class="pagination">
+  {{view SB.PreviousButton target="HttpCron.TasksList"}}
+  {{view SB.NextButton target="HttpCron.TasksList"}}
+</div>
 
 {{#view HttpCron.NewTaskView}}
   <div class="fields">
-    {{view SC.TextField valueBinding="content.name" placeholder="Name..."}}
-    {{view SC.TextField valueBinding="content.cron" placeholder="Cron line..."}}
-    {{view SC.TextField type="url" valueBinding="content.url" placeholder="URL..."}}
-    {{view SC.Checkbox title="Enabled" valueBinding="content.enabled"}}
+    {{view SC.TextField valueBinding="content.nested.name" placeholder="Name..."}}
+    {{view SC.TextField valueBinding="content.nested.cron" placeholder="Cron line..."}}
+    {{view SC.TextField type="url" valueBinding="content.nested.url" placeholder="URL..."}}
+    {{view SC.Checkbox title="Enabled" valueBinding="content.nested.enabled"}}
   </div>
   <div class="buttons">
     {{view JUI.Button label="Cancel" targetBinding="content" action="toggle"}}

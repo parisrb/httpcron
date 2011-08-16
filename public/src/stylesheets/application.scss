@@ -1,8 +1,3 @@
-// BUGFIX
-.new-task > input:last-child {
-  display:none;
-}
-
 body {
   font-size:0.9em;
 }
@@ -29,13 +24,37 @@ header {
   display:block;
 }
 
+.pane {
+  width:700px;
+  padding:10px;
+}
+
+.pagination {
+  float:right;
+}
+
+.sc-checkbox {
+  input {
+    display: inline-block;
+    margin-right:5px;
+  }
+}
+
 .new-task {
+  .sc-checkbox {
+    width: 200px;
+    float:left;
+  }
+  .buttons {
+    float:right;
+  }
   margin-top:5px;
   padding:5px;
   border-radius:5px;
   border:1px solid #ccc;
-  width: 500px;
-  input {
+  width: 687px;
+  overflow:hidden;
+  input:not([type=checkbox]) {
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
     -ms-box-sizing: border-box;
