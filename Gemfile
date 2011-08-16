@@ -13,6 +13,7 @@ group :test, :development do
   gem 'sqlite3'
   gem 'rake'
   gem 'jammit'
+  gem 'uglifier'
   gem 'sass'
   gem 'compass'
   gem 'rack-test', '~> 0.6'

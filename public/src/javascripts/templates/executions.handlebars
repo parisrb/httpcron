@@ -1,12 +1,16 @@
 <h1>{{title}}</h1>
-{{view JUI.Button label="Back" target="HttpCron.TasksView" action="append"}}
+{{view JUI.Button label="Back" target="HttpCron.TasksPaneView" action="append"}}
 {{view SB.PreviousButton target="HttpCron.ExecutionsList"}}
 {{view SB.NextButton target="HttpCron.ExecutionsList"}}
 
 {{#collection HttpCron.ExecutionsCollection}}
-  {{content.status}}<br/>
-  {{content.run_at}}<br/>
-  {{content.duration}}
+  <p><strong>Status :</strong> {{content.status}}</p>
+  <p><strong>Start at :</strong> {{content.start_at}}</p>
+  <p><strong>Duration :</strong> {{content.duration}}</p>
+  <p><strong>Response :</strong></p>
+  <blockquote>
+    {{content.response}}
+  </blockquote>
 {{else}}
   Not executed yiet...
 {{/collection}}

@@ -47,7 +47,7 @@ migration 'create tables tasks/users/executions' do
     foreign_key :task_id, :tasks
 
     Integer :status, :null => false
-    DateTime :run_at, :null => false
+    DateTime :start_at, :null => false
     Integer :duration, :null => false
     String :response, :size => 5000, :null => true
   end

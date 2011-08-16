@@ -1,13 +1,6 @@
 
 HttpCron.NewTask = SC.Object.create({
-
-  attributes: ['name', 'url', 'cron', 'enabled', 'timeout'],
-  defaults: {
-    cron: '0 22 * * 1-5',
-    enabled: true,
-    timeout: 60
-  },
-
+  nested: null,
   isVisible: false,
   isInvisibleBinding: SC.Binding.not('isVisible'),
 
@@ -16,20 +9,25 @@ HttpCron.NewTask = SC.Object.create({
   },
 
   save: function() {
-    var data = {};
-    this.attributes.forEach(function(name) {
-      data[name] = this.get(name);
-    }, this);
+    this.get('store').commitChanges();
+    HttpCron.store.commitRecords();
+    //HttpCron.TasksList.reload();
+    //this._observeRecord(this.get('record'), SC.Record.READY_CLEAN, this._didSaveRecord);
     this.toggle();
-    HttpCron.store.createRecord(HttpCron.Task, data);
-    HttpCron.TasksList.reload();
   },
 
-  reset: function() {
-    if (!this.get('isVisible')) {
-      this.attributes.forEach(function(name) {
-        this.set(name, this.defaults[name] || '');
-      }, this);
+  _didShow: function() {
+    if (this.get('isVisible')) {
+      var store = this.get('store');
+      if (!store) {
+        var store = HttpCron.store.chain();
+        this.set('store', store);
+      } else {
+        this.get('store').reset();
+      }
+      this.set('nested', store.createRecord(HttpCron.Task, {}));
+    } else {
+      this.set('nested', null);
     }
   }.observes('isVisible')
 });
