@@ -116,7 +116,7 @@ class HTTPCronApi < Sinatra::Base
   def tasks_for_user user
     pagination_params
     content_type :json
-    tasks = Task.order(:id).filter(:user => user).paginate(@offset, @limit)
+    tasks = Task.order(:id.desc).filter(:user => user).paginate(@offset, @limit)
     {:total => tasks.pagination_record_count, :records => tasks}.to_json
   end
 
