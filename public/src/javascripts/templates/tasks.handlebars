@@ -1,5 +1,5 @@
 {{view JUI.Button label="Log Out"
-  target="HttpCron.User" action="logout"}}
+  target="HttpCron.CurrentUser" action="logout"}}
 {{view JUI.Button label="Add Task"
   target="HttpCron.NewTask" action="toggle"
   isVisibleBinding="HttpCron.NewTask.isInvisible"}}

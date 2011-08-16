@@ -1,5 +1,6 @@
 
 HttpCron.ExecutionsList = SB.PaginatedArray.create({
+  limit: 20,
   fetch: function(task) {
     this.set('task', task);
     this.reset();

@@ -1,7 +1,10 @@
 <h1>{{title}}</h1>
 {{view JUI.Button label="Back" target="HttpCron.TasksPaneView" action="append"}}
-{{view SB.PreviousButton target="HttpCron.ExecutionsList"}}
-{{view SB.NextButton target="HttpCron.ExecutionsList"}}
+
+<div class="pagination">
+  {{view SB.PreviousButton target="HttpCron.ExecutionsList"}}
+  {{view SB.NextButton target="HttpCron.ExecutionsList"}}
+</div>
 
 {{#collection HttpCron.ExecutionsCollection}}
   <p><strong>Status :</strong> {{content.status}}</p>

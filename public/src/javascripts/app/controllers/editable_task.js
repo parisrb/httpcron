@@ -84,6 +84,7 @@ HttpCron.EditableTask = SC.Object.extend({
   },
 
   _didSaveRecord: function(record) {
+    //console.log('update record');
     //this._updateFormRecord();
   },
 
