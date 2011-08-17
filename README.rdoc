@@ -110,7 +110,7 @@ Create a task, parameters:
 - timezone optional, default to the user's timezone
 
 === put /api/tasks/:id
-Edit the task with the specified id, non-admin users can only edit their own tasks, see above for parameters
+Edit the task with the specified id, non-admin users can only edit their own tasks, see above for parameters list, you can omit parameters that don't change
 
 === delete /api/tasks/:id
 Delet the task with the specified id, non-admin users can only delete their own tasks
