@@ -12,13 +12,13 @@
 = Installation
 
 - clone the repository
-- install the bundler gem if you don’t have it (+gem install bundler+)
+- install the bundler gem if you don’t have it (<tt>gem install bundler</tt>)
 - define a DATABASE_URL environment variable to specify the database url path, see here[http://sequel.rubyforge.org/rdoc/files/doc/opening_databases_rdoc.html] for details, add the relevant database gem to the gemfile
 - (optional) change the configuration by editing the /config.rb file
-- in the application directory run +bundle install+
-- in the application directory run +rake assets:build+ to generate the optimiezd assets
-- in the application directory run +rackup+
-- go to http://localhost:9292
+- in the application directory run <tt>bundle install</tt>
+- in the application directory run <tt>rake assets:build</tt> to generate the optimiezd assets
+- in the application directory run <tt>rackup</tt>
+- go to <tt>http://localhost:9292</tt>
 - the default login/password is httpcronadmin/httpcronadmin
 
 = API
@@ -68,10 +68,10 @@ Get the current user
 === post /api/users §
 Create a user, parameters:
 
-- username mandatory, max size 250, unique
-- password mandatory
-- admin optional, default to false
-- timezone optional, default to "UTC"#
+- <tt>username</tt> mandatory, max size 250, unique
+- <tt>password</tt> mandatory
+- <tt>admin</tt> optional, default to false
+- <tt>timezone</tt> optional, default to "UTC"#
 
 === delete /api/users/:id
 Delete the user with the corresponding id, admin users can delete anybody, non-adminc an only delete themselves. Deleting a user delete all his tasks.
@@ -103,12 +103,12 @@ Get the tasks for the user with the specified id
 === post /api/tasks
 Create a task, parameters:
 
-- name mandatory, max size to 250
-- url mandatory, max size to 250
-- cron mandatory, the cron expression
-- timeout optional, in seconds, default to 60#, max to 300#
-- enabled optional, default to false
-- timezone optional, default to the user's timezone
+- <tt>name</tt> mandatory, max size to 250
+- <tt>url</tt> mandatory, max size to 250
+- <tt>cron</tt> mandatory, the cron expression
+- <tt>timeout</tt> optional, in seconds, default to 60#, max to 300#
+- <tt>enabled</tt> optional, default to false
+- <tt>timezone</tt> optional, default to the user's timezone
 
 === put /api/tasks/:id
 Edit the task with the specified id, non-admin users can only edit their own tasks, see above for parameters list, you can omit parameters that don't change
