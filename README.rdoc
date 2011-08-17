@@ -43,7 +43,18 @@ Pagination parameters:
 
 ==== Ordering
 
-QQQQQQQQQQ
+By default API returning lists are sorted by id desc, to use another order use the <tt>order</tt> parameter, the syntax is
+
+  <tt>order=field_name[(.asc|.desc)]</tt>
+
+where
+
+- field_name is the name of the field you want to use for sorting and the direction
+- .asc and .desc can define the sort direction, .desc being the default
+
+Thus if you want to list the users ordered by their ascending username:
+
+  curl --digest --user httpcronadmin:httpcronadmin http://localhost:9292/api/users?sort=username.asc
 
 == Users
 

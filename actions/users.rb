@@ -12,13 +12,12 @@ class HTTPCronApi < Sinatra::Base
     end
   end
 
+  USERS_LIST_ORDER_FIELDS = [:id, :username, :admin, :timezone, :created_at]
+  USERS_LIST_ORDER_REGEX = create_order_regex(USERS_LIST_ORDER_FIELDS)
+
   get '/users' do
     check_admin
-    pagination_params
-
-    content_type :json
-    users = User.order(:id.desc).paginate(@offset, @limit)
-    {:total => users.pagination_record_count, :records => users}.to_json
+    apply_list_params(User, USERS_LIST_ORDER_FIELDS, USERS_LIST_ORDER_REGEX)
   end
 
   get '/users/current' do

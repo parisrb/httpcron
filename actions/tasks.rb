@@ -127,11 +127,11 @@ class HTTPCronApi < Sinatra::Base
     end
   end
 
+  TASKS_LIST_ORDER_FIELDS = [:id, :name, :url, :timeout, :enabled, :cron, :timezone, :next_execution, :created_at]
+  TASKS_LIST_ORDER_REGEX = create_order_regex(TASKS_LIST_ORDER_FIELDS)
+
   def tasks_for_user user
-    pagination_params
-    content_type :json
-    tasks = Task.order(:id.desc).filter(:user => user).paginate(@offset, @limit)
-    {:total => tasks.pagination_record_count, :records => tasks}.to_json
+    apply_list_params(Task.filter(:user => user), TASKS_LIST_ORDER_FIELDS, TASKS_LIST_ORDER_REGEX)
   end
 
 end

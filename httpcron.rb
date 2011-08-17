@@ -72,51 +72,6 @@ class HTTPCronApi < Sinatra::Base
     @current_user = user
   end
 
-  # Check if the current user is an admin
-  # raise a 403 elsewhere
-  def check_admin
-    unless current_user.admin
-      halt 403
-    end
-  end
-
-  # Get the offset and limit params value
-  # and set them as @offset and @limit
-  # default are 0 and 100
-  def pagination_params
-    if params[:limit]
-      @limit = params[:limit].to_i
-      if @limit <= 0
-        halt 422, "Limit is [#{@limit}] but shouldn't be <= 0"
-      elsif @limit > HttpCronConfig.max_pagination_limit
-        halt 422, "Limit is [#{@limit}] but should be <= #{HttpCronConfig.max_pagination_limit}"
-      end
-    else
-      @limit = 100
-    end
-
-    if params[:offset]
-      @offset = params[:offset].to_i
-      if @offset < 0
-        halt 422, "Offset is [#{@offset}] but shouldn't be < 0"
-      end
-      @offset += 1
-    else
-      @offset = 1
-    end
-  end
-
-  def check_parameter_for_blank *params_names
-    params_names.each do |param_name|
-      if params[param_name]
-        if params[param_name].blank?
-          halt 422, "Parameter [#{param_name}] is blank"
-        end
-      else
-        halt 422, "No [#{param_name}] parameter"
-      end
-    end
-  end
 end
 
 # mokey patch Rack to work with xhr digest

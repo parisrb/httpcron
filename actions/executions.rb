@@ -2,19 +2,16 @@ class HTTPCronApi < Sinatra::Base
 
   get '/executions/:id' do |id|
     execution = execution_if_allowed(id)
-
     content_type :json
     execution.to_json
   end
 
+  EXECUTIONS_LIST_ORDER_FIELDS = [:id, :status, :run_at, :duration]
+  EXECUTIONS_LIST_ORDER_REGEX = create_order_regex(EXECUTIONS_LIST_ORDER_FIELDS)
+
   get '/executions/task/:id' do |id|
     task = task_if_allowed(id)
-
-    pagination_params
-    content_type :json
-
-    executions = Execution.order(:id.desc).filter(:task => task).paginate(@offset, @limit)
-    {:total => executions.pagination_record_count, :records => executions}.to_json
+    apply_list_params(Execution.filter(:task => task), EXECUTIONS_LIST_ORDER_FIELDS, EXECUTIONS_LIST_ORDER_REGEX)
   end
 
   delete '/executions/:id' do |id|
