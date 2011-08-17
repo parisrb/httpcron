@@ -68,7 +68,7 @@ def start_task task
 end
 
 # Start all pending tasks
-def start_tasks
+def setup_tasks
   p "Start tasks"
   Task.filter('enabled = ?', true).order(:next_execution.asc).each do |t|
     @@tasks[t.id] = setup_next_execution(t)
@@ -86,7 +86,7 @@ end
 Thread.start do
   EventMachine.run do
     begin
-      start_tasks
+      setup_tasks
     rescue Exception => e
       p e
     end
