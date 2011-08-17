@@ -27,7 +27,6 @@ class HTTPCron < Sinatra::Base
   configure :development do
     set :show_exceptions, :true
     set :logging, true
-    database.loggers << Logger.new(STDOUT)
   end
 
   get '/' do

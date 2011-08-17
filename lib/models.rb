@@ -47,7 +47,7 @@ migration 'create tables tasks/users/executions' do
     foreign_key :task_id, :tasks
 
     Integer :status, :null => false
-    DateTime :start_at, :null => false
+    DateTime :run_at, :null => false
     Integer :duration, :null => false
     String :response, :size => 5000, :null => true
   end
@@ -150,11 +150,6 @@ class Task < Sequel::Model
     notify_create_task self
   end
 
-  def after_update
-    super
-    notify_update_task self
-  end
-
   def after_destroy
     super
     notify_delete_task self
@@ -169,7 +164,7 @@ class Task < Sequel::Model
   end
 
   def to_s
-    "#{id} #{name} #{user_id } #{cron} #{timezone} #{url}"
+    "#{id}, name: [#{name}], user: #{user_id}, cron: [#{cron}], timezone: [#{timezone}], url [#{url}]"
   end
 
 end
