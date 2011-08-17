@@ -16,7 +16,8 @@
 - define a DATABASE_URL environment variable to specify the database url path, see here[http://sequel.rubyforge.org/rdoc/files/doc/opening_databases_rdoc.html] for details, add the relevant database gem to the gemfile
 - (optional) change the configuration by editing the /config.rb file
 - in the application directory run +bundle install+
-- in the app directory run +rackup+
+- in the application directory run +rake assets:build+ to generate the optimiezd assets
+- in the application directory run +rackup+
 - go to http://localhost:9292
 - the default login/password is httpcronadmin/httpcronadmin
 
