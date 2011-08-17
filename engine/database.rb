@@ -36,22 +36,18 @@ private
 # start:: starting date
 # task:: the corresponding task
 def end_task http, start, task
-  begin
-    p "Ending task #{task.id} [#{task.name}] : #{http.response_header.status}"
-    Execution.create(:task => task,
-                     :status => http.response_header.status,
-                     :run_at => start,
-                     :duration => (SECONDS_IN_A_DAY * (DateTime.now - start)).to_i,
-                     :response => response_content(http))
-    from = Time.now
-    from += 60 - from.sec
-    task.recalculate_cron(from)
-    task.save
-    @@running_tasks.delete task.id
-    possibly_set_next_execution task.next_execution
-  rescue Exception => e
-    p e
-  end
+  p "Ending task #{task.id} [#{task.name}] : #{http.response_header.status}"
+  Execution.create(:task => task,
+                   :status => http.response_header.status,
+                   :run_at => start,
+                   :duration => (SECONDS_IN_A_DAY * (DateTime.now - start)).to_i,
+                   :response => response_content(http))
+  from = Time.now
+  from += 60 - from.sec
+  task.recalculate_cron(from)
+  task.save
+  @@running_tasks.delete task.id
+  possibly_set_next_execution task.next_execution
 end
 
 # Start a task
