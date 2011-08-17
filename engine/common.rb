@@ -32,8 +32,8 @@ def response_charset http
 end
 
 # Get the content of the response in a way suitable for the database
-def response_content http
-  response = http.response[0...4000]
+def response_content http, content
+  response = content[0...4000]
   charset = response_charset http
   if charset && (charset != 'UTF-8')
     begin

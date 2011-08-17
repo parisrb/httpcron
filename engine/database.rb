@@ -33,15 +33,16 @@ private
 
 # Called when a task as ended
 # http:: the http request
+# content:: the response' content
 # start:: starting date
 # task:: the corresponding task
-def end_task http, start, task
+def end_task http, content, start, task
   p "Ending task #{task.id} [#{task.name}] : #{http.response_header.status}"
   Execution.create(:task => task,
                    :status => http.response_header.status,
                    :run_at => start,
                    :duration => (SECONDS_IN_A_DAY * (DateTime.now - start)).to_i,
-                   :response => response_content(http))
+                   :response => response_content(http, content))
   from = Time.now
   from += 60 - from.sec
   task.recalculate_cron(from)
@@ -55,13 +56,19 @@ def start_task task
   unless @@running_tasks[task.id]
     p "Start task #{task.id} [#{task.name}]"
     @@running_tasks[task.id] = task
+    content = ""
     start = DateTime.now
     http = EventMachine::HttpRequest.new(task.url).get :redirects => 5, :timeout => task.timeout
+    http.stream do |chunk|
+      if content.length < 4000
+        content << chunk
+      end
+    end
     http.callback do
-      end_task(http, start, task)
+      end_task(http, content, start, task)
     end
     http.errback do
-      end_task(http, start, task)
+      end_task(http, content, start, task)
     end
   end
 end
