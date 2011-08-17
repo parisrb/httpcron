@@ -29,7 +29,7 @@ migration 'create tables tasks/users/executions' do
 
     foreign_key :user_id, :users
 
-    String :name, :size => 250, :null => true, :index => true
+    String :name, :size => 250, :null => false, :index => true
     String :url, :size => 255, :null => false
     Integer :timeout, :null => false
     boolean :enabled, :null => false, :index => true, :default => true
@@ -58,8 +58,10 @@ module ModelWithTimezone
   def validate_timezone
     begin
       TZInfo::Timezone.get(self.timezone)
+      true
     rescue TZInfo::InvalidTimezoneIdentifier
       errors.add('timezone', "[#{self.timezone}] is not a valid timezone")
+      false
     end
   end
 
@@ -78,6 +80,7 @@ class User < Sequel::Model
   end
 
   def before_destroy
+    super
     tasks = Task.filter(:user => self)
     Execution.filter(:task => tasks).delete
     tasks.delete
@@ -113,12 +116,21 @@ class Task < Sequel::Model
     rescue URI::InvalidURIError
       errors.add('url', "[#{self.url}] is not a valid url")
     end
-    validate_timezone
+    if validate_timezone
+      # don't validate the cron expression if the timezone is wrong
+      begin
+        recalculate_cron
+      rescue ArgumentError
+        errors.add('cron', "[#{self.cron}] is not a valid cron expression")
+      end
+    end
   end
 
   def before_create
     super
-    recalculate_cron
+    unless self.next_execution
+      recalculate_cron
+    end
   end
 
   def before_update

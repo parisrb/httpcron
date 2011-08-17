@@ -44,6 +44,7 @@ class HTTPCronApi < Sinatra::Base
 
   post '/users' do
     check_admin
+    check_parameter_for_blank :username, :password
     user = User.new(:username => params[:username],
                     :admin => 'true' == params[:admin],
                     :timezone => (params[:timezone] || HttpCronConfig.server_timezone),

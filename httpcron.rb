@@ -88,9 +88,9 @@ class HTTPCronApi < Sinatra::Base
     if params[:limit]
       @limit = params[:limit].to_i
       if @limit <= 0
-        halt 500, "Limit is [#{@limit}] but shouldn't be <= 0"
+        halt 422, "Limit is [#{@limit}] but shouldn't be <= 0"
       elsif @limit > HttpCronConfig.max_pagination_limit
-        halt 500, "Limit is [#{@limit}] but should be <= #{HttpCronConfig.max_pagination_limit}"
+        halt 422, "Limit is [#{@limit}] but should be <= #{HttpCronConfig.max_pagination_limit}"
       end
     else
       @limit = 100
@@ -99,7 +99,7 @@ class HTTPCronApi < Sinatra::Base
     if params[:offset]
       @offset = params[:offset].to_i
       if @offset < 0
-        halt 500, "Offset is [#{@offset}] but shouldn't be < 0"
+        halt 422, "Offset is [#{@offset}] but shouldn't be < 0"
       end
       @offset += 1
     else
@@ -111,10 +111,10 @@ class HTTPCronApi < Sinatra::Base
     params_names.each do |param_name|
       if params[param_name]
         if params[param_name].blank?
-          halt 500, "Parameter [#{param_name}] is blank"
+          halt 422, "Parameter [#{param_name}] is blank"
         end
       else
-        halt 500, "No [#{param_name}] parameter"
+        halt 422, "No [#{param_name}] parameter"
       end
     end
   end

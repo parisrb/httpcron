@@ -33,6 +33,24 @@ describe 'admin user' do
     end
   end
 
+  it 'requires a username' do
+    database.transaction do
+      post '/users', 'password' => 'testpassword'
+      last_response.status.must_equal 422
+      last_response.body.must_equal 'No [username] parameter'
+      raise(Sequel::Rollback)
+    end
+  end
+
+  it 'requires a password' do
+    database.transaction do
+      post '/users', 'username' => 'testuser'
+      last_response.status.must_equal 422
+      last_response.body.must_equal 'No [password] parameter'
+      raise(Sequel::Rollback)
+    end
+  end
+
   it 'can delete a user' do
     database.transaction do
       post '/users', 'username' => 'testuser', 'password' => 'testpassword'

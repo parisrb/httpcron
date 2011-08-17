@@ -100,7 +100,7 @@ describe 'admin task' do
 
       post '/tasks', 'user_id' => 1, 'name' => 'test', 'url' => 'http://example.com', 'cron' => 'wft ??'
       last_response.status.must_equal 422
-      last_response.body.must_equal "not a valid cronline : 'wft ?? UTC'"
+      last_response.body.must_equal "[wft ??] is not a valid cron expression"
 
       raise(Sequel::Rollback)
     end
