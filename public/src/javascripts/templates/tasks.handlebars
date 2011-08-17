@@ -11,10 +11,10 @@
 
 {{#view HttpCron.NewTaskView}}
   <div class="fields">
-    {{view SC.TextField valueBinding="content.nested.name" placeholder="Name..."}}
-    {{view SC.TextField valueBinding="content.nested.cron" placeholder="Cron line..."}}
-    {{view SC.TextField type="url" valueBinding="content.nested.url" placeholder="URL..."}}
-    {{view SC.Checkbox title="Enabled" valueBinding="content.nested.enabled"}}
+    {{view SC.TextField valueBinding="content.name" placeholder="Name..."}}
+    {{view SC.TextField valueBinding="content.cron" placeholder="Cron line..."}}
+    {{view SC.TextField type="url" valueBinding="content.url" placeholder="URL..."}}
+    {{view SC.Checkbox title="Enabled" valueBinding="content.enabled"}}
   </div>
   <div class="buttons">
     {{view JUI.Button label="Cancel" targetBinding="content" action="toggle"}}
@@ -23,27 +23,26 @@
 {{/view}}
 
 {{#collection HttpCron.TasksCollection}}
-  {{#view classNames="show-task" isVisibleBinding="content.isNotEditing" contentBinding="content"}}
+  {{#view HttpCron.ShowTaskView contentBinding="content"}}
     <div class="content">
       {{content.name}}<br/>
       <em>{{content.cron}}</em><br/>
-      <strong>http://</strong>{{content.cleanUrl}}
+      <strong>http://</strong>{{content.formattedUrl}}
     </div>
     {{view JUI.Button label="Destroy" targetBinding="content" action="destroy"}}
-    {{view JUI.Button label="Edit" targetBinding="content" action="edit"}}
+    {{view JUI.Button label="Edit" targetBinding="content" action="toggle"}}
     {{view JUI.Button label="Logs" targetBinding="content" action="logs"}}
   {{/view}}
-  {{#view classNames="edit-task" targetBinding="content"
-    isVisibleBinding="content.isEditing" contentBinding="content.nested"}}
+  {{#view classNames="edit-task" isVisibleBinding="content.isEditing" contentBinding="content"}}
     <div class="fields">
       {{view SC.TextField valueBinding="content.name" placeholder="Name..."}}
       {{view SC.TextField valueBinding="content.cron" placeholder="Cron line..."}}
-      {{view SC.TextField type="url" valueBinding="content.url" placeholder="URL..."}}
+      {{view SC.TextField type="url" valueBinding="content.formattedUrl" placeholder="URL..."}}
       {{view SC.Checkbox title="Enabled" valueBinding="content.enabled"}}
     </div>
     <div class="buttons">
-      {{view JUI.Button label="Update" targetBinding="target" action="save"}}
-      {{view JUI.Button label="Cancel" targetBinding="target" action="cancel"}}
+      {{view JUI.Button label="Update" targetBinding="content" action="update"}}
+      {{view JUI.Button label="Cancel" targetBinding="content" action="cancel"}}
     </div>
   {{/view}}
 {{else}}

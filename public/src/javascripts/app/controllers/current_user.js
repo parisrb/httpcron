@@ -1,3 +1,9 @@
+// ===============================================================================
+// Project    :   HttpCron
+// Copyright  :   ©2011 Paris.rb
+// Authors    :   Julien Kirch [archiloque], Paul Chavard [tchak], Vincent Viaud
+//
+// ===============================================================================
 
 DigestAuthentication.registerInterface();
 
@@ -10,11 +16,11 @@ HttpCron.CurrentUser = SB.CurrentUser.create({
   },
 
   didLoggedOut: function() {
-    HttpCron.LoginView.append();
+    HttpCron.LoginPaneView.append();
   },
 
   loginError: function() {
-    HttpCron.LoginView.append();
+    HttpCron.LoginPaneView.append();
   },
 
   setCredentials: function(username, password) {

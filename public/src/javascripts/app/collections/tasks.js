@@ -1,27 +1,34 @@
+// ===============================================================================
+// Project    :   HttpCron
+// Copyright  :   ©2011 Paris.rb
+// Authors    :   Julien Kirch [archiloque], Paul Chavard [tchak], Vincent Viaud
+//
+// ===============================================================================
 
 HttpCron.TasksList = SB.PaginatedArray.create({
   isLoading: true,
-  limit: 10,
+  limit: 7,
   fetch: function() {
     this.reset();
   },
   didRequireRange: function(limit, offset) {
     this._super();
     this.set('content', []);
-    var url = "/api/tasks?limit=%@&offset=%@".fmt(limit, offset);
-    SC.Request.getUrl(url).json()
-      .notify(this, 'rangeDidLoaded')
-      .send();
+    var url = '/api/tasks?limit=%@&offset=%@'.fmt(limit, offset);
+    SC.$.ajax(url, {
+      dataType: 'json',
+      context: this,
+      success: this._fetchTasksSuccess,
+      error: this._fetchTasksError
+    });
   },
-  rangeDidLoaded: function(response) {
-    if (SC.ok(response)) {
-      var data = response.get('body');
+  _fetchTasksSuccess: function(data) {
       var tasks = data.records.map(function(task) {
-        return HttpCron.EditableTask.create(task);
+        return HttpCron.Task.create(task);
       }, this);
-      this._super(data.total, tasks);
-    } else {
-      this._super(0, []);
-    }
+      this.rangeDidLoaded(data.total, tasks);
+  },
+  _fetchTasksError: function() {
+    this.rangeDidLoaded(0, []);
   }
 });
