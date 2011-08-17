@@ -9,8 +9,6 @@ javascripts:
     - public/src/javascripts/libs/jquery.js
     - public/src/javascripts/libs/jquery-ui.js
     - public/src/javascripts/libs/sproutcore.js
-    - public/src/javascripts/libs/sproutcore-datastore.js
-    - public/src/javascripts/libs/sproutcore-ajax.js
     - public/src/javascripts/libs/sproutcore-jui.js
 
   templates:
@@ -25,7 +23,6 @@ javascripts:
     # sproutcore bricks
     - public/src/javascripts/libs/bricks/current_user.js
     - public/src/javascripts/libs/bricks/paginated_array.js
-    - public/src/javascripts/libs/bricks/rest_data_source.js
     - public/src/javascripts/libs/bricks/toggle_view.js
     - public/src/javascripts/libs/bricks/pane_view.js
     - public/src/javascripts/libs/bricks/pagination_button.js
@@ -33,7 +30,6 @@ javascripts:
     - public/src/javascripts/app/main.js
     - public/src/javascripts/app/models/task.js
 
-    - public/src/javascripts/app/controllers/editable_task.js
     - public/src/javascripts/app/controllers/new_task.js
     - public/src/javascripts/app/controllers/current_user.js
 
@@ -43,6 +39,5 @@ javascripts:
 
     - public/src/javascripts/app/views/login.js
     - public/src/javascripts/app/views/tasks.js
-    - public/src/javascripts/app/views/new_task.js
     - public/src/javascripts/app/views/executions.js
     - public/src/javascripts/app/views/users.js

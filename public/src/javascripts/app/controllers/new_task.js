@@ -1,33 +1,51 @@
+// ===============================================================================
+// Project    :   HttpCron
+// Copyright  :   ©2011 Paris.rb
+// Authors    :   Julien Kirch [archiloque], Paul Chavard [tchak], Vincent Viaud
+//
+// ===============================================================================
 
 HttpCron.NewTask = SC.Object.create({
-  nested: null,
+
+  nameBinding: '*editedObject.name',
+  cronBinding: '*editedObject.cron',
+  urlBinding: '*editedObject.formattedUrl',
+  enabledBinding: '*editedObject.enabled',
+
+  editedObject: null,
+
   isVisible: false,
   isInvisibleBinding: SC.Binding.not('isVisible'),
+  isCommiting: false,
 
   toggle: function() {
-    this.toggleProperty('isVisible');
+    if (this.toggleProperty('isVisible')) {
+      this.set('editedObject', HttpCron.Task.create());
+    }
   },
 
   save: function() {
-    this.get('store').commitChanges();
-    HttpCron.store.commitRecords();
-    //HttpCron.TasksList.reload();
-    //this._observeRecord(this.get('record'), SC.Record.READY_CLEAN, this._didSaveRecord);
-    this.toggle();
+    if (this.get('isCommiting')) { return; }
+    this.set('isCommiting', true);
+    SC.$.ajax('/api/tasks', {
+      type: 'POST',
+      data: this.get('editedObject').toJSON(),
+      dataType: 'json',
+      context: this,
+      success: this._createTaskSuccess,
+      error: this._createTaskError
+    });
   },
 
-  _didShow: function() {
-    if (this.get('isVisible')) {
-      var store = this.get('store');
-      if (!store) {
-        var store = HttpCron.store.chain();
-        this.set('store', store);
-      } else {
-        this.get('store').reset();
-      }
-      this.set('nested', store.createRecord(HttpCron.Task, {}));
-    } else {
-      this.set('nested', null);
-    }
-  }.observes('isVisible')
+  _createTaskSuccess: function(data) {
+    var task = this.get('editedObject');
+    task.setProperties(data);
+    HttpCron.TasksList.unshiftObject(task);
+    this.toggle();
+    this.set('isCommiting', false);
+  },
+
+  _createTaskError: function() {
+    this.set('isCommiting', false);
+  }
 });

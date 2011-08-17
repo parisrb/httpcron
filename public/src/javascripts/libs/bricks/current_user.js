@@ -34,10 +34,12 @@ SB.CurrentUser = SC.Object.extend({
     if (!SC.empty(username) && !SC.empty(password)) {
       this.setCredentials(username, password);
     }
-    var method = "%@Url".fmt(this.get('authenticateMethod').toLowerCase());
-    SC.Request[method](this.get('url')).json()
-      .notify(this, 'loginComplete')
-      .send();
+    SC.$.ajax(this.get('url'), {
+      type: this.get('authenticateMethod'),
+      context: this,
+      success: this._loginSuccess,
+      error: this._loginError
+    });
   },
 
   logout: function() {
@@ -51,18 +53,19 @@ SB.CurrentUser = SC.Object.extend({
   /*
     @private
   */
-  loginComplete: function(response) {
+  _loginSuccess: function(data) {
     this.set('isLoggingIn', false);
-    if (SC.ok(response)) {
-      this.set('isLoggedIn', true);
-      this.loginSuccess(response);
-      this.didLoggedIn();
-      this.setProperties({'username': '', 'password': ''});
-    } else {
-      this.set('isLoggedIn', false);
-      this.set('password', '');
-      this.resetCredentials();
-      this.loginError(response);
-    }
+    this.set('isLoggedIn', true);
+    this.loginSuccess(data);
+    this.didLoggedIn();
+    this.setProperties({'username': '', 'password': ''});
+  },
+
+  _loginError: function() {
+    this.set('isLoggingIn', false);
+    this.set('isLoggedIn', false);
+    this.set('password', '');
+    this.resetCredentials();
+    this.loginError();
   }
 });

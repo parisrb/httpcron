@@ -1,6 +1,12 @@
-// Create main namespace
+// ===============================================================================
+// Project    :   HttpCron
+// Copyright  :   ©2011 Paris.rb
+// Authors    :   Julien Kirch [archiloque], Paul Chavard [tchak], Vincent Viaud
+//
+// ===============================================================================
 
 HttpCron = SC.Application.create({
-  store: SC.Store.create({commitRecordsAutomatically: true})
-    .from(SB.RestDataSource.create({storagePrefix: 'api'}))
+   panes: 'Login Tasks Executions Users'.w()
 });
+
+HttpCron.createPanes(HttpCron.panes);

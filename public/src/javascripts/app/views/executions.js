@@ -1,6 +1,11 @@
+// ===============================================================================
+// Project    :   HttpCron
+// Copyright  :   ©2011 Paris.rb
+// Authors    :   Julien Kirch [archiloque], Paul Chavard [tchak], Vincent Viaud
+//
+// ===============================================================================
 
-HttpCron.ExecutionsView = SB.PaneView.create({
-  name: 'executions',
+HttpCron.ExecutionsPaneView.reopen({
   titleBinding: 'HttpCron.ExecutionsList.title'
 });
 

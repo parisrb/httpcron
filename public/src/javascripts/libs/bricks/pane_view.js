@@ -27,10 +27,10 @@ SB.PaneView = SC.View.extend(SB.ToggleViewSupport, {
 
   append: function() {
     var currentPane = SB.PaneView.currentPane;
-    if (currentPane && currentPane.state === 'inDOM') {
+    if (currentPane && currentPane.get('state') === 'inDOM') {
       currentPane.hide();
     }
-    if (this.state === 'inDOM') {
+    if (this.get('state') === 'inDOM') {
       this.show();
     } else {
       this.appendTo(this.get('rootElement')); 
