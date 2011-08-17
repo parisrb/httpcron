@@ -61,6 +61,17 @@ describe 'user creation' do
     end
   end
 
+  it 'check for duplicates' do
+    database.transaction do
+
+      post '/users', 'username' => 'testuser', 'password' => 'testpassword'
+      post '/users', 'username' => 'testuser', 'password' => 'testpassword'
+      last_response.status.must_equal 422
+      last_response.body.must_equal 'is already taken'
+      raise(Sequel::Rollback)
+    end
+  end
+
   it 'requires a username' do
     database.transaction do
       post '/users', 'password' => 'testpassword'
