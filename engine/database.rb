@@ -86,11 +86,11 @@ end
 
 # Set the next execution time
 def set_next_execution next_execution
-  wait_time = ((next_execution - DateTime.now) * SECONDS_IN_A_DAY).to_i + 1
+  wait_time = ((next_execution - DateTime.now) * SECONDS_IN_A_DAY).to_i
+  @@next_execution = next_execution
   p "Setting new timeout at #{next_execution} in #{wait_time.to_s} seconds"
   @@timer.cancel if @@timer
-  @@timer = EventMachine::Timer.new(wait_time) { wakeup }
-  @@next_execution = next_execution
+  @@timer = EventMachine::Timer.new(wait_time + 1) { wakeup }
 end
 
 # Trigger the pending tasks
