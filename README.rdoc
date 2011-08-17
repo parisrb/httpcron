@@ -23,12 +23,12 @@
 
 = API
 
+- § indicates a method that requires admin rights
+- # indicates a value that can be configured in the /config.rb file
+
 The API use json data and require the digest authentication method, most http query tool should support it natively, example with curl:
 
   curl --digest --user httpcronadmin:httpcronadmin http://localhost:9292/api/users
-
-- § this method requires admin rights
-- # this value can be configured in the /config.rb file
 
 === Pagination
 
