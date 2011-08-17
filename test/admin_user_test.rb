@@ -1,18 +1,18 @@
 require_relative 'helper'
 
-describe 'admin user' do
+describe 'user basics' do
 
   def app
     HTTPCronApi
   end
 
   before do
-     digest_authorize 'httpcronadmin', 'httpcronadmin'
+    digest_authorize 'httpcronadmin', 'httpcronadmin'
   end
 
   it 'has default user' do
-    get '/users'
     database.transaction do
+      get '/users'
       last_response.status.must_equal 200
       last_response.json_body['total'].must_equal 1
       last_response.json_body['records'].length.must_equal 1
@@ -22,13 +22,41 @@ describe 'admin user' do
     end
   end
 
+  it 'can access your own user' do
+    database.transaction do
+      get '/users/current'
+      last_response.status.must_equal 200
+      last_response.json_body['username'].must_equal 'httpcronadmin'
+      last_response.json_body['admin'].must_equal true
+      raise(Sequel::Rollback)
+    end
+  end
+
+end
+
+describe 'user creation' do
+
+  def app
+    HTTPCronApi
+  end
+
+  before do
+    digest_authorize 'httpcronadmin', 'httpcronadmin'
+  end
+
   it 'can create user' do
     database.transaction do
+
       post '/users', 'username' => 'testuser', 'password' => 'testpassword'
       last_response.status.must_equal 200
       last_response.json_body['username'].must_equal 'testuser'
       last_response.json_body['password'].must_equal nil
       last_response.json_body['admin'].must_equal false
+
+      get '/users'
+      last_response.status.must_equal 200
+      last_response.json_body['total'].must_equal 2
+
       raise(Sequel::Rollback)
     end
   end
@@ -57,6 +85,46 @@ describe 'admin user' do
       user_id = last_response.json_body['id']
       delete "/users/#{user_id}"
       last_response.status.must_equal 200
+      raise(Sequel::Rollback)
+    end
+  end
+
+end
+
+describe 'access rights' do
+
+  def app
+    HTTPCronApi
+  end
+
+  before do
+    digest_authorize 'httpcronadmin', 'httpcronadmin'
+  end
+
+  it 'cannot access other users' do
+    database.transaction do
+      get '/users/current'
+      id_admin = last_response.json_body['id']
+
+      post '/users', 'username' => 'testuser', 'password' => 'testpassword'
+      id_user = last_response.json_body['id']
+      digest_authorize 'testuser', 'testpassword'
+
+      get '/users'
+      last_response.status.must_equal 403
+
+      get "/users/#{id_admin}"
+      last_response.status.must_equal 403
+
+      get "/users/#{id_user}"
+      last_response.status.must_equal 403
+
+      get '/users/current'
+      last_response.status.must_equal 200
+
+      post '/users'
+      last_response.status.must_equal 403
+
       raise(Sequel::Rollback)
     end
   end
