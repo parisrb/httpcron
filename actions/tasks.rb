@@ -27,7 +27,7 @@ class HTTPCronApi < Sinatra::Base
 
     if params[:timeout]
       if (timeout = params[:timeout].to_i) > HttpCronConfig.max_timeout
-        halt 500, "Timeout [#{timeout}] can't be higher than #{HttpCronConfig.max_timeout}"
+        halt 422, "Timeout [#{timeout}] can't be higher than #{HttpCronConfig.max_timeout}"
       end
     else
       timeout = HttpCronConfig.default_timeout
@@ -42,7 +42,7 @@ class HTTPCronApi < Sinatra::Base
                     :timeout => timeout)
 
     unless task.valid?
-      halt 500, task.errors.values.join("\n")
+      halt 422, task.errors.values.join("\n")
     end
 
     begin
@@ -63,7 +63,7 @@ class HTTPCronApi < Sinatra::Base
 
     if params[:timeout]
       if (timeout = params[:timeout].to_i) > HttpCronConfig.max_timeout
-        halt 500, "Timeout [#{timeout}] can't be higher than #{HttpCronConfig.max_timeout}"
+        halt 422, "Timeout [#{timeout}] can't be higher than #{HttpCronConfig.max_timeout}"
       end
     else
       timeout = HttpCronConfig.default_timeout
@@ -75,7 +75,7 @@ class HTTPCronApi < Sinatra::Base
     task[:timeout] = timeout
 
     unless task.valid?
-      halt 500, task.errors.values.join("\n")
+      halt 422, task.errors.values.join("\n")
     end
 
     begin
@@ -105,7 +105,7 @@ class HTTPCronApi < Sinatra::Base
   def task_if_allowed id
     task = Task[id]
     if !task
-      halt 500, "Task [#{id}] does not exist"
+      halt 404, "Task [#{id}] does not exist"
     elsif (task.user != current_user) && (!current_user.admin)
       halt 403, "Task [#{id}] is not allowed to you"
     else

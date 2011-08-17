@@ -50,7 +50,7 @@ class HTTPCronApi < Sinatra::Base
                     :password => params[:password])
 
     unless user.valid?
-      halt 500, user.errors.values.join("\n")
+      halt 422, user.errors.values.join("\n")
     end
 
     begin
