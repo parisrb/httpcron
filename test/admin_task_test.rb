@@ -1,13 +1,13 @@
 require_relative 'helper'
 
-describe 'admin task' do
+describe 'task edition' do
 
   def app
     HTTPCronApi
   end
 
   before do
-     digest_authorize 'httpcronadmin', 'httpcronadmin'
+    authorize_admin
   end
 
   it 'has no task by default' do
@@ -21,17 +21,29 @@ describe 'admin task' do
 
   it 'can create a task' do
     database.transaction do
-      post '/tasks', 'user_id' => 1, 'name' => 'test', 'url' => 'http://example.com', 'cron' => '0 0 1 1 *'
+      create_valid_task
       last_response.status.must_equal 200
-      last_response.json_body['id'].must_equal 1
+      last_response_id.must_equal 1
+      raise(Sequel::Rollback)
+    end
+  end
+
+  it 'can edit a task' do
+    database.transaction do
+      create_valid_task
+      task_id = last_response_id
+      put "/tasks/#{task_id}", 'name' => 'test2'
+      last_response.status.must_equal 200
+      last_response_id.must_equal 1
+      last_response.json_body['name'].must_equal 'test2'
       raise(Sequel::Rollback)
     end
   end
 
   it 'can delete a task' do
     database.transaction do
-      post '/tasks', 'user_id' => 1, 'name' => 'test', 'url' => 'http://example.com', 'cron' => '0 0 1 1 *'
-      delete "/tasks/#{last_response.json_body['id']}"
+      create_valid_task
+      delete "/tasks/#{last_response_id}"
       last_response.status.must_equal 200
       raise(Sequel::Rollback)
     end
@@ -39,35 +51,54 @@ describe 'admin task' do
 
   it 'can fetch a task' do
     database.transaction do
-      post '/tasks', 'name' => 'test', 'url' => 'http://example.com', 'cron' => '0 0 1 1 *'
-      post '/tasks', 'name' => 'test', 'url' => 'http://example.com', 'cron' => '0 0 1 1 *'
-      post '/tasks', 'name' => 'test', 'url' => 'http://example.com', 'cron' => '0 0 1 1 *'
-      post '/tasks', 'name' => 'test', 'url' => 'http://example.com', 'cron' => '0 0 1 1 *'
-      post '/tasks', 'name' => 'test', 'url' => 'http://example.com', 'cron' => '0 0 1 1 *'
-      post '/tasks', 'name' => 'test', 'url' => 'http://example.com', 'cron' => '0 0 1 1 *'
-      post '/tasks', 'name' => 'test', 'url' => 'http://example.com', 'cron' => '0 0 1 1 *'
-      post '/tasks', 'name' => 'test', 'url' => 'http://example.com', 'cron' => '0 0 1 1 *'
-      get "/tasks/4"
+      create_valid_task
+      create_valid_task
+      create_valid_task
+      last_id = last_response_id
+
+      get "/tasks/#{last_id}"
       last_response.status.must_equal 200
-      last_response.json_body['id'].must_equal 4
+      last_response_id.must_equal last_id
       raise(Sequel::Rollback)
     end
   end
 
   it 'requires a name' do
     database.transaction do
-      post '/tasks', 'user_id' => 1, 'url' => 'http://example.com', 'cron' => '0 0 1 1 *'
+
+      post '/tasks', 'url' => 'http://example.com', 'cron' => '0 0 1 1 *'
       last_response.status.must_equal 422
       last_response.body.must_equal 'No [name] parameter'
+
+      post '/tasks', 'url' => 'http://example.com', 'cron' => '0 0 1 1 *', 'name' => ''
+      last_response.status.must_equal 422
+      last_response.body.must_equal 'Parameter [name] is blank'
+
+      create_valid_task
+      put "/tasks/#{last_response_id}", 'name' => ''
+      last_response.status.must_equal 422
+      last_response.body.must_equal 'Parameter [name] is blank'
+
       raise(Sequel::Rollback)
     end
   end
 
   it 'requires an url' do
     database.transaction do
-      post '/tasks', 'user_id' => 1, 'name' => 'test', 'cron' => '0 0 1 1 *'
+
+      post '/tasks', 'name' => 'test', 'cron' => '0 0 1 1 *'
       last_response.status.must_equal 422
       last_response.body.must_equal 'No [url] parameter'
+
+      post '/tasks', 'name' => 'test', 'cron' => '0 0 1 1 *', 'url' => ''
+      last_response.status.must_equal 422
+      last_response.body.must_equal 'Parameter [url] is blank'
+
+      create_valid_task
+      put "/tasks/#{last_response_id}", 'url' => ''
+      last_response.status.must_equal 422
+      last_response.body.must_equal 'Parameter [url] is blank'
+
       raise(Sequel::Rollback)
     end
   end
@@ -76,7 +107,12 @@ describe 'admin task' do
     database.transaction do
 
       buggy_url = 'http:|?example.com'
-      post '/tasks', 'user_id' => 1, 'name' => 'test', 'url' => buggy_url, 'cron' => '0 0 1 1 *'
+      post '/tasks', 'name' => 'test', 'url' => buggy_url, 'cron' => '0 0 1 1 *'
+      last_response.status.must_equal 422
+      last_response.body.must_equal "[#{buggy_url}] is not a valid url"
+
+      create_valid_task
+      put "/tasks/#{last_response_id}", 'url' => buggy_url
       last_response.status.must_equal 422
       last_response.body.must_equal "[#{buggy_url}] is not a valid url"
 
@@ -87,9 +123,18 @@ describe 'admin task' do
   it 'requires a cron' do
     database.transaction do
 
-      post '/tasks', 'user_id' => 1, 'name' => 'test', 'url' => 'http://example.com'
+      post '/tasks', 'name' => 'test', 'url' => 'http://example.com'
       last_response.status.must_equal 422
       last_response.body.must_equal 'No [cron] parameter'
+
+      post '/tasks', 'name' => 'test', 'url' => 'http://example.com', 'cron' => ''
+      last_response.status.must_equal 422
+      last_response.body.must_equal 'Parameter [cron] is blank'
+
+      create_valid_task
+      put "/tasks/#{last_response_id}", 'cron' => ''
+      last_response.status.must_equal 422
+      last_response.body.must_equal 'Parameter [cron] is blank'
 
       raise(Sequel::Rollback)
     end
@@ -98,9 +143,14 @@ describe 'admin task' do
   it 'requires a valid cron' do
     database.transaction do
 
-      post '/tasks', 'user_id' => 1, 'name' => 'test', 'url' => 'http://example.com', 'cron' => 'wft ??'
+      post '/tasks', 'name' => 'test', 'url' => 'http://example.com', 'cron' => 'wtf ??'
       last_response.status.must_equal 422
-      last_response.body.must_equal "[wft ??] is not a valid cron expression"
+      last_response.body.must_equal "[wtf ??] is not a valid cron expression"
+
+      create_valid_task
+      put "/tasks/#{last_response_id}", 'cron' => 'wtf ??'
+      last_response.status.must_equal 422
+      last_response.body.must_equal "[wtf ??] is not a valid cron expression"
 
       raise(Sequel::Rollback)
     end
@@ -109,7 +159,7 @@ describe 'admin task' do
   it 'calculates the next execution' do
     database.transaction do
 
-      post '/tasks', 'user_id' => 1, 'name' => 'test', 'url' => 'http://example.com', 'cron' => '0 0 1 1 *'
+      post '/tasks', 'name' => 'test', 'url' => 'http://example.com', 'cron' => '0 0 1 1 *'
       last_response.status.must_equal 200
       last_response.json_body['next_execution'].wont_be_nil
 
@@ -120,15 +170,20 @@ describe 'admin task' do
   it 'can specify a timezone' do
     database.transaction do
 
-      post '/tasks', 'user_id' => 1, 'name' => 'test', 'url' => 'http://example.com', 'cron' => '0 0 1 1 *'
+      post '/tasks', 'name' => 'test', 'url' => 'http://example.com', 'cron' => '0 0 1 1 *'
       last_response.status.must_equal 200
       last_response.json_body['timezone'].must_equal HttpCronConfig.server_timezone
 
-      post '/tasks', 'user_id' => 1, 'name' => 'test', 'url' => 'http://example.com', 'cron' => '0 0 1 1 *', 'timezone' => 'Atlantic/Bermuda'
+      post '/tasks', 'name' => 'test', 'url' => 'http://example.com', 'cron' => '0 0 1 1 *', 'timezone' => 'Atlantic/Bermuda'
       last_response.status.must_equal 200
       last_response.json_body['timezone'].must_equal 'Atlantic/Bermuda'
 
-      post '/tasks', 'user_id' => 1, 'name' => 'test', 'url' => 'http://example.com', 'cron' => '0 0 1 1 *', 'timezone' => 'Mordor'
+      post '/tasks', 'name' => 'test', 'url' => 'http://example.com', 'cron' => '0 0 1 1 *', 'timezone' => 'Mordor'
+      last_response.status.must_equal 422
+      last_response.body.must_equal '[Mordor] is not a valid timezone'
+
+      create_valid_task
+      put "/tasks/#{last_response_id}", 'timezone' => 'Mordor'
       last_response.status.must_equal 422
       last_response.body.must_equal '[Mordor] is not a valid timezone'
 
@@ -139,15 +194,15 @@ describe 'admin task' do
   it 'can specify if task is enabled' do
     database.transaction do
 
-      post '/tasks', 'user_id' => 1, 'name' => 'test', 'url' => 'http://example.com', 'cron' => '0 0 1 1 *'
+      post '/tasks', 'name' => 'test', 'url' => 'http://example.com', 'cron' => '0 0 1 1 *'
       last_response.status.must_equal 200
       last_response.json_body['enabled'].must_equal true
 
-      post '/tasks', 'user_id' => 1, 'name' => 'test', 'url' => 'http://example.com', 'cron' => '0 0 1 1 *', 'enabled' => true
+      post '/tasks', 'name' => 'test', 'url' => 'http://example.com', 'cron' => '0 0 1 1 *', 'enabled' => true
       last_response.status.must_equal 200
       last_response.json_body['enabled'].must_equal true
 
-      post '/tasks', 'user_id' => 1, 'name' => 'test', 'url' => 'http://example.com', 'cron' => '0 0 1 1 *', 'enabled' => false
+      post '/tasks', 'name' => 'test', 'url' => 'http://example.com', 'cron' => '0 0 1 1 *', 'enabled' => false
       last_response.status.must_equal 200
       last_response.json_body['enabled'].must_equal false
 
@@ -158,20 +213,136 @@ describe 'admin task' do
   it 'can specify a timeout' do
     database.transaction do
 
-      post '/tasks', 'user_id' => 1, 'name' => 'test', 'url' => 'http://example.com', 'cron' => '0 0 1 1 *'
+      post '/tasks', 'name' => 'test', 'url' => 'http://example.com', 'cron' => '0 0 1 1 *'
       last_response.status.must_equal 200
       last_response.json_body['timeout'].must_equal HttpCronConfig.default_timeout
 
-      post '/tasks', 'user_id' => 1, 'name' => 'test', 'url' => 'http://example.com', 'cron' => '0 0 1 1 *', 'timeout' => 13
+      post '/tasks', 'name' => 'test', 'url' => 'http://example.com', 'cron' => '0 0 1 1 *', 'timeout' => 13
       last_response.status.must_equal 200
       last_response.json_body['timeout'].must_equal 13
 
-      post '/tasks', 'user_id' => 1, 'name' => 'test', 'url' => 'http://example.com', 'cron' => '0 0 1 1 *', 'timeout' => 50000
+      post '/tasks', 'name' => 'test', 'url' => 'http://example.com', 'cron' => '0 0 1 1 *', 'timeout' => 50000
       last_response.status.must_equal 422
       last_response.body.must_equal 'Timeout [50000] can\'t be higher than 300'
+
+      post '/tasks', 'name' => 'test', 'url' => 'http://example.com', 'cron' => '0 0 1 1 *', 'timeout' => 'wtf ??'
+      last_response.status.must_equal 422
+      last_response.body.must_equal '[wtf ??] is not a valid timeout'
+
+      post '/tasks', 'name' => 'test', 'url' => 'http://example.com', 'cron' => '0 0 1 1 *', 'timeout' => -200
+      last_response.status.must_equal 422
+      last_response.body.must_equal 'timeout [-200] should be > 0'
+
+      create_valid_task
+      task_id =  last_response_id
+
+      put "/tasks/#{task_id}", 'timeout' => 50000
+      last_response.status.must_equal 422
+      last_response.body.must_equal 'Timeout [50000] can\'t be higher than 300'
+
+      put "/tasks/#{task_id}", 'timeout' => 'wtf ??'
+      last_response.status.must_equal 422
+      last_response.body.must_equal '[wtf ??] is not a valid timeout'
+
+      put "/tasks/#{task_id}", 'timeout' => -200
+      last_response.status.must_equal 422
+      last_response.body.must_equal 'timeout [-200] should be > 0'
 
       raise(Sequel::Rollback)
     end
   end
+
+end
+
+describe 'task access rights' do
+
+  def app
+    HTTPCronApi
+  end
+
+  before do
+    authorize_admin
+  end
+
+  it 'admin can see tasks of other users' do
+    database.transaction do
+      create_non_admin_user_authenticate
+      create_valid_task
+      task_id = last_response_id
+      authorize_admin
+      get "/tasks/#{task_id}"
+      last_response.status.must_equal 200
+      raise(Sequel::Rollback)
+    end
+  end
+
+  it 'non admin user can\'t see tasks of other users' do
+    database.transaction do
+      create_valid_task
+      task_id = last_response_id
+      create_non_admin_user_authenticate
+      get "/tasks/#{task_id}"
+      last_response.status.must_equal 403
+      raise(Sequel::Rollback)
+    end
+  end
+
+  it 'only the user tasks are listed' do
+    database.transaction do
+      create_valid_task
+      create_non_admin_user_authenticate
+      get '/tasks'
+      last_response.status.must_equal 200
+      last_response.json_body['total'].must_equal 0
+      raise(Sequel::Rollback)
+    end
+  end
+
+  it 'can only delete its own tasks' do
+    database.transaction do
+      create_valid_task
+      task_id = last_response_id
+      create_non_admin_user_authenticate
+      delete "/tasks/#{task_id}"
+      last_response.status.must_equal 403
+      raise(Sequel::Rollback)
+    end
+  end
+
+  it 'admin can delete all tasks' do
+    database.transaction do
+      create_non_admin_user_authenticate
+      create_valid_task
+      task_id = last_response_id
+      authorize_admin
+      delete "/tasks/#{task_id}"
+      last_response.status.must_equal 200
+      raise(Sequel::Rollback)
+    end
+  end
+
+  it 'can only edit its own tasks' do
+    database.transaction do
+      create_valid_task
+      task_id = last_response_id
+      create_non_admin_user_authenticate
+      put "/tasks/#{task_id}"
+      last_response.status.must_equal 403
+      raise(Sequel::Rollback)
+    end
+  end
+
+  it 'admin can edit all tasks' do
+    database.transaction do
+      create_non_admin_user_authenticate
+      create_valid_task
+      task_id = last_response_id
+      authorize_admin
+      put "/tasks/#{task_id}"
+      last_response.status.must_equal 200
+      raise(Sequel::Rollback)
+    end
+  end
+
 
 end

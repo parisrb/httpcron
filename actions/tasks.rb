@@ -26,6 +26,12 @@ class HTTPCronApi < Sinatra::Base
     check_parameter_for_blank :name, :url, :cron
 
     if params[:timeout]
+      begin
+        Kernel.Integer(params[:timeout])
+      rescue
+        halt 422, "[#{params[:timeout]}] is not a valid timeout"
+      end
+
       if (timeout = params[:timeout].to_i) > HttpCronConfig.max_timeout
         halt 422, "Timeout [#{timeout}] can't be higher than #{HttpCronConfig.max_timeout}"
       end
@@ -59,20 +65,30 @@ class HTTPCronApi < Sinatra::Base
   put '/tasks/:id' do |id|
     task = task_if_allowed(id)
 
-    check_parameter_for_blank :name, :url, :cron
-
     if params[:timeout]
-      if (timeout = params[:timeout].to_i) > HttpCronConfig.max_timeout
-        halt 422, "Timeout [#{timeout}] can't be higher than #{HttpCronConfig.max_timeout}"
+      timeout = params[:timeout]
+      begin
+        Kernel.Integer(timeout)
+      rescue
+        halt 422, "[#{timeout}] is not a valid timeout"
       end
-    else
-      timeout = HttpCronConfig.default_timeout
+
+      if (timeout = timeout.to_i) > HttpCronConfig.max_timeout
+        halt 422, "Timeout [#{timeout}] can't be higher than #{HttpCronConfig.max_timeout}"
+      else
+        task.timeout = timeout
+      end
     end
 
-    [:name, :url, :cron, :enabled].each do |s|
-      task[s] = params[s]
+    [:name, :url, :cron, :enabled, :timezone].each do |s|
+      if params[s]
+        if params[s].blank?
+          halt 422, "Parameter [#{s}] is blank"
+        else
+          task[s] = params[s]
+        end
+      end
     end
-    task[:timeout] = timeout
 
     unless task.valid?
       halt 422, task.errors.values.join("\n")

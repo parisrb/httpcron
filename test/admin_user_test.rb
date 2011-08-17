@@ -7,7 +7,7 @@ describe 'user basics' do
   end
 
   before do
-    digest_authorize 'httpcronadmin', 'httpcronadmin'
+    authorize_admin
   end
 
   it 'has default user' do
@@ -82,7 +82,7 @@ describe 'user creation' do
   it 'can delete a user' do
     database.transaction do
       post '/users', 'username' => 'testuser', 'password' => 'testpassword'
-      user_id = last_response.json_body['id']
+      user_id = last_response_id
       delete "/users/#{user_id}"
       last_response.status.must_equal 200
       raise(Sequel::Rollback)
@@ -104,11 +104,8 @@ describe 'access rights' do
   it 'cannot access other users' do
     database.transaction do
       get '/users/current'
-      id_admin = last_response.json_body['id']
-
-      post '/users', 'username' => 'testuser', 'password' => 'testpassword'
-      id_user = last_response.json_body['id']
-      digest_authorize 'testuser', 'testpassword'
+      id_admin = last_response_id
+      id_user = create_non_admin_user_authenticate
 
       get '/users'
       last_response.status.must_equal 403

@@ -111,6 +111,16 @@ class Task < Sequel::Model
   def validate
     super
     validates_presence [:name, :url, :timeout, :cron, :user_id, :timezone]
+
+    unless errors.on('timeout')
+      validates_integer :timeout
+      unless errors.on('timeout')
+        if Kernel.Integer(self.timeout.to_s) <= 0
+          errors.add('timeout', "timeout [#{self.timeout.to_s}] should be > 0")
+        end
+      end
+    end
+
     begin
       URI.parse self.url
     rescue URI::InvalidURIError
