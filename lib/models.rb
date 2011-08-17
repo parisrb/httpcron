@@ -74,16 +74,11 @@ class User < Sequel::Model
   one_to_many :tasks
   one_to_many :executions, :through => :tasks
 
+  add_association_dependencies :tasks => :delete
+
   def before_validation
     super
     self.timezone ||= HttpCronConfig.server_timezone
-  end
-
-  def before_destroy
-    super
-    tasks = Task.filter(:user => self)
-    Execution.filter(:task => tasks).delete
-    tasks.delete
   end
 
   def validate
@@ -148,6 +143,21 @@ class Task < Sequel::Model
     if self.enabled
       recalculate_cron
     end
+  end
+
+  def after_create
+    super
+    notify_create_task self
+  end
+
+  def after_update
+    super
+    notify_update_task self
+  end
+
+  def after_destroy
+    super
+    notify_delete_task self
   end
 
   def recalculate_cron from = Time.now

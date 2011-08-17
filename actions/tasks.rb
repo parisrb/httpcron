@@ -57,7 +57,6 @@ class HTTPCronApi < Sinatra::Base
       halt 500, e.message
     end
 
-    notify_create_task task
     content_type :json
     task.to_json
   end
@@ -100,8 +99,6 @@ class HTTPCronApi < Sinatra::Base
       halt 500, e.message
     end
 
-    notify_update_task task
-
     content_type :json
     task.to_json
   end
@@ -113,7 +110,6 @@ class HTTPCronApi < Sinatra::Base
     rescue Exception => e
       halt 500, e.message
     end
-    notify_delete_task task
     content_type :json
     halt 200
   end
