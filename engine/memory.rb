@@ -87,7 +87,9 @@ end
 def setup_next_execution task
   wait_time = (task.next_execution - DateTime.now) * SECONDS_IN_A_DAY
   p "Setting new timeout: will wait #{wait_time.round} seconds"
-  EventMachine::Timer.new(wait_time) { start_task task }
+  EventMachine.next_tick do
+    EventMachine::Timer.new(wait_time) { start_task task }
+  end
 end
 
 Thread.start do

@@ -97,7 +97,9 @@ def set_next_execution next_execution
   @@next_execution = next_execution
   p "Setting new timeout at #{next_execution} in #{wait_time.to_s} seconds"
   @@timer.cancel if @@timer
-  @@timer = EventMachine::Timer.new(wait_time + 1) { wakeup }
+  EventMachine.next_tick do
+    @@timer = EventMachine::Timer.new(wait_time + 1) { wakeup }
+  end
 end
 
 # Trigger the pending tasks
@@ -121,7 +123,9 @@ def wakeup
     end
   else
     p "No task, just waiting"
-    @@timer = EventMachine::Timer.new(300) { wakeup } unless @@timer
+    EventMachine.next_tick do
+      @@timer = EventMachine::Timer.new(300) { wakeup } unless @@timer
+    end
   end
 end
 
