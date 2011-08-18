@@ -25,13 +25,13 @@ SB.PaneView = SC.View.extend(SB.ToggleViewSupport, {
     return this.get('name') + '-pane';
   }.property('name').cacheable(),
 
-  append: function() {
+  show: function() {
     var currentPane = SB.PaneView.currentPane;
     if (currentPane && currentPane.get('state') === 'inDOM') {
       currentPane.hide();
     }
     if (this.get('state') === 'inDOM') {
-      this.show();
+      this._super();
     } else {
       this.appendTo(this.get('rootElement')); 
     }

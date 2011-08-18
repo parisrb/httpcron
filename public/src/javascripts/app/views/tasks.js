@@ -11,8 +11,12 @@ HttpCron.TasksCollection = SC.CollectionView.extend({
   tagName: 'ul',
   classNames: ['tasks-list', 'list'],
   itemViewClass: SC.View.extend({
+    classNameBindings: ['content.isCommiting'],
     doubleClick: function() {
-      this.get('content').edit();
+      var content = this.get('content')
+      if (content.get('isNotEditing')) {
+        content.edit();
+      }
     },
     mouseEnter: function() {
       this.$('.show-task button').show();
@@ -33,4 +37,14 @@ HttpCron.NewTaskView = SC.View.extend(SB.ToggleViewSupport, {
   contentBinding: 'HttpCron.NewTask',
   isVisibleBinding: 'content.isVisible',
   toggleMethod: 'slideToggle'
+});
+
+HttpCron.TextField = SC.TextField.extend({
+  attributeBindings: ['disabled'],
+  disabledBinding: 'content.isCommiting'
+});
+
+HttpCron.Checkbox = SC.Checkbox.extend({
+  attributeBindings: ['disabled'],
+  disabledBinding: 'content.isCommiting'
 });

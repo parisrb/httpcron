@@ -17,11 +17,13 @@ SB.PaginatedArray = SC.ArrayProxy.extend({
   isLoading: false,
   didRequireRange: SC.K,
 
-  reset: function() {
+  reset: function(init) {
     this.set('offset', 0);
     this.set('total', 0);
     this.set('content', []);
-    this._didRequireRange(this.limit, 0);
+    if (init) {
+      this._didRequireRange(this.limit, 0);
+    }
   },
 
   reload: function() {

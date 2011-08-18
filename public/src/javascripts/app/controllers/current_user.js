@@ -11,16 +11,18 @@ HttpCron.CurrentUser = SB.CurrentUser.create({
   url: '/api/authenticate',
 
   didLoggedIn: function() {
-    HttpCron.TasksPaneView.append();
+    HttpCron.TasksPaneView.show();
     HttpCron.TasksList.fetch();
   },
 
   didLoggedOut: function() {
-    HttpCron.LoginPaneView.append();
+    // FIXME : find out why we have DOM insertion error here
+    //HttpCron.TasksList.reset();
+    HttpCron.LoginPaneView.show();
   },
 
   loginError: function() {
-    HttpCron.LoginPaneView.append();
+    HttpCron.LoginPaneView.show();
   },
 
   setCredentials: function(username, password) {

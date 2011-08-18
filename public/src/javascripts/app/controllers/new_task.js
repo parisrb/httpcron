@@ -12,6 +12,8 @@ HttpCron.NewTask = SC.Object.create({
   urlBinding: '*editedObject.formattedUrl',
   enabledBinding: '*editedObject.enabled',
 
+  isErrorBinding: '*editedObject.isError',
+
   editedObject: null,
 
   isVisible: false,
@@ -43,9 +45,12 @@ HttpCron.NewTask = SC.Object.create({
     HttpCron.TasksList.unshiftObject(task);
     this.toggle();
     this.set('isCommiting', false);
+    this.set('isError', false);
   },
 
-  _createTaskError: function() {
+  _createTaskError: function(xhr) {
     this.set('isCommiting', false);
+    this.set('isError', true);
+    this.set('errorMessage', xhr.responseText);
   }
 });

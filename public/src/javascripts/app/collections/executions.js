@@ -9,7 +9,7 @@ HttpCron.ExecutionsList = SB.PaginatedArray.create({
   limit: 50,
   fetch: function(task) {
     this.set('task', task);
-    this.reset();
+    this.reset(true);
   },
   didRequireRange: function(limit, offset) {
     var record = this.get('task');

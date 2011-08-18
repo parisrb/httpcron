@@ -86,6 +86,9 @@ header {
 
 .tasks-list {
   li {
+    &.is-commiting {
+      background:#ccc;
+    }
     .content, .fields {
       float:left;
     }
@@ -148,4 +151,12 @@ header {
     max-height:200px;
     overflow:auto;
   }
+}
+
+.error {
+  border:1px solid red;
+  padding:3px;
+  background:#ccc;
+  border-radius:3px;
+  margin-bottom:5px;
 }

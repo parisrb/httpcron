@@ -11,10 +11,13 @@
 
 {{#view HttpCron.NewTaskView}}
   <div class="fields">
-    {{view SC.TextField valueBinding="content.name" placeholder="Name..."}}
-    {{view SC.TextField valueBinding="content.cron" placeholder="Cron line..."}}
-    {{view SC.TextField type="url" valueBinding="content.url" placeholder="URL..."}}
-    {{view SC.Checkbox title="Enabled" valueBinding="content.enabled"}}
+    {{#view SC.View isVisibleBinding="content.isError" messageBinding="content.errorMessage"}}
+      <div class="error">{{message}}</div>
+    {{/view}}
+    {{view HttpCron.TextField valueBinding="content.name" placeholder="Name..."}}
+    {{view HttpCron.TextField valueBinding="content.cron" placeholder="Cron line..."}}
+    {{view HttpCron.TextField type="url" valueBinding="content.url" placeholder="URL..."}}
+    {{view HttpCron.Checkbox title="Enabled" valueBinding="content.enabled"}}
   </div>
   <div class="buttons">
     {{view JUI.Button label="Cancel" targetBinding="content" action="toggle"}}
@@ -35,10 +38,13 @@
   {{/view}}
   {{#view classNames="edit-task" isVisibleBinding="content.isEditing" contentBinding="content"}}
     <div class="fields">
-      {{view SC.TextField valueBinding="content.name" placeholder="Name..."}}
-      {{view SC.TextField valueBinding="content.cron" placeholder="Cron line..."}}
-      {{view SC.TextField type="url" valueBinding="content.formattedUrl" placeholder="URL..."}}
-      {{view SC.Checkbox title="Enabled" valueBinding="content.enabled"}}
+      {{#view SC.View isVisibleBinding="content.isError" messageBinding="content.errorMessage"}}
+        <div class="error">{{message}}</div>
+      {{/view}}
+      {{view HttpCron.TextField valueBinding="content.name" placeholder="Name..."}}
+      {{view HttpCron.TextField valueBinding="content.cron" placeholder="Cron line..."}}
+      {{view HttpCron.TextField type="url" valueBinding="content.formattedUrl" placeholder="URL..."}}
+      {{view HttpCron.Checkbox title="Enabled" valueBinding="content.enabled"}}
     </div>
     <div class="buttons">
       {{view JUI.Button label="Update" targetBinding="content" action="update"}}

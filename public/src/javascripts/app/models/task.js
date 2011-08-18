@@ -38,6 +38,7 @@ HttpCron.Task = SC.Object.extend({
   isEditing: false,
   isNotEditingBinding: SC.Binding.not('isEditing'),
   isCommiting: false,
+  isError: false,
 
   // Actions
   toggle: function() {
@@ -47,7 +48,7 @@ HttpCron.Task = SC.Object.extend({
   },
 
   logs: function() {
-    HttpCron.ExecutionsPaneView.append();
+    HttpCron.ExecutionsPaneView.show();
     HttpCron.ExecutionsList.fetch(this);
   },
 
@@ -56,6 +57,7 @@ HttpCron.Task = SC.Object.extend({
   },
 
   cancel: function() {
+    this.set('isError', false);
     this.setProperties(this._undo);
     this.toggle();
   },
@@ -90,20 +92,27 @@ HttpCron.Task = SC.Object.extend({
   _updateTaskSuccess: function(data) {
     this.setProperties(data);
     this.set('isCommiting', false);
+    this.set('isError', false);
     this.toggle();
   },
 
-  _updateTaskError: function() {
+  _updateTaskError: function(xhr) {
     this.set('isCommiting', false);
+    this.set('isError', true);
+    this.set('errorMessage', xhr.responseText);
   },
 
   _destroyTaskSuccess: function() {
     HttpCron.TasksList.removeObject(this);
     this.set('isCommiting', false);
+    this.set('isError', false);
   },
 
-  _destroyTaskError: function() {
+  _destroyTaskError: function(xhr) {
     this.set('isCommiting', false);
+    this.set('isError', true);
+    this.set('errorMessage', xhr.responseText);
+    console.log(xhr);
   }
 });
 

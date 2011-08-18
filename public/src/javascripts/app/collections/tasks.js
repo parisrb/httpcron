@@ -9,7 +9,7 @@ HttpCron.TasksList = SB.PaginatedArray.create({
   isLoading: true,
   limit: 7,
   fetch: function() {
-    this.reset();
+    this.reset(true);
   },
   didRequireRange: function(limit, offset) {
     this._super();
