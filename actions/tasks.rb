@@ -127,7 +127,7 @@ class HTTPCronApi < Sinatra::Base
     end
   end
 
-  TASKS_LIST_ORDER_FIELDS = [:id, :name, :url, :timeout, :enabled, :cron, :timezone, :next_execution, :created_at]
+  TASKS_LIST_ORDER_FIELDS = [:id, :name, :url, :timeout, :enabled, :cron, :timezone, :next_execution, :created_at, :updated_at]
   TASKS_LIST_ORDER_REGEX = create_order_regex(TASKS_LIST_ORDER_FIELDS)
 
   def tasks_for_user user

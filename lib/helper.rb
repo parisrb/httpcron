@@ -33,15 +33,17 @@ class HTTPCronApi < Sinatra::Base
     Regexp.new "\\A(#{fields.join('|')})(\\.asc|\\.desc|)\\z"
   end
 
-  # Apply the parameters used in list requests to a dataset
+  # Apply the parameters used in list requests to a dataset and return the result
+  # dataset:: the dataset to add the parameters to
+  # order_fields:: the list of fileds that can be used to order the data
+  # order_regex:: the regex created by #create_order_regex from the order_fields
   def apply_list_params dataset, order_fields, order_regex
-    # .order(:id.desc).paginate(@offset, @limit)
     if params[:limit]
       limit = params[:limit].to_i
       if limit <= 0
-        halt 422, "Limit is [#{limit}] but shouldn't be <= 0"
+        halt 400, "Limit is [#{limit}] but shouldn't be <= 0"
       elsif limit > HttpCronConfig.max_pagination_limit
-        halt 422, "Limit is [#{limit}] but should be <= #{HttpCronConfig.max_pagination_limit}"
+        halt 400, "Limit is [#{limit}] but should be <= #{HttpCronConfig.max_pagination_limit}"
       end
     else
       limit = 100
@@ -50,7 +52,7 @@ class HTTPCronApi < Sinatra::Base
     if params[:offset]
       offset = params[:offset].to_i
       if offset < 0
-        halt 422, "Offset is [#{offset}] but shouldn't be < 0"
+        halt 400, "Offset is [#{offset}] but shouldn't be < 0"
       end
       offset += 1
     else
@@ -59,7 +61,7 @@ class HTTPCronApi < Sinatra::Base
 
     if params[:order]
       unless v = order_regex.match(params[:order])
-        halt 422, "[#{params[:order]}] order parameter is invalid, allowed fields are [#{order_fields.join(',')}], allowed directions are [asc,desc]"
+        halt 400, "[#{params[:order]}] order parameter is invalid, allowed fields are [#{order_fields.join(',')}], allowed directions are [asc,desc]"
         return
       else
         order = "#{v[1]} #{v[2].blank? ? 'desc' : v[2]}"
