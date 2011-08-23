@@ -26,7 +26,7 @@ class HTTPCronApi < Sinatra::Base
   end
 
   def execution_if_allowed id
-    execution = Execution.find(id)
+    execution = Execution[id]
     if !execution
       halt 404, "Execution [#{id}] not found"
     elsif (execution.user != current_user) && (!current_user.admin)

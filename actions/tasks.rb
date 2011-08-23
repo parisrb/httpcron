@@ -14,7 +14,7 @@ class HTTPCronApi < Sinatra::Base
   get '/tasks/user/:id' do |id|
     check_admin
 
-    user = User.find(id)
+    user = User[id]
     unless user
       halt 404, "User [#{id}] not found"
     end

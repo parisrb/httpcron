@@ -63,6 +63,51 @@ class HTTPCronApi < Sinatra::Base
     user.to_json
   end
 
+  put '/users/:id' do |id|
+    if (id != current_user.id) && (!current_user.admin)
+      halt 403, "User [#{id}] is not allowed to you"
+    end
+
+    if params[:username] && (!params[:password])
+      halt 400, 'Can\'t change the username without changing the password'
+    end
+
+    user = User[id]
+    unless user
+      halt 404, "User [#{id}] not found"
+    end
+
+    [:username, :password, :timezone].each do |p|
+      if params[p]
+        if params[p].blank?
+          halt 422, "Parameter [#{p}] is blank"
+        else
+          user[p] = params[p]
+        end
+      end
+    end
+
+    if params[:admin]
+      if !current_user.admin
+        halt 403, "Only admins can change the admin status"
+      end
+      user.admin = params[:admin]
+    end
+
+    unless user.valid?
+      halt 422, user.errors.values.join("\n")
+    end
+
+    begin
+      user.save
+    rescue Exception => e
+      halt 500, e.message
+    end
+
+    content_type :json
+    user.to_json
+  end
+
   delete '/users/:id' do |id|
     check_admin || current_user.id == id
     user = User[id]
