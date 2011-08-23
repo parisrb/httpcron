@@ -12,7 +12,7 @@ class HTTPCronApi < Sinatra::Base
     end
   end
 
-  USERS_LIST_ORDER_FIELDS = [:id, :username, :admin, :timezone, :created_at]
+  USERS_LIST_ORDER_FIELDS = [:id, :username, :admin, :timezone, :created_at, :updated_at]
   USERS_LIST_ORDER_REGEX = create_order_regex(USERS_LIST_ORDER_FIELDS)
 
   get '/users' do
