@@ -33,9 +33,11 @@ class HTTPCronApi < Sinatra::Base
     Regexp.new "\\A(#{fields.join('|')})(\\.asc|\\.desc|)\\z"
   end
 
-  # Apply the parameters used in list requests to a dataset
+  # Apply the parameters used in list requests to a dataset and return the result
+  # dataset:: the dataset to add the parameters to
+  # order_fields:: the list of fileds that can be used to order the data
+  # order_regex:: the regex created by #create_order_regex from the order_fields
   def apply_list_params dataset, order_fields, order_regex
-    # .order(:id.desc).paginate(@offset, @limit)
     if params[:limit]
       limit = params[:limit].to_i
       if limit <= 0

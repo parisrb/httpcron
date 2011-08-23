@@ -15,7 +15,7 @@ class HTTPCronApi < Sinatra::Base
   USERS_LIST_ORDER_FIELDS = [:id, :username, :admin, :timezone, :created_at]
   USERS_LIST_ORDER_REGEX = create_order_regex(USERS_LIST_ORDER_FIELDS)
 
-  get '/users' do
+  get '/users/?' do
     check_admin
     apply_list_params(User, USERS_LIST_ORDER_FIELDS, USERS_LIST_ORDER_REGEX)
   end

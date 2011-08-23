@@ -41,7 +41,7 @@ describe 'user creation' do
   end
 
   before do
-    digest_authorize 'httpcronadmin', 'httpcronadmin'
+    authorize_admin
   end
 
   it 'can create user' do
