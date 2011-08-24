@@ -1,8 +1,9 @@
-= httpcron is a ruby application to cron http requests
+= httpcron is a ruby server to cron http requests
 
 - administration can be done using a REST API or a webapp
 - http requests use asyncronous IO enabling a very low resource usage
 - storage use sequel[http://sequel.rubyforge.org/] so most of popular SQL database are supported
+- code is kept simple to be easily adapted
 
 = Causes:
 
@@ -38,8 +39,8 @@ All methods returning a list of data are paginated thus the results looks like:
 
 Pagination parameters:
 
-- limit the max number of records to return, default and max value is 100#
-- offset index of the first item to be returned
+- <tt>limit<tt> the page size aka the max number of records to return, default and max value is 100#
+- <tt>page</tt> index of the page to return
 
 === Ordering
 
