@@ -55,13 +55,13 @@ class HTTPCronApi < Sinatra::Base
       halt 403, "User [#{id}] is not allowed to you"
     end
 
-    if params[:username] && (!params[:password])
-      halt 400, 'Can\'t change the username without changing the password'
-    end
-
     user = User[id]
     unless user
       halt 404, "User [#{id}] not found"
+    end
+
+    if params[:username] && (params[:username] != user.username) && (!params[:password])
+      halt 400, 'Can\'t change the username without changing the password'
     end
 
     [:username, :password, :timezone].each do |p|

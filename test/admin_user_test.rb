@@ -134,6 +134,9 @@ describe 'user edition' do
       last_response.status.must_equal 200
       user_id = last_response_id
 
+      put "/users/#{user_id}", 'username' => 'testuser'
+      last_response.status.must_equal 200
+
       put "/users/#{user_id}", 'username' => 'testuser2'
       last_response.status.must_equal 400
       last_response.body.must_equal 'Can\'t change the username without changing the password'
