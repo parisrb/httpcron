@@ -160,6 +160,12 @@ describe 'user edition' do
       get '/users/current'
       last_response.status.must_equal 200
 
+      put "/users/#{user_id}", 'admin' => 'false'
+      last_response.status.must_equal 200
+
+      put "/users/#{user_id}", 'admin' => 'true'
+      last_response.status.must_equal 403
+
       raise(Sequel::Rollback)
     end
   end

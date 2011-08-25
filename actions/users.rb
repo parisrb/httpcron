@@ -74,7 +74,7 @@ class HTTPCronApi < Sinatra::Base
       end
     end
 
-    if params[:admin]
+    if params[:admin] && (params[:admin] != user.admin.to_s)
       if !current_user.admin
         halt 403, "Only admins can change the admin status"
       end
