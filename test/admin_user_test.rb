@@ -102,6 +102,85 @@ describe 'user creation' do
 
 end
 
+describe 'user edition' do
+
+  def app
+    HTTPCronApi
+  end
+
+  before do
+    authorize_admin
+  end
+
+  it 'can edit user' do
+    database.transaction do
+
+      post '/users', 'username' => 'testuser', 'password' => 'testpassword'
+      last_response.status.must_equal 200
+      user_id = last_response_id
+
+      put "/users/#{user_id}", 'username' => 'testuser2', 'password' => 'testpassword'
+      last_response.status.must_equal 200
+      last_response.json_body['username'].must_equal 'testuser2'
+
+      raise(Sequel::Rollback)
+    end
+  end
+
+  it 'requires a password when changing the username' do
+    database.transaction do
+
+      post '/users', 'username' => 'testuser', 'password' => 'testpassword'
+      last_response.status.must_equal 200
+      user_id = last_response_id
+
+      put "/users/#{user_id}", 'username' => 'testuser2'
+      last_response.status.must_equal 400
+      last_response.body.must_equal 'Can\'t change the username without changing the password'
+
+      raise(Sequel::Rollback)
+    end
+  end
+
+  it 'can edit it\s own user' do
+    database.transaction do
+
+      create_non_admin_user_authenticate
+      last_response.status.must_equal 200
+      user_id = last_response_id
+
+      put "/users/#{user_id}", 'username' => 'testuser2', 'password' => 'testpassword'
+      last_response.status.must_equal 200
+      last_response.json_body['username'].must_equal 'testuser2'
+
+      get '/users/current'
+      last_response.status.must_equal 401
+
+      digest_authorize 'testuser2', 'testpassword'
+      get '/users/current'
+      last_response.status.must_equal 200
+
+      raise(Sequel::Rollback)
+    end
+  end
+
+  it 'cannot edit other users if not admin' do
+    database.transaction do
+
+      get '/users/current'
+      user_id = last_response_id
+      create_non_admin_user_authenticate
+
+      put "/users/#{user_id}", 'username' => 'testuser2', 'password' => 'testpassword'
+      last_response.status.must_equal 403
+      last_response.body.must_equal "User [#{user_id}] is not allowed to you"
+
+      raise(Sequel::Rollback)
+    end
+  end
+
+end
+
 describe 'access rights' do
 
   def app

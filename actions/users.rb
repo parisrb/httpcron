@@ -12,9 +12,6 @@ class HTTPCronApi < Sinatra::Base
     end
   end
 
-  USERS_LIST_ORDER_FIELDS = [:id, :username, :admin, :timezone, :created_at, :updated_at]
-  USERS_LIST_ORDER_REGEX = create_order_regex(USERS_LIST_ORDER_FIELDS)
-
   get '/users/?' do
     check_admin
     apply_list_params(User, USERS_LIST_ORDER_FIELDS, USERS_LIST_ORDER_REGEX)
@@ -25,7 +22,7 @@ class HTTPCronApi < Sinatra::Base
     current_user.to_json
   end
 
-  get '/users/:id' do |id|
+  get /\/users\/(\d+)/ do |id|
     check_admin
     if current_user.id != id
       user = User[id]
@@ -49,21 +46,11 @@ class HTTPCronApi < Sinatra::Base
                     :timezone => (params[:timezone] || HttpCronConfig.server_timezone),
                     :password => params[:password])
 
-    unless user.valid?
-      halt 422, user.errors.values.join("\n")
-    end
-
-    begin
-      user.save
-    rescue Exception => e
-      halt 500, e.message
-    end
-
-    content_type :json
-    user.to_json
+    save_user user
   end
 
-  put '/users/:id' do |id|
+  put /\/users\/(\d+)/ do |id|
+    id = id.to_i
     if (id != current_user.id) && (!current_user.admin)
       halt 403, "User [#{id}] is not allowed to you"
     end
@@ -94,21 +81,10 @@ class HTTPCronApi < Sinatra::Base
       user.admin = params[:admin]
     end
 
-    unless user.valid?
-      halt 422, user.errors.values.join("\n")
-    end
-
-    begin
-      user.save
-    rescue Exception => e
-      halt 500, e.message
-    end
-
-    content_type :json
-    user.to_json
+    save_user user
   end
 
-  delete '/users/:id' do |id|
+  delete /\/users\/(\d+)/ do |id|
     check_admin || current_user.id == id
     user = User[id]
     unless user
@@ -137,5 +113,25 @@ class HTTPCronApi < Sinatra::Base
     app.opaque = '1hj540cdui23j43l3578nkm8634ruso5443lmg'
     app
   end
+
+  private
+
+  def save_user(user)
+    unless user.valid?
+      halt 422, user.errors.values.join("\n")
+    end
+
+    begin
+      user.save
+    rescue Exception => e
+      halt 500, e.message
+    end
+
+    content_type :json
+    user.to_json
+  end
+
+  USERS_LIST_ORDER_FIELDS = [:id, :username, :admin, :timezone, :created_at, :updated_at]
+  USERS_LIST_ORDER_REGEX = create_order_regex(USERS_LIST_ORDER_FIELDS)
 
 end

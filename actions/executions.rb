@@ -1,6 +1,6 @@
 class HTTPCronApi < Sinatra::Base
 
-  get '/executions/:id' do |id|
+  get /\/executions\/(\d+)/ do |id|
     execution = execution_if_allowed(id)
     content_type :json
     execution.to_json
@@ -9,12 +9,12 @@ class HTTPCronApi < Sinatra::Base
   EXECUTIONS_LIST_ORDER_FIELDS = [:id, :status, :run_at, :duration]
   EXECUTIONS_LIST_ORDER_REGEX = create_order_regex(EXECUTIONS_LIST_ORDER_FIELDS)
 
-  get '/executions/task/:id' do |id|
+  get /\/executions\/task\/(\d+)/ do |id|
     task = task_if_allowed(id)
     apply_list_params(Execution.filter(:task => task), EXECUTIONS_LIST_ORDER_FIELDS, EXECUTIONS_LIST_ORDER_REGEX)
   end
 
-  delete '/executions/:id' do |id|
+  delete /\/executions\/(\d+)/ do |id|
     execution = execution_if_allowed(id)
 
     begin

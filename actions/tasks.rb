@@ -4,14 +4,14 @@ class HTTPCronApi < Sinatra::Base
     tasks_for_user current_user
   end
 
-  get '/tasks/:id' do |id|
+  get /\/tasks\/(\d+)/ do |id|
     task = task_if_allowed(id)
 
     content_type :json
     task.to_json
   end
 
-  get '/tasks/user/:id' do |id|
+  get /\/tasks\/users\/(\d+)/ do |id|
     check_admin
 
     user = User[id]
@@ -47,21 +47,10 @@ class HTTPCronApi < Sinatra::Base
                     :enabled => (params[:enabled] || true),
                     :timeout => timeout)
 
-    unless task.valid?
-      halt 422, task.errors.values.join("\n")
-    end
-
-    begin
-      task.save
-    rescue Exception => e
-      halt 500, e.message
-    end
-
-    content_type :json
-    task.to_json
+    save_task task
   end
 
-  put '/tasks/:id' do |id|
+  put /\/tasks\/(\d+)/ do |id|
     task = task_if_allowed(id)
 
     if params[:timeout]
@@ -89,23 +78,10 @@ class HTTPCronApi < Sinatra::Base
       end
     end
 
-    unless task.valid?
-      halt 422, task.errors.values.join("\n")
-    end
-
-    begin
-      task.save
-    rescue Exception => e
-      halt 500, e.message
-    end
-
-    notify_update_task task
-
-    content_type :json
-    task.to_json
+    save_task task
   end
 
-  delete '/tasks/:id' do |id|
+  delete /\/tasks\/(\d+)/ do |id|
     task = task_if_allowed(id)
     begin
       task.destroy
@@ -115,6 +91,8 @@ class HTTPCronApi < Sinatra::Base
     content_type :json
     halt 200
   end
+
+  private
 
   def task_if_allowed id
     task = Task[id]
@@ -132,6 +110,23 @@ class HTTPCronApi < Sinatra::Base
 
   def tasks_for_user user
     apply_list_params(Task.filter(:user => user), TASKS_LIST_ORDER_FIELDS, TASKS_LIST_ORDER_REGEX)
+  end
+
+  def save_task task
+    unless task.valid?
+      halt 422, task.errors.values.join("\n")
+    end
+
+    begin
+      task.save
+    rescue Exception => e
+      halt 500, e.message
+    end
+
+    notify_update_task task
+
+    content_type :json
+    task.to_json
   end
 
 end
