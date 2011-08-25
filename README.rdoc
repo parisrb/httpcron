@@ -1,5 +1,7 @@
 = httpcron is a ruby server to cron http requests
 
+- simple user managment
+- requests' executions are recorded
 - administration can be done using a REST API or a webapp
 - http requests use asyncronous IO enabling a very low resource usage
 - storage use sequel[http://sequel.rubyforge.org/] so most of popular SQL database are supported
