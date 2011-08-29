@@ -6,7 +6,7 @@ class HTTPCronApi < Sinatra::Base
     execution.to_json
   end
 
-  EXECUTIONS_LIST_ORDER_FIELDS = [:id, :status, :run_at, :duration]
+  EXECUTIONS_LIST_ORDER_FIELDS = [:id, :status, :start_at, :duration]
   EXECUTIONS_LIST_ORDER_REGEX = create_order_regex(EXECUTIONS_LIST_ORDER_FIELDS)
 
   get /\/executions\/task\/(\d+)/ do |id|
