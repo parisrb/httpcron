@@ -82,7 +82,7 @@ class HTTPCronApi < Sinatra::Base
 
 end
 
-# mokey patch Rack to work with xhr digest
+# Monkey patch Rack to work with xhr digest
 
 module Rack
   module Auth
