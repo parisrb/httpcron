@@ -72,6 +72,14 @@ class HTTPCronApi < Sinatra::Base
     @current_user = user
   end
 
+  get '/config' do
+    content_type :json
+    {:server_timezone => HttpCronConfig.server_timezone,
+     :default_timeout => HttpCronConfig.default_timeout,
+     :max_timeout => HttpCronConfig.max_timeout,
+     :max_pagination_limit => HttpCronConfig.max_pagination_limit}.to_json
+  end
+
 end
 
 # mokey patch Rack to work with xhr digest

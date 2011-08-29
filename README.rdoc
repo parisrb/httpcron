@@ -149,3 +149,15 @@ Get the executions of the task with the corresponding id, non-admin users can on
 
 === delete /api/executions/:id
 Get the execution with the corresponding id, non-admin users can only delete the executions of their own tasks
+
+== Server config
+
+=== get /config
+Get some server config
+
+  {
+    "server_timezone": "UTC",
+    "default_timeout": 60,
+    "max_timeout": 300,
+    "max_pagination_limit": 100
+  }
