@@ -182,10 +182,6 @@ class Execution < Sequel::Model
     end
   end
 
-  def to_json(*a)
-    super(:except => :task_id)
-  end
-
 end
 
 if User.count == 0
