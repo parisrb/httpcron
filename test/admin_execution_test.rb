@@ -87,16 +87,16 @@ describe 'execution edition' do
       create_valid_execution task_id, 200
       create_valid_execution task_id, 404
 
-      get "/executions/user/current"
+      get '/executions/user/current'
       last_response.status.must_equal 200
       last_response.json_body['records'].length.must_equal 2
 
-      get "/executions/user/current/success"
+      get '/executions/user/current/success'
       last_response.status.must_equal 200
       last_response.json_body['records'].length.must_equal 1
       last_response.json_body['records'][0]['status'].must_equal 200
 
-      get "/executions/user/current/failure"
+      get '/executions/user/current/failure'
       last_response.status.must_equal 200
       last_response.json_body['records'].length.must_equal 1
       last_response.json_body['records'][0]['status'].must_equal 404
