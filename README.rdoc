@@ -147,8 +147,33 @@ Get the execution with the corresponding id, non-admin users can only access the
 === get /api/executions/task/:id
 Get the executions of the task with the corresponding id, non-admin users can only access the executions of their own tasks
 
+=== get /api/executions/task/:id/failure
+Get the failed executions of the task with the corresponding id, non-admin users can only access the executions of their own tasks
+
+=== get /api/executions/task/:id/success
+Get the successful executions of the task with the corresponding id, non-admin users can only access the executions of their own tasks
+
+=== get /api/executions/user/:id
+Get the executions of the tasks owned by the current user
+
+=== get /api/executions/user/:id/failure
+Get the failed executions of the tasks owned by the current user
+
+=== get /api/executions/user/current/success
+Get the successful executions of the tasks owned by the current user
+
+=== get /api/executions/user/:id
+Get the executions of the tasks owned by the user with the corresponding id, non-admin users can only access the executions of their own tasks
+
+=== get /api/executions/user/:id/failure
+Get the failed executions of the tasks owned by the user with the corresponding id, non-admin users can only access the executions of their own tasks
+
+=== get /api/executions/user/:id/success
+Get the successful executions of the tasks owned by the user with the corresponding id, non-admin users can only access the executions of their own tasks
+
 === delete /api/executions/:id
 Get the execution with the corresponding id, non-admin users can only delete the executions of their own tasks
+
 
 == Server config
 

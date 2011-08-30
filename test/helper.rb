@@ -33,6 +33,14 @@ def create_valid_task
   post '/tasks', 'name' => 'test', 'url' => 'http://example.com', 'cron' => '0 0 1 1 *'
 end
 
+def create_valid_execution task_id, status = 200
+  Execution.create(:task_id => task_id,
+                   :status => status,
+                   :start_at => DateTime.now,
+                   :duration => 2,
+                   :response => '')
+end
+
 def last_response_id
   last_response.json_body['id']
 end
