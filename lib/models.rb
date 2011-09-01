@@ -160,7 +160,7 @@ class Task < Sequel::Model
   end
 
   def to_json(*a)
-    self.enabled ? super(:except => :user_id) : super(:except => [:user_id, :next_execution])
+    self.enabled ? super : super(:except => :next_execution)
   end
 
   def to_s
