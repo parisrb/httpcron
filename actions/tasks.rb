@@ -11,7 +11,7 @@ class HTTPCronApi < Sinatra::Base
     task.to_json
   end
 
-  get /\/tasks\/users\/(\d+)/ do |id|
+  get /\/tasks\/user\/(\d+)/ do |id|
     check_admin
 
     user = User[id]
