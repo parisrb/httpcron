@@ -79,10 +79,10 @@ class HTTPCronApi < Sinatra::Base
     params_names.each do |param_name|
       if params[param_name]
         if params[param_name].blank?
-          halt 422, "Parameter [#{param_name}] is blank"
+          halt 422, "#{param_name} is blank"
         end
       else
-        halt 422, "No [#{param_name}] parameter"
+        halt 422, "#{param_name} is missing"
       end
     end
   end

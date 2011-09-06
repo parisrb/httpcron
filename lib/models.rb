@@ -8,7 +8,7 @@ Sequel::Model.plugin :json_serializer, :naked => true
 Sequel::Model.plugin :association_dependencies
 Sequel.extension :pagination
 
-max_timezone_length = TZInfo::Timezone.all_identifiers.max { |t1, t2| t1.length <=> t2.length }.length
+MAX_TIMEZONE_LENGTH = TZInfo::Timezone.all_identifiers.max { |t1, t2| t1.length <=> t2.length }.length
 
 migration 'create tables tasks/users/executions' do
 
@@ -17,7 +17,7 @@ migration 'create tables tasks/users/executions' do
 
     String :username, :size => 250, :null => false, :index => true, :unique => true
     Boolean :admin, :null => false, :default => false
-    String :timezone, :size => max_timezone_length, :null => false
+    String :timezone, :size => MAX_TIMEZONE_LENGTH, :null => false
     String :password, :null => false
 
     DateTime :created_at, :null => false
@@ -35,7 +35,7 @@ migration 'create tables tasks/users/executions' do
     boolean :enabled, :null => false, :index => true, :default => true
 
     String :cron, :size => 50, :null => false
-    String :timezone, :size => max_timezone_length, :null => false
+    String :timezone, :size => MAX_TIMEZONE_LENGTH, :null => false
     DateTime :next_execution, :null => false
 
     DateTime :created_at, :null => false
@@ -60,7 +60,7 @@ module ModelWithTimezone
       TZInfo::Timezone.get(self.timezone)
       true
     rescue TZInfo::InvalidTimezoneIdentifier
-      errors.add('timezone', "[#{self.timezone}] is not a valid timezone")
+      errors.add('timezone', "[#{self.timezone}] is invalid")
       false
     end
   end
@@ -86,6 +86,8 @@ class User < Sequel::Model
     validates_presence [:username, :timezone]
     validates_unique :username
     validate_timezone
+    validates_max_length 250, :username
+    validates_max_length MAX_TIMEZONE_LENGTH, :timezone
   end
 
   def to_json(*a)
@@ -111,7 +113,7 @@ class Task < Sequel::Model
       validates_integer :timeout
       unless errors.on('timeout')
         if Kernel.Integer(self.timeout.to_s) <= 0
-          errors.add('timeout', "timeout [#{self.timeout.to_s}] should be > 0")
+          errors.add('timeout', "[#{self.timeout.to_s}] should be > 0")
         end
       end
     end
@@ -119,16 +121,21 @@ class Task < Sequel::Model
     begin
       URI.parse self.url
     rescue URI::InvalidURIError
-      errors.add('url', "[#{self.url}] is not a valid url")
+      errors.add('url', "[#{self.url}] is invalid")
     end
     if validate_timezone
       # don't validate the cron expression if the timezone is wrong
       begin
         recalculate_cron
       rescue ArgumentError
-        errors.add('cron', "[#{self.cron}] is not a valid cron expression")
+        errors.add('cron', "[#{self.cron}] is invalid")
       end
     end
+
+    validates_max_length 250, :name
+    validates_max_length 255, :url
+    validates_max_length 50, :cron
+    validates_max_length MAX_TIMEZONE_LENGTH, :timezone
   end
 
   def before_create

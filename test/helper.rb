@@ -44,3 +44,7 @@ end
 def last_response_id
   last_response.json_body['id']
 end
+
+def create_string length
+  Array.new(length, 'a').join
+end

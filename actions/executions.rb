@@ -79,9 +79,9 @@ class HTTPCronApi < Sinatra::Base
   def execution_if_allowed id
     execution = Execution[id]
     if !execution
-      halt 404, "Execution [#{id}] not found"
+      halt 404, "execution [#{id}] not found"
     elsif (execution.task.user != current_user) && (!current_user.admin)
-      halt 403, "Execution [#{id}] is not allowed to you"
+      halt 403, "execution [#{id}] is not allowed to you"
     else
       execution
     end

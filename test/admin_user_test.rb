@@ -67,7 +67,7 @@ describe 'user creation' do
       post '/users', 'username' => 'testuser', 'password' => 'testpassword'
       post '/users', 'username' => 'testuser', 'password' => 'testpassword'
       last_response.status.must_equal 422
-      last_response.body.must_equal 'is already taken'
+      last_response.body.must_equal 'username is already taken'
       raise(Sequel::Rollback)
     end
   end
@@ -76,7 +76,16 @@ describe 'user creation' do
     database.transaction do
       post '/users', 'password' => 'testpassword'
       last_response.status.must_equal 422
-      last_response.body.must_equal 'No [username] parameter'
+      last_response.body.must_equal 'username is missing'
+      raise(Sequel::Rollback)
+    end
+  end
+
+  it 'requires a not too long username' do
+    database.transaction do
+      post '/users', 'username' => create_string(255), 'password' => 'testpassword'
+      last_response.status.must_equal 422
+      last_response.body.must_equal 'username is longer than 250 characters'
       raise(Sequel::Rollback)
     end
   end
@@ -85,7 +94,7 @@ describe 'user creation' do
     database.transaction do
       post '/users', 'username' => 'testuser'
       last_response.status.must_equal 422
-      last_response.body.must_equal 'No [password] parameter'
+      last_response.body.must_equal 'password is missing'
       raise(Sequel::Rollback)
     end
   end
@@ -139,7 +148,7 @@ describe 'user edition' do
 
       put "/users/#{user_id}", 'username' => 'testuser2'
       last_response.status.must_equal 400
-      last_response.body.must_equal 'Can\'t change the username without changing the password'
+      last_response.body.must_equal 'can\'t change the username without changing the password'
 
       raise(Sequel::Rollback)
     end
@@ -182,7 +191,7 @@ describe 'user edition' do
 
       put "/users/#{user_id}", 'username' => 'testuser2', 'password' => 'testpassword'
       last_response.status.must_equal 403
-      last_response.body.must_equal "User [#{user_id}] is not allowed to you"
+      last_response.body.must_equal "user [#{user_id}] is not allowed to you"
 
       raise(Sequel::Rollback)
     end

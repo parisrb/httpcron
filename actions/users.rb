@@ -27,7 +27,7 @@ class HTTPCronApi < Sinatra::Base
     if current_user.id != id
       user = User[id]
       unless user
-        halt 404, "User [#{id}] does not exist"
+        halt 404, "user [#{id}] does not exist"
       end
       content_type :json
       user.to_json
@@ -52,22 +52,22 @@ class HTTPCronApi < Sinatra::Base
   put /\/users\/(\d+)/ do |id|
     id = id.to_i
     if (id != current_user.id) && (!current_user.admin)
-      halt 403, "User [#{id}] is not allowed to you"
+      halt 403, "user [#{id}] is not allowed to you"
     end
 
     user = User[id]
     unless user
-      halt 404, "User [#{id}] not found"
+      halt 404, "user [#{id}] not found"
     end
 
     if params[:username] && (params[:username] != user.username) && (!params[:password])
-      halt 400, 'Can\'t change the username without changing the password'
+      halt 400, 'can\'t change the username without changing the password'
     end
 
     [:username, :password, :timezone].each do |p|
       if params[p]
         if params[p].blank?
-          halt 422, "Parameter [#{p}] is blank"
+          halt 422, "#{p} is blank"
         else
           user[p] = params[p]
         end
@@ -76,7 +76,7 @@ class HTTPCronApi < Sinatra::Base
 
     if params[:admin] && (params[:admin] != user.admin.to_s)
       if !current_user.admin
-        halt 403, "Only admins can change the admin status"
+        halt 403, 'only admins can change the admin status'
       end
       user.admin = params[:admin]
     end
@@ -88,7 +88,7 @@ class HTTPCronApi < Sinatra::Base
     check_admin || current_user.id == id
     user = User[id]
     unless user
-      halt 404, "User [#{id}] does not exist"
+      halt 404, "user [#{id}] does not exist"
     end
     begin
       user.destroy
@@ -109,7 +109,7 @@ class HTTPCronApi < Sinatra::Base
       user = User.filter(:username => username).first
       user.password if user
     end
-    app.realm = 'CromagnonApi'
+    app.realm = 'httpcron'
     app.opaque = '1hj540cdui23j43l3578nkm8634ruso5443lmg'
     app
   end
@@ -118,7 +118,7 @@ class HTTPCronApi < Sinatra::Base
 
   def save_user(user)
     unless user.valid?
-      halt 422, user.errors.values.join("\n")
+      halt 422, user.errors.full_messages.join("\n")
     end
 
     begin
