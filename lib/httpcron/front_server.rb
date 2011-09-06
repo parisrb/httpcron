@@ -14,11 +14,15 @@ module HTTPCron
     register Sinatra::AssetPack
 
     assets do
+      serve '/js',     from: 'app/js'
+      serve '/css',     from: 'app/css'
+
       js :application, '/js/application.js', [
         '/js/vendor/jquery.js',
         '/js/vendor/jquery-ui.js',
         '/js/vendor/sproutcore.js',
         '/js/vendor/sproutcore-jui.js',
+        '/js/vendor/bricks/toggle_view.js',
         '/js/vendor/**/*.js',
         '/js/app/main.js',
         '/js/app/**/*.js'

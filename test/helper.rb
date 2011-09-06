@@ -1,7 +1,7 @@
 ENV['RACK_ENV'] = 'test'
 ENV['ENGINE'] = 'none'
 
-require_relative '../httpcron'
+require_relative '../lib/httpcron'
 require 'test/unit'
 require 'rack/test'
 require 'minitest/spec'
