@@ -39,13 +39,14 @@ class HTTPCronApi < Sinatra::Base
       timeout = HttpCronConfig.default_timeout
     end
 
-    task = Task.new(:user => current_user,
-                    :name => params[:name],
-                    :url => params[:url],
-                    :cron => params[:cron],
-                    :timezone => (params[:timezone] || current_user.timezone),
-                    :enabled => (params[:enabled] || true),
-                    :timeout => timeout)
+    task = Task.new
+    task.user = current_user
+    task.name = params[:name]
+    task.url = params[:url]
+    task.cron = params[:cron]
+    task.timezone = params[:timezone] || current_user.timezone
+    task.enabled = params[:enabled] || true
+    task.timeout = timeout
 
     save_task task
   end
@@ -76,6 +77,10 @@ class HTTPCronApi < Sinatra::Base
           task[s] = params[s]
         end
       end
+    end
+
+    unless params.has_key? :enabled
+      task.enabled = true
     end
 
     save_task task

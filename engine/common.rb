@@ -11,7 +11,7 @@ def reschedule_tasks
 
   database.transaction do
     Task.filter('enabled = ? and next_execution <= ?', true, DateTime.now).each do |task|
-      task.recalculate_cron(from)
+      task.next_execution = task.calculate_next_execution(from)
       task.save
       count += 1
     end

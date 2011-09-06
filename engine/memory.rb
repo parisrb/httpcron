@@ -47,9 +47,10 @@ def end_task http, content, start, task
                    :started_at => start,
                    :duration => (SECONDS_IN_A_DAY * (DateTime.now - start)).to_i,
                    :response => response_content(http, content))
+
   from = Time.now
   from += 60 - from.sec
-  task.recalculate_cron(from)
+  task.next_execution = task.calculate_next_execution(from)
   task.save
 
   @@tasks[task.id] = setup_next_execution task

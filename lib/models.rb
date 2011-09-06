@@ -36,7 +36,7 @@ migration 'create tables tasks/users/executions' do
 
     String :cron, :size => 50, :null => false
     String :timezone, :size => MAX_TIMEZONE_LENGTH, :null => false
-    DateTime :next_execution, :null => false
+    DateTime :next_execution, :null => true
 
     DateTime :created_at, :null => false
     DateTime :updated_at, :null => false
@@ -123,12 +123,19 @@ class Task < Sequel::Model
     rescue URI::InvalidURIError
       errors.add('url', "[#{self.url}] is invalid")
     end
+
     if validate_timezone
       # don't validate the cron expression if the timezone is wrong
-      begin
-        recalculate_cron
-      rescue ArgumentError
-        errors.add('cron', "[#{self.cron}] is invalid")
+
+      if changed_columns.include?(:cron) || changed_columns.include?(:timezone)
+        @cronline = nil
+
+        begin
+          cronline
+          self.next_execution = self.enabled ? calculate_next_execution : nil
+        rescue ArgumentError
+          errors.add('cron', "[#{self.cron}] is invalid")
+        end
       end
     end
 
@@ -136,20 +143,6 @@ class Task < Sequel::Model
     validates_max_length 255, :url
     validates_max_length 50, :cron
     validates_max_length MAX_TIMEZONE_LENGTH, :timezone
-  end
-
-  def before_create
-    super
-    unless self.next_execution
-      recalculate_cron
-    end
-  end
-
-  def before_update
-    super
-    if self.enabled
-      recalculate_cron
-    end
   end
 
   def after_create
@@ -162,16 +155,16 @@ class Task < Sequel::Model
     notify_delete_task self
   end
 
-  def recalculate_cron from = Time.now
-    self.next_execution = Rufus::CronLine.new("#{self.cron} #{self.timezone}").next_time(from)
+  def cronline
+    @cronline ||= Rufus::CronLine.new("#{self.cron} #{self.timezone}")
   end
 
-  def to_json(*a)
-    self.enabled ? super : super(:except => :next_execution)
+  def calculate_next_execution from = Time.now
+    cronline.next_time(from)
   end
 
   def to_s
-    "#{id}, name: [#{name}], user: #{user_id}, cron: [#{cron}], timezone: [#{timezone}], url [#{url}]"
+    "#{id}, name: [#{name}], user: #{user_id}, enabled: #{enabled}, cron: [#{cron}], timezone: [#{timezone}], url [#{url}]"
   end
 
 end
