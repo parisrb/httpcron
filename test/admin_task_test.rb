@@ -167,6 +167,17 @@ describe 'task edition' do
     end
   end
 
+  it 'no next execution when task is disabled' do
+    database.transaction do
+
+      post '/tasks', 'name' => 'test', 'url' => 'http://example.com', 'cron' => '0 0 1 1 *', 'enabled' => false
+      last_response.status.must_equal 200
+      last_response.json_body['next_execution'].must_equal nil
+
+      raise(Sequel::Rollback)
+    end
+  end
+
   it 'can specify a timezone' do
     database.transaction do
 
