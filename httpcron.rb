@@ -77,7 +77,9 @@ class HTTPCronApi < Sinatra::Base
     {:server_timezone => HttpCronConfig.server_timezone,
      :default_timeout => HttpCronConfig.default_timeout,
      :max_timeout => HttpCronConfig.max_timeout,
-     :max_pagination_limit => HttpCronConfig.max_pagination_limit}.to_json
+     :max_pagination_limit => HttpCronConfig.max_pagination_limit,
+     :valid_timezones => TZInfo::Timezone.all_identifiers.join(', ')
+    }.to_json
   end
 
 end
