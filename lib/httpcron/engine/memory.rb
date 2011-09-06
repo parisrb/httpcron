@@ -38,11 +38,11 @@ module HTTPCron
 
     @@tasks = {}
 
-# Called when a task as ended
-# http:: the http request
-# content:: the response' content
-# start:: starting date
-# task:: the corresponding task
+    # Called when a task as ended
+    # http:: the http request
+    # content:: the response' content
+    # start:: starting date
+    # task:: the corresponding task
     def self.end_task http, content, start, task
       p "Ending task #{task.id} [#{task.name}] : #{http.response_header.status}"
       Execution.create(:task => task,
@@ -59,7 +59,7 @@ module HTTPCron
       @@tasks[task.id] = setup_next_execution task
     end
 
-# Start a task
+    # Start a task
     def self.start_task task
       p "Start task #{task.id} [#{task.name}]"
       content = ""
@@ -78,7 +78,7 @@ module HTTPCron
       end
     end
 
-# Start all pending tasks
+    # Start all pending tasks
     def self.setup_tasks
       p "Start tasks"
       Task.filter('enabled = ?', true).order(:next_execution.asc).each do |t|
@@ -86,8 +86,8 @@ module HTTPCron
       end
     end
 
-# Setup the next execution
-# return the corresponding time
+    # Setup the next execution
+    # return the corresponding time
     def self.setup_next_execution task
       wait_time = (task.next_execution - DateTime.now) * SECONDS_IN_A_DAY
       p "Setting new timeout: will wait #{wait_time.round} seconds"

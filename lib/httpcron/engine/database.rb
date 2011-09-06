@@ -34,11 +34,11 @@ module HTTPCron
     @@next_execution = nil
     @@timer = nil
 
-# Called when a task as ended
-# http:: the http request
-# content:: the response' content
-# start:: starting date
-# task:: the corresponding task
+    # Called when a task as ended
+    # http:: the http request
+    # content:: the response' content
+    # start:: starting date
+    # task:: the corresponding task
     def self.end_task http, content, start, task
       p "Ending task #{task.id} [#{task.name}] : #{http.response_header.status}"
       Execution.create(:task => task,
@@ -56,7 +56,7 @@ module HTTPCron
       possibly_set_next_execution task.next_execution
     end
 
-# Start a task
+    # Start a task
     def self.start_task task
       unless @@running_tasks[task.id]
         p "Start task #{task.id} [#{task.name}]"
@@ -78,7 +78,7 @@ module HTTPCron
       end
     end
 
-# Start all pending tasks
+    # Start all pending tasks
     def self.start_tasks
       p "Start tasks"
       Task.filter('enabled = ? and next_execution <= ?', true, DateTime.now).each do |t|
@@ -88,7 +88,7 @@ module HTTPCron
       wakeup
     end
 
-# Update the next execution time of it is before the current one
+    # Update the next execution time of it is before the current one
     def self.possibly_set_next_execution next_execution
       p "Possibly update timeout"
       if (!@@next_execution) || (next_execution < @@next_execution)
@@ -96,7 +96,7 @@ module HTTPCron
       end
     end
 
-# Set the next execution time
+    # Set the next execution time
     def self.set_next_execution next_execution
       wait_time = ((next_execution - DateTime.now) * SECONDS_IN_A_DAY).to_i
       @@next_execution = next_execution
@@ -107,7 +107,7 @@ module HTTPCron
       end
     end
 
-# Trigger the pending tasks
+    # Trigger the pending tasks
     def self.wakeup
       @@next_execution = nil
       @@timer.cancel if @@timer
