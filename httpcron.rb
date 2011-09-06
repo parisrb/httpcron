@@ -11,10 +11,15 @@ require 'sequel/extensions/named_timezones'
 require 'rufus-scheduler'
 
 require 'slim'
+require 'sinatra/assetpack'
 
 module HTTPCron
-
 end
+
+require_relative 'config'
+
+Sequel.default_timezone = TZInfo::Timezone.get(HttpCronConfig.server_timezone)
+Sequel::Model.raise_on_save_failure = true
 
 require_relative 'lib/httpcron/config'
 

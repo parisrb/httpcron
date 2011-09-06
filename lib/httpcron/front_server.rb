@@ -2,8 +2,7 @@ module HTTPCron
 
   class FrontServer < Sinatra::Base
 
-    set :views, File.dirname(__FILE__) + '/views'
-    set :public, File.dirname(__FILE__) + '/public'
+    set :root, File.dirname(__FILE__)
     set :raise_errors, true
     set :dump_errors, true
 
@@ -12,24 +11,26 @@ module HTTPCron
       set :logging, true
     end
 
-    get '/' do
-      slim :index
+    register Sinatra::AssetPack
+
+    assets do
+      js :application, '/js/application.js', [
+        '/js/vendor/jquery.js',
+        '/js/vendor/jquery-ui.js',
+        '/js/vendor/sproutcore.js',
+        '/js/vendor/sproutcore-jui.js',
+        '/js/vendor/**/*.js',
+        '/js/app/main.js',
+        '/js/app/**/*.js'
+      ]
+
+      css :application, '/css/application.css', ['/css/style.css']
+
+      css_compression :sass
     end
 
-    helpers do
-      def javascript_incudes
-        html = ''
-        if development?
-          require 'yaml'
-          assets = YAML::load(File.read(File.dirname(__FILE__) + '/assets.yml'))
-          assets['javascripts']['application'].each do |file|
-            html += '<script src="'+file.gsub(/^public/, '')+'" type="text/javascript"></script>'
-          end
-        else
-          html = '<script src="assets/application.js" type="text/javascript"></script>'
-        end
-        html
-      end
+    get '/' do
+      slim :index
     end
 
   end
