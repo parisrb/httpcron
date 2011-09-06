@@ -47,7 +47,7 @@ migration 'create tables tasks/users/executions' do
     foreign_key :task_id, :tasks
 
     Integer :status, :null => false
-    DateTime :start_at, :null => false
+    DateTime :started_at, :null => false
     Integer :duration, :null => false
     String :response, :size => 5000, :null => true
   end
@@ -183,7 +183,7 @@ class Execution < Sequel::Model
 
   def validate
     super
-    validates_presence [:status, :duration, :start_at]
+    validates_presence [:status, :duration, :started_at]
     if self.response
       validates_max_length 5000, :response
     end

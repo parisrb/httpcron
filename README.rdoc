@@ -138,7 +138,7 @@ Get the execution with the corresponding id, non-admin users can only access the
   {
     "id":1,
     "status": 200,
-    "start_at": "2011-08-16T16:56:22+00:00",
+    "started_at": "2011-08-16T16:56:22+00:00",
     "url":"http://localhost:9292/",
     "duration": 3 // in seconds
     "response": "Ho-hai !" // limit to 5000

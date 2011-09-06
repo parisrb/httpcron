@@ -36,7 +36,7 @@ end
 def create_valid_execution task_id, status = 200
   Execution.create(:task_id => task_id,
                    :status => status,
-                   :start_at => DateTime.now,
+                   :started_at => DateTime.now,
                    :duration => 2,
                    :response => '')
 end

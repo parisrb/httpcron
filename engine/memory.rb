@@ -44,7 +44,7 @@ def end_task http, content, start, task
   p "Ending task #{task.id} [#{task.name}] : #{http.response_header.status}"
   Execution.create(:task => task,
                    :status => http.response_header.status,
-                   :start_at => start,
+                   :started_at => start,
                    :duration => (SECONDS_IN_A_DAY * (DateTime.now - start)).to_i,
                    :response => response_content(http, content))
   from = Time.now
