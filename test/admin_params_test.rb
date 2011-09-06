@@ -3,7 +3,7 @@ require_relative 'helper'
 describe 'params' do
 
   def app
-    HTTPCronApi
+    HTTPCron::ApiServer
   end
 
   before do
@@ -31,7 +31,7 @@ describe 'params' do
       last_response.status.must_equal 200
       last_response.json_body['records'].length.must_equal 2
 
-      get '/users', :limit => HttpCronConfig.max_pagination_limit + 1
+      get '/users', :limit => HTTPCron::Config.max_pagination_limit + 1
       last_response.status.must_equal 400
       last_response.body.must_equal 'Limit is [101] but should be <= 100'
 

@@ -3,7 +3,7 @@ require_relative 'helper'
 describe 'execution edition' do
 
   def app
-    HTTPCronApi
+    HTTPCron::ApiServer
   end
 
   before do

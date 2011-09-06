@@ -1,5 +1,5 @@
 # Access the configuration
-class HttpCronConfig
+class HTTPCron::Config
 
   # The server timezone
   def self.server_timezone

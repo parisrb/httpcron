@@ -3,7 +3,7 @@ require_relative 'helper'
 describe 'task edition' do
 
   def app
-    HTTPCronApi
+    HTTPCron::ApiServer
   end
 
   before do
@@ -183,7 +183,7 @@ describe 'task edition' do
 
       post '/tasks', 'name' => 'test', 'url' => 'http://example.com', 'cron' => '0 0 1 1 *'
       last_response.status.must_equal 200
-      last_response.json_body['timezone'].must_equal HttpCronConfig.server_timezone
+      last_response.json_body['timezone'].must_equal HTTPCron::Config.server_timezone
 
       post '/tasks', 'name' => 'test', 'url' => 'http://example.com', 'cron' => '0 0 1 1 *', 'timezone' => 'Atlantic/Bermuda'
       last_response.status.must_equal 200
@@ -226,7 +226,7 @@ describe 'task edition' do
 
       post '/tasks', 'name' => 'test', 'url' => 'http://example.com', 'cron' => '0 0 1 1 *'
       last_response.status.must_equal 200
-      last_response.json_body['timeout'].must_equal HttpCronConfig.default_timeout
+      last_response.json_body['timeout'].must_equal HTTPCron::Config.default_timeout
 
       post '/tasks', 'name' => 'test', 'url' => 'http://example.com', 'cron' => '0 0 1 1 *', 'timeout' => 13
       last_response.status.must_equal 200
@@ -278,7 +278,7 @@ end
 describe 'task access rights' do
 
   def app
-    HTTPCronApi
+    HTTPCron::ApiServer
   end
 
   before do

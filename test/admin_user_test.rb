@@ -3,7 +3,7 @@ require_relative 'helper'
 describe 'user basics' do
 
   def app
-    HTTPCronApi
+    HTTPCron::ApiServer
   end
 
   before do
@@ -37,7 +37,7 @@ end
 describe 'user creation' do
 
   def app
-    HTTPCronApi
+    HTTPCron::ApiServer
   end
 
   before do
@@ -114,7 +114,7 @@ end
 describe 'user edition' do
 
   def app
-    HTTPCronApi
+    HTTPCron::ApiServer
   end
 
   before do
@@ -202,7 +202,7 @@ end
 describe 'access rights' do
 
   def app
-    HTTPCronApi
+    HTTPCron::ApiServer
   end
 
   before do

@@ -34,7 +34,7 @@ def create_valid_task
 end
 
 def create_valid_execution task_id, status = 200
-  Execution.create(:task_id => task_id,
+  HTTPCron::Execution.create(:task_id => task_id,
                    :status => status,
                    :started_at => DateTime.now,
                    :duration => 2,
