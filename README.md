@@ -15,9 +15,9 @@
 # Fast Installation
 
 - install ruby 1.9.2
-- install the httpcron gem `gem install httpcron`
-- go to the target directory
-- create a `config.ru` file to setup the server:
+- install the httpcron gem: `gem install httpcron`
+- go to the directory where you want to install the server
+- create a `config.ru` file:
 
 ``` ruby
 # Setup the database url, see http://sequel.rubyforge.org/rdoc/files/doc/opening_databases_rdoc.html for details
@@ -39,7 +39,7 @@ run Rack::URLMap.new(
 
 - (optional) add other configuration items, see HTTPCron::Config
 - run `rackup -E production`
-- start your browser and go to `http://localhost:9292`
+- start your browser and go to [http://localhost:9292](http://localhost:9292)
 - the default login / password is `httpcronadmin` / `httpcronadmin`
 
 # API
