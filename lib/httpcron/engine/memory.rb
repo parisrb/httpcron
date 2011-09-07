@@ -37,22 +37,15 @@ module HTTPCron
 
     @@tasks = {}
 
-    # Called when a task as ended
+    # Called when a task has ended
     # http:: the http request
     # content:: the response' content
     # start:: starting date
     # task:: the corresponding task
     def self.end_task http, content, start, task
-      p "Ending task #{task.id} [#{task.name}] : #{http.response_header.status}"
-      Execution.create(:task => task,
-                       :status => http.response_header.status,
-                       :started_at => start,
-                       :duration => (SECONDS_IN_A_DAY * (DateTime.now - start)).to_i,
-                       :response => response_content(http, content))
+      task_ended http, content, start, task
 
-      from = Time.now
-      from += 60 - from.sec
-      task.next_execution = task.calculate_next_execution(from)
+      task.next_execution = task.calculate_next_execution(Time.now + 1)
       task.save
 
       @@tasks[task.id] = setup_next_execution task
@@ -60,19 +53,7 @@ module HTTPCron
 
     # Start a task
     def self.start_task task
-      p "Start task #{task.id} [#{task.name}]"
-      content = ""
-      start = DateTime.now
-      http = EventMachine::HttpRequest.new(task.url).get :redirects => 5, :timeout => task.timeout
-      http.stream do |chunk|
-        if content.length < 4000
-          content << chunk
-        end
-      end
-      http.callback do
-        end_task(http, content, start, task)
-      end
-      http.errback do
+      run_task(task) do |http, content, start|
         end_task(http, content, start, task)
       end
     end
