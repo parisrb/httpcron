@@ -17,7 +17,7 @@
 - install ruby 1.9.2
 - install the httpcron gem `gem install httpcron`
 - go to the target directory
-- create a `config.ru` file to setup the server
+- create a `config.ru` file to setup the server:
 
 ``` ruby
 # Setup the database url, see http://sequel.rubyforge.org/rdoc/files/doc/opening_databases_rdoc.html for details
@@ -39,8 +39,8 @@ run Rack::URLMap.new(
 
 - (optional) add other configuration items, see HTTPCron::Config
 - run `rackup -E production`
-- go to `http://localhost:9292`
-- the default login/password is `httpcronadmin`/`httpcronadmin`
+- start your browser and go to `http://localhost:9292`
+- the default login / password is `httpcronadmin` / `httpcronadmin`
 
 # API
 
@@ -70,7 +70,9 @@ Pagination parameters:
 
 By default API returning lists are sorted by id desc, to use another order use the `order` parameter, the syntax is
 
+```
     order=field_name[(.asc|.desc)]
+```
 
 where
 
@@ -112,7 +114,7 @@ Create a user, parameters:
 - `username` mandatory, max size 250, unique
 - `password` mandatory
 - `admin` optional, default to false
-- `timezone` optional, default to "UTC"#
+- `timezone` optional, default to "UTC" #
 
 ### delete /api/users/:id
 Delete the user with the corresponding id, admin users can delete anybody, non-adminc an only delete themselves. Deleting a user delete all his tasks.
