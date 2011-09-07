@@ -1,6 +1,3 @@
-require 'bundler'
-Bundler.setup
-
 require 'json'
 require 'logger'
 

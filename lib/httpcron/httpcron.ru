@@ -1,10 +1,11 @@
 ENV['DATABASE_URL'] ||= "sqlite://#{Dir.pwd}/httpcron.sqlite3"
 
-require './lib/httpcron'
+require File.join(File.dirname(__FILE__), '../httpcron')
 
 # Start the engine
 HTTPCron::Engine.start_engine
 
+# Start the server
 run Rack::URLMap.new(
         {
             "/" => HTTPCron::FrontServer,

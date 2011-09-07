@@ -2,7 +2,7 @@
 
 - simple user managment
 - requests' executions are recorded
-- administration can be done using a REST API or a webapp
+- administration can be done using a webapp, a REST API, or the httpcron-client[https://github.com/parisrb/httpcron-client] gem
 - http requests use asyncronous IO enabling a very low resource usage
 - storage use sequel[http://sequel.rubyforge.org/] so most of popular SQL database are supported
 - code is kept simple to be easily adapted
@@ -12,15 +12,31 @@
 - existing http cron capabilities of hosting providers are very limited
 - existing classic schedulers use threads and are not adapted to http requests and/or lack an admin part
 
-= Installation
+= Fast Installation
 
-- clone the repository
-- install the bundler gem if you don’t have it (<tt>gem install bundler</tt>)
-- define a DATABASE_URL environment variable to specify the database url path, see here[http://sequel.rubyforge.org/rdoc/files/doc/opening_databases_rdoc.html] for details, add the relevant database gem to the <tt>Gemfile</tt>
-- (optional) change the configuration by editing the /config.rb file
-- in the application directory run <tt>bundle install</tt>
-- in the application directory run <tt>rake assets:build</tt> to generate the optimiezd assets
-- in the application directory run <tt>rackup</tt>
+- install ruby 1.9.2
+- install the httpcron gem <tt>gem install httpcron</tt>
+- go to the target directory
+- create a <tt>config.ru</tt> file to setup the server
+
+  # Setup the database url, see http://sequel.rubyforge.org/rdoc/files/doc/opening_databases_rdoc.html for details
+  ENV['DATABASE_URL'] = "sqlite://#{Dir.pwd}/httpcron.sqlite3"
+
+  require 'httpcron'
+
+  # Start the engine
+  HTTPCron::Engine.start_engine
+
+  # Start the server
+  run Rack::URLMap.new(
+    {
+      "/" => HTTPCron::FrontServer,
+      "/api" => HTTPCron::ApiServer
+      }
+  )
+
+- (optional) add other configuration items, see HTTPCron::Config
+- run <tt>rackup -E production</tt>
 - go to <tt>http://localhost:9292</tt>
 - the default login/password is <tt>httpcronadmin</tt>/<tt>httpcronadmin</tt>
 
