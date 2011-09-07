@@ -19,20 +19,21 @@ module HTTPCron
 
       js :application, '/js/application.js',
          [
-             '/js/vendor/jquery.js',
-             '/js/vendor/jquery-ui.js',
-             '/js/vendor/sproutcore.js',
-             '/js/vendor/sproutcore-jui.js',
-             '/js/vendor/bricks/toggle_view.js',
-             '/js/vendor/**/*.js',
-             '/js/app/main.js',
-             '/js/app/**/*.js'
+            '/js/vendor/less.js',
+            '/js/vendor/jquery.js',
+            '/js/vendor/jquery-ui.js',
+            '/js/vendor/sproutcore.js',
+            '/js/vendor/sproutcore-jui.js',
+            '/js/vendor/bricks/toggle_view.js',
+            '/js/vendor/**/*.js',
+            '/js/app/main.js',
+            '/js/app/**/*.js'
          ]
 
       css :application, '/css/application.css',
           [
-              '/css/style.css',
-              '/css/boilerplate.css'
+            '/css/style.css',
+            '/css/boilerplate.css'
           ]
 
       css_compression :sass
