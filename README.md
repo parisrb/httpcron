@@ -4,7 +4,7 @@
 - requests' executions are recorded
 - administration can be done using a webapp, a REST API, or the [httpcron-client gem](https://github.com/parisrb/httpcron-client)
 - http requests use asynchronous IO enabling a very low resource usage
-- storage use [sequel](http://sequel.rubyforge.org/) so most of popular SQL database are supported
+- storage use [sequel](http://sequel.rubyforge.org/) so most of popular SQL databases are supported
 - code is kept simple to be easily adapted
 
 # Causes:
