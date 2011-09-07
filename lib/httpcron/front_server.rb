@@ -14,21 +14,26 @@ module HTTPCron
     register Sinatra::AssetPack
 
     assets do
-      serve '/js',     from: 'app/js'
-      serve '/css',     from: 'app/css'
+      serve '/js', from: 'assets/js'
+      serve '/css', from: 'assets/css'
 
-      js :application, '/js/application.js', [
-        '/js/vendor/jquery.js',
-        '/js/vendor/jquery-ui.js',
-        '/js/vendor/sproutcore.js',
-        '/js/vendor/sproutcore-jui.js',
-        '/js/vendor/bricks/toggle_view.js',
-        '/js/vendor/**/*.js',
-        '/js/app/main.js',
-        '/js/app/**/*.js'
-      ]
+      js :application, '/js/application.js',
+         [
+             '/js/vendor/jquery.js',
+             '/js/vendor/jquery-ui.js',
+             '/js/vendor/sproutcore.js',
+             '/js/vendor/sproutcore-jui.js',
+             '/js/vendor/bricks/toggle_view.js',
+             '/js/vendor/**/*.js',
+             '/js/app/main.js',
+             '/js/app/**/*.js'
+         ]
 
-      css :application, '/css/application.css', ['/css/style.css']
+      css :application, '/css/application.css',
+          [
+              '/css/style.css',
+              '/css/boilerplate.css'
+          ]
 
       css_compression :sass
     end

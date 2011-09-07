@@ -8,7 +8,6 @@ require_relative 'common'
 module HTTPCron
 
   module Engine
-    reschedule_tasks
 
     def self.notify_create_task task
       p "Create task #{task}"
@@ -96,12 +95,17 @@ module HTTPCron
       end
     end
 
-    Thread.start do
-      EventMachine.run do
-        begin
-          setup_tasks
-        rescue Exception => e
-          p e
+    # Start the engine
+    def self.start_engine
+      reschedule_tasks
+
+      Thread.start do
+        EventMachine.run do
+          begin
+            setup_tasks
+          rescue Exception => e
+            p e
+          end
         end
       end
     end

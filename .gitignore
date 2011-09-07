@@ -3,5 +3,5 @@
 *.sqlite3-journal
 *.db
 Gemfile.lock
-public/assets
+lib/httpcron/public
 .DS_Store

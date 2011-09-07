@@ -2,10 +2,12 @@ require 'bundler/setup'
 require 'rake'
 require 'rake/testtask'
 
-APP_FILE  = 'httpcron.rb'
-APP_CLASS = 'HTTPCron'
+APP_FILE  = 'lib/httpcron.rb'
+APP_CLASS = 'HTTPCron::FrontServer'
 
 require 'sinatra/assetpack/rake'
+require 'sinatra/assetpack'
+require 'sinatra'
 
 desc "Run all tests"
 Rake::TestTask.new do |t|

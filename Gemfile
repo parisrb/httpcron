@@ -8,7 +8,7 @@ gem 'tzinfo', '~> 0.3'
 gem 'slim', '~> 0.9'
 gem 'eventmachine', '1.0.0.beta.3'
 gem 'em-http-request', '1.0.0.beta.4', :require => 'em-http'
-gem 'sinatra-assetpack', :require => 'sinatra/assetpack'
+gem 'sinatra-assetpack', :require => 'sinatra/assetpack', :git => 'git://github.com/parisrb/sinatra-assetpack.git'
 
 group :test, :development do
   gem 'sqlite3'
