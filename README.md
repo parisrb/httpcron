@@ -2,7 +2,7 @@
 
 - simple user managment
 - requests' executions are recorded
-- administration can be done using a webapp, a REST API, or the [httpcron-client gem](https://github.com/parisrb/httpcron-client)
+- administration can be done using a webapp, a REST API or the [httpcron-client gem](https://github.com/parisrb/httpcron-client)
 - http requests use asynchronous IO enabling a very low resource usage
 - storage use [sequel](http://sequel.rubyforge.org/) so most of popular SQL databases are supported
 - code is kept simple to be easily adapted
@@ -45,7 +45,7 @@ run Rack::URLMap.new(
 # API
 
 - § indicates a method that requires admin rights
-- # indicates a value that can be configured in the /config.rb file
+- # indicates a value that can be configured in HTTPCron::Config
 
 The API use json data and require the digest authentication method, most http query tool should support it natively, example with curl:
 
