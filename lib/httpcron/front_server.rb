@@ -19,7 +19,6 @@ module HTTPCron
 
       js :application, '/js/application.js',
          [
-            '/js/vendor/less.js',
             '/js/vendor/jquery.js',
             '/js/vendor/jquery-ui.js',
             '/js/vendor/sproutcore.js',
@@ -32,8 +31,10 @@ module HTTPCron
 
       css :application, '/css/application.css',
           [
-            '/css/style.css',
-            '/css/boilerplate.css'
+            '/css/normalize.css',
+            '/css/jquery-ui.css',
+            '/css/aristo.css',
+            '/css/style.css'
           ]
 
       css_compression :sass
