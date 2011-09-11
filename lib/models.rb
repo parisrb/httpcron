@@ -19,6 +19,7 @@ migration 'create tables tasks/users/executions' do
     Boolean :admin, :null => false, :default => false
     String :timezone, :size => max_timezone_length, :null => false
     String :password, :null => false
+    String :email_address, :null => false, :index => true, :unique => true
 
     DateTime :created_at, :null => false
     DateTime :updated_at, :null => false
@@ -185,5 +186,5 @@ class Execution < Sequel::Model
 end
 
 if User.count == 0
-  User.create(:username => 'httpcronadmin', :admin => true, :password => 'httpcronadmin')
+  User.create(:username => 'httpcronadmin', :admin => true, :password => 'httpcronadmin', :email_address => HttpCronConfig.admin_email_address)
 end

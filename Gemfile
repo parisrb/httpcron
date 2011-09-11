@@ -5,9 +5,10 @@ gem 'sequel', '~> 3.25'
 gem 'sinatra-sequel', '~> 0.9', :require => 'sinatra/sequel'
 gem 'rufus-scheduler', '~> 2.0'
 gem 'tzinfo', '~> 0.3'
-gem 'slim', '~> 0.9'
+gem 'slim', '~> 1.0.2'
 gem 'eventmachine', '1.0.0.beta.3'
 gem 'em-http-request', '1.0.0.beta.4', :require => 'em-http'
+gem 'mail', '~> 2.3.0'
 
 group :test, :development do
   gem 'sqlite3'
@@ -17,5 +18,5 @@ group :test, :development do
   gem 'sass'
   gem 'compass'
   gem 'rack-test', :git => 'git://github.com/brynary/rack-test.git', :ref => '3bc79d37d21085c1ab13'
-  gem 'capybara-webkit', '~> 1.0.0.beta'
+  # gem 'capybara-webkit', '~> 1.0.0.beta'
 end

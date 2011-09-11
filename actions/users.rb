@@ -35,7 +35,14 @@ class HTTPCronApi < Sinatra::Base
       content_type :json
       current_user.to_json
     end
+  end
 
+  get /\/user\/password\/(.+)/ do |email_address|
+    user = User[:email_address => email_address]
+    unless user
+      halt 404, "No user found with email address [#{email_address}]"
+    end
+    send_password user
   end
 
   post '/users' do
@@ -129,6 +136,18 @@ class HTTPCronApi < Sinatra::Base
 
     content_type :json
     user.to_json
+  end
+
+  def send_password(user)
+    user_name = user.username
+    user_password = user.password
+    body = ERB.new(File.new('views/password_mail.erb').read).result(binding)
+    Mail.deliver do
+      from    HttpCronConfig.sender_email_address
+      to      user.email_address
+      subject 'Your httpcron password'
+      body    body
+    end
   end
 
   USERS_LIST_ORDER_FIELDS = [:id, :username, :admin, :timezone, :created_at, :updated_at]

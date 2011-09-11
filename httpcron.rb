@@ -12,10 +12,25 @@ require 'rufus-scheduler'
 
 require 'slim'
 
+require 'mail'
+require 'erb'
+
 require_relative 'config'
 
 Sequel.default_timezone = TZInfo::Timezone.get(HttpCronConfig.server_timezone)
 Sequel::Model.raise_on_save_failure = true
+
+Mail.defaults do
+  delivery_method :smtp, {
+    :address => HttpCronConfig.smtp_hostname,
+    :port => HttpCronConfig.smtp_port,
+    :domain => HttpCronConfig.smtp_domain,
+    :user_name => HttpCronConfig.smtp_user,
+    :password => HttpCronConfig.smtp_password,
+    :authentication => 'plain',
+    :enable_starttls_auto => true
+  }
+end
 
 class HTTPCron < Sinatra::Base
 

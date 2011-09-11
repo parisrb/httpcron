@@ -32,6 +32,17 @@ describe 'user basics' do
     end
   end
 
+  it 'can send your password by email' do
+    database.transaction do
+      Mail.defaults do
+        delivery_method :test
+      end
+      get "/user/password/#{HttpCronConfig.admin_email_address}"
+      Mail::TestMailer.deliveries.length.must_equal 1
+      Mail::TestMailer.clear
+    end
+  end
+
 end
 
 describe 'user creation' do

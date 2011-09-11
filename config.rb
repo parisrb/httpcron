@@ -3,7 +3,7 @@ class HttpCronConfig
 
   # The server timezone
   def self.server_timezone
-    @@server_timezone ||= get_value('TIMEZONE', 'UTC')
+    @@server_timezone ||= get_value('TIMEZONE', 'Europe/Paris')
   end
 
   # Default timeout
@@ -24,6 +24,34 @@ class HttpCronConfig
   # Max pagination limit
   def self.max_pagination_limit
     @@max_pagination_limit ||= get_value_i('MAX_PAGINATION_LIMIT', 100)
+  end
+
+  def self.admin_email_address
+    @@admin_email_address ||= get_value('ADMIN_EMAIL_ADDRESS', 'b.kerrien@gmail.com')
+  end
+
+  def self.smtp_hostname
+    @@smtp_hostname ||= get_value('SMTP_HOST', 'smtp.free.fr')
+  end
+
+  def self.smtp_port
+    @@smtp_port ||= get_value_i('SMTP_PORT', 587)
+  end
+
+  def self.smtp_domain
+    @@smtp_domain ||= get_value('SMTP_DOMAIN', 'kerrien.org')
+  end
+
+  def self.smtp_user
+    @@smtp_user ||= get_value('SMTP_USER', nil)
+  end
+
+  def self.smtp_password
+    @@smtp_password ||= get_value('SMTP_PASSWORD', nil)
+  end
+
+  def self.sender_email_address
+    @@smtp_password ||= get_value('SENDER_EMAIL_ADDRESS', "noreply@#{HttpCronConfig.smtp_domain}")
   end
 
   private
