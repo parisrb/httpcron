@@ -8,15 +8,14 @@ gem 'tzinfo', '~> 0.3'
 gem 'slim', '~> 1.0.2'
 gem 'eventmachine', '1.0.0.beta.3'
 gem 'em-http-request', '1.0.0.beta.4', :require => 'em-http'
+gem 'sinatra-assetpack', :require => 'sinatra/assetpack', :git => 'git://github.com/rstacruz/sinatra-assetpack.git', :ref => '3d677aa29eca349e98eac358b4c53cd9797a5a97'
 gem 'mail', '~> 2.3.0'
 
 group :test, :development do
   gem 'sqlite3'
   gem 'rake'
-  gem 'jammit'
   gem 'uglifier'
   gem 'sass'
-  gem 'compass'
   gem 'rack-test', :git => 'git://github.com/brynary/rack-test.git', :ref => '3bc79d37d21085c1ab13'
-  # gem 'capybara-webkit', '~> 1.0.0.beta'
+  #gem 'capybara-webkit', '~> 1.0.0.beta'
 end

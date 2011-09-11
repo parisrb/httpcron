@@ -2,6 +2,8 @@
 *.sqlite3
 *.sqlite3-journal
 *.db
+*.gem
 Gemfile.lock
-public/assets
+lib/httpcron/public
 .DS_Store
+config.ru

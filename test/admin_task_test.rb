@@ -3,7 +3,7 @@ require_relative 'helper'
 describe 'task edition' do
 
   def app
-    HTTPCronApi
+    HTTPCron::ApiServer
   end
 
   before do
@@ -68,16 +68,16 @@ describe 'task edition' do
 
       post '/tasks', 'url' => 'http://example.com', 'cron' => '0 0 1 1 *'
       last_response.status.must_equal 422
-      last_response.body.must_equal 'No [name] parameter'
+      last_response.body.must_equal 'name is missing'
 
       post '/tasks', 'url' => 'http://example.com', 'cron' => '0 0 1 1 *', 'name' => ''
       last_response.status.must_equal 422
-      last_response.body.must_equal 'Parameter [name] is blank'
+      last_response.body.must_equal 'name is blank'
 
       create_valid_task
       put "/tasks/#{last_response_id}", 'name' => ''
       last_response.status.must_equal 422
-      last_response.body.must_equal 'Parameter [name] is blank'
+      last_response.body.must_equal 'name is blank'
 
       raise(Sequel::Rollback)
     end
@@ -88,16 +88,16 @@ describe 'task edition' do
 
       post '/tasks', 'name' => 'test', 'cron' => '0 0 1 1 *'
       last_response.status.must_equal 422
-      last_response.body.must_equal 'No [url] parameter'
+      last_response.body.must_equal 'url is missing'
 
       post '/tasks', 'name' => 'test', 'cron' => '0 0 1 1 *', 'url' => ''
       last_response.status.must_equal 422
-      last_response.body.must_equal 'Parameter [url] is blank'
+      last_response.body.must_equal 'url is blank'
 
       create_valid_task
       put "/tasks/#{last_response_id}", 'url' => ''
       last_response.status.must_equal 422
-      last_response.body.must_equal 'Parameter [url] is blank'
+      last_response.body.must_equal 'url is blank'
 
       raise(Sequel::Rollback)
     end
@@ -109,12 +109,12 @@ describe 'task edition' do
       buggy_url = 'http:|?example.com'
       post '/tasks', 'name' => 'test', 'url' => buggy_url, 'cron' => '0 0 1 1 *'
       last_response.status.must_equal 422
-      last_response.body.must_equal "[#{buggy_url}] is not a valid url"
+      last_response.body.must_equal "url [#{buggy_url}] is invalid"
 
       create_valid_task
       put "/tasks/#{last_response_id}", 'url' => buggy_url
       last_response.status.must_equal 422
-      last_response.body.must_equal "[#{buggy_url}] is not a valid url"
+      last_response.body.must_equal "url [#{buggy_url}] is invalid"
 
       raise(Sequel::Rollback)
     end
@@ -125,16 +125,16 @@ describe 'task edition' do
 
       post '/tasks', 'name' => 'test', 'url' => 'http://example.com'
       last_response.status.must_equal 422
-      last_response.body.must_equal 'No [cron] parameter'
+      last_response.body.must_equal 'cron is missing'
 
       post '/tasks', 'name' => 'test', 'url' => 'http://example.com', 'cron' => ''
       last_response.status.must_equal 422
-      last_response.body.must_equal 'Parameter [cron] is blank'
+      last_response.body.must_equal 'cron is blank'
 
       create_valid_task
       put "/tasks/#{last_response_id}", 'cron' => ''
       last_response.status.must_equal 422
-      last_response.body.must_equal 'Parameter [cron] is blank'
+      last_response.body.must_equal 'cron is blank'
 
       raise(Sequel::Rollback)
     end
@@ -145,12 +145,12 @@ describe 'task edition' do
 
       post '/tasks', 'name' => 'test', 'url' => 'http://example.com', 'cron' => 'wtf ??'
       last_response.status.must_equal 422
-      last_response.body.must_equal "[wtf ??] is not a valid cron expression"
+      last_response.body.must_equal 'cron [wtf ??] is invalid'
 
       create_valid_task
       put "/tasks/#{last_response_id}", 'cron' => 'wtf ??'
       last_response.status.must_equal 422
-      last_response.body.must_equal "[wtf ??] is not a valid cron expression"
+      last_response.body.must_equal 'cron [wtf ??] is invalid'
 
       raise(Sequel::Rollback)
     end
@@ -167,12 +167,23 @@ describe 'task edition' do
     end
   end
 
+  it 'no next execution when task is disabled' do
+    database.transaction do
+
+      post '/tasks', 'name' => 'test', 'url' => 'http://example.com', 'cron' => '0 0 1 1 *', 'enabled' => false
+      last_response.status.must_equal 200
+      last_response.json_body['next_execution'].must_equal nil
+
+      raise(Sequel::Rollback)
+    end
+  end
+
   it 'can specify a timezone' do
     database.transaction do
 
       post '/tasks', 'name' => 'test', 'url' => 'http://example.com', 'cron' => '0 0 1 1 *'
       last_response.status.must_equal 200
-      last_response.json_body['timezone'].must_equal HttpCronConfig.server_timezone
+      last_response.json_body['timezone'].must_equal HTTPCron::Config.server_timezone
 
       post '/tasks', 'name' => 'test', 'url' => 'http://example.com', 'cron' => '0 0 1 1 *', 'timezone' => 'Atlantic/Bermuda'
       last_response.status.must_equal 200
@@ -180,12 +191,12 @@ describe 'task edition' do
 
       post '/tasks', 'name' => 'test', 'url' => 'http://example.com', 'cron' => '0 0 1 1 *', 'timezone' => 'Mordor'
       last_response.status.must_equal 422
-      last_response.body.must_equal '[Mordor] is not a valid timezone'
+      last_response.body.must_equal 'timezone [Mordor] is invalid'
 
       create_valid_task
       put "/tasks/#{last_response_id}", 'timezone' => 'Mordor'
       last_response.status.must_equal 422
-      last_response.body.must_equal '[Mordor] is not a valid timezone'
+      last_response.body.must_equal 'timezone [Mordor] is invalid'
 
       raise(Sequel::Rollback)
     end
@@ -215,7 +226,7 @@ describe 'task edition' do
 
       post '/tasks', 'name' => 'test', 'url' => 'http://example.com', 'cron' => '0 0 1 1 *'
       last_response.status.must_equal 200
-      last_response.json_body['timeout'].must_equal HttpCronConfig.default_timeout
+      last_response.json_body['timeout'].must_equal HTTPCron::Config.default_timeout
 
       post '/tasks', 'name' => 'test', 'url' => 'http://example.com', 'cron' => '0 0 1 1 *', 'timeout' => 13
       last_response.status.must_equal 200
@@ -223,7 +234,7 @@ describe 'task edition' do
 
       post '/tasks', 'name' => 'test', 'url' => 'http://example.com', 'cron' => '0 0 1 1 *', 'timeout' => 50000
       last_response.status.must_equal 422
-      last_response.body.must_equal 'Timeout [50000] can\'t be higher than 300'
+      last_response.body.must_equal 'timeout [50000] can\'t be higher than 300'
 
       post '/tasks', 'name' => 'test', 'url' => 'http://example.com', 'cron' => '0 0 1 1 *', 'timeout' => 'wtf ??'
       last_response.status.must_equal 422
@@ -238,7 +249,7 @@ describe 'task edition' do
 
       put "/tasks/#{task_id}", 'timeout' => 50000
       last_response.status.must_equal 422
-      last_response.body.must_equal 'Timeout [50000] can\'t be higher than 300'
+      last_response.body.must_equal 'timeout [50000] can\'t be higher than 300'
 
       put "/tasks/#{task_id}", 'timeout' => 'wtf ??'
       last_response.status.must_equal 422
@@ -252,12 +263,22 @@ describe 'task edition' do
     end
   end
 
+  it 'has length limit' do
+    post '/tasks', 'name' => create_string(255), 'url' => 'http://example.com', 'cron' => '0 0 1 1 *'
+    last_response.status.must_equal 422
+    last_response.body.must_equal 'name is longer than 250 characters'
+
+    post '/tasks', 'name' => 'test', 'url' => create_string(256), 'cron' => '0 0 1 1 *'
+    last_response.status.must_equal 422
+    last_response.body.must_equal 'url is longer than 255 characters'
+  end
+
 end
 
 describe 'task access rights' do
 
   def app
-    HTTPCronApi
+    HTTPCron::ApiServer
   end
 
   before do

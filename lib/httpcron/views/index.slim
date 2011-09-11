@@ -1,0 +1,118 @@
+doctype html
+html
+  head
+    title
+      |HTTP Cron
+    == js :application
+    == css :application
+    erb:
+      <script type="text/x-handlebars" data-template-name="executions">
+        <h1>{{title}}</h1>
+        {{view JUI.Button label="Back" target="HttpCron.TasksPaneView" action="show"}}
+
+        <div class="pagination">
+          {{view SB.PreviousButton target="HttpCron.ExecutionsList"}}
+          {{view SB.NextButton target="HttpCron.ExecutionsList"}}
+        </div>
+
+        {{#collection HttpCron.ExecutionsCollection}}
+          <p><strong>Status :</strong> {{content.status}}</p>
+          <p><strong>Start at :</strong> {{content.start_at}}</p>
+          <p><strong>Duration :</strong> {{content.duration}}</p>
+          <p><strong>Response :</strong></p>
+          <blockquote>
+            {{content.response}}
+          </blockquote>
+        {{else}}
+          Not executed yiet...
+        {{/collection}}
+      </script>
+      <script type="text/x-handlebars" data-template-name="login">
+        <div>
+          {{view HttpCron.LoginTextField
+              valueBinding="content.username"
+              placeholder="Username..."}}
+        </div>
+        <div>
+          {{view HttpCron.LoginTextField
+              type="password"
+              valueBinding="content.password"
+              placeholder="Password..."}}
+        </div>
+        <div>
+          {{view JUI.Button label="LogIn" target="HttpCron.CurrentUser" action="login"}}
+        </div>
+      </script>
+      <script type="text/x-handlebars" data-template-name="tasks">
+        {{view JUI.Button label="Log Out"
+          target="HttpCron.CurrentUser" action="logout"}}
+        {{view JUI.Button label="Add Task"
+          target="HttpCron.NewTask" action="toggle"
+          isVisibleBinding="HttpCron.NewTask.isInvisible"}}
+        
+        <div class="pagination">
+          {{view SB.PreviousButton target="HttpCron.TasksList"}}
+          {{view SB.NextButton target="HttpCron.TasksList"}}
+        </div>
+        
+        {{#view HttpCron.NewTaskView}}
+          <div class="fields">
+            {{#view SC.View isVisibleBinding="content.isError" messageBinding="content.errorMessage"}}
+              <div class="error">{{message}}</div>
+            {{/view}}
+            {{view HttpCron.TextField valueBinding="content.name" placeholder="Name..."}}
+            {{view HttpCron.TextField valueBinding="content.cron" placeholder="Cron line..."}}
+            {{view HttpCron.TextField type="url" valueBinding="content.url" placeholder="URL..."}}
+            {{view HttpCron.Checkbox title="Enabled" valueBinding="content.enabled"}}
+          </div>
+          <div class="buttons">
+            {{view JUI.Button label="Cancel" targetBinding="content" action="toggle"}}
+            {{view JUI.Button label="Save" targetBinding="content" action="save"}}
+          </div>
+        {{/view}}
+        
+        {{#collection HttpCron.TasksCollection}}
+          {{#view HttpCron.ShowTaskView contentBinding="content"}}
+            <div class="content">
+              {{content.name}}<br/>
+              <em>{{content.cron}}</em><br/>
+              <strong>http://</strong>{{content.formattedUrl}}
+            </div>
+            {{view JUI.Button label="Destroy" targetBinding="content" action="destroy"}}
+            {{view JUI.Button label="Edit" targetBinding="content" action="toggle"}}
+            {{view JUI.Button label="Logs" targetBinding="content" action="logs"}}
+          {{/view}}
+          {{#view classNames="edit-task" isVisibleBinding="content.isEditing" contentBinding="content"}}
+            <div class="fields">
+              {{#view SC.View isVisibleBinding="content.isError" messageBinding="content.errorMessage"}}
+                <div class="error">{{message}}</div>
+              {{/view}}
+              {{view HttpCron.TextField valueBinding="content.name" placeholder="Name..."}}
+              {{view HttpCron.TextField valueBinding="content.cron" placeholder="Cron line..."}}
+              {{view HttpCron.TextField type="url" valueBinding="content.formattedUrl" placeholder="URL..."}}
+              {{view HttpCron.Checkbox title="Enabled" valueBinding="content.enabled"}}
+            </div>
+            <div class="buttons">
+              {{view JUI.Button label="Update" targetBinding="content" action="update"}}
+              {{view JUI.Button label="Cancel" targetBinding="content" action="cancel"}}
+            </div>
+          {{/view}}
+        {{else}}
+          {{#if HttpCron.TasksList.isLoading}}
+            Loading...
+            {{view JUI.Throbber}}
+          {{else}}
+            No Tasks
+          {{/if}}
+        {{/collection}}
+      </script>
+      <script type="text/x-handlebars" data-template-name="users">
+      </script>
+  body
+    header
+      h1 ="HTTP Cron"
+
+      div id='description' ="A ruby server to cron http requests"
+      a href='https://github.com/parisrb/httpcron' Website
+    .main[role="application"]
+    footer

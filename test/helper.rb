@@ -1,7 +1,7 @@
 ENV['RACK_ENV'] = 'test'
 ENV['ENGINE'] = 'none'
 
-require_relative '../httpcron'
+require_relative '../lib/httpcron'
 require 'test/unit'
 require 'rack/test'
 require 'minitest/spec'
@@ -34,13 +34,17 @@ def create_valid_task
 end
 
 def create_valid_execution task_id, status = 200
-  Execution.create(:task_id => task_id,
+  HTTPCron::Execution.create(:task_id => task_id,
                    :status => status,
-                   :start_at => DateTime.now,
+                   :started_at => DateTime.now,
                    :duration => 2,
                    :response => '')
 end
 
 def last_response_id
   last_response.json_body['id']
+end
+
+def create_string length
+  Array.new(length, 'a').join
 end
