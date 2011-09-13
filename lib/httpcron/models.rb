@@ -1,3 +1,5 @@
+require 'rack/auth/digest/md5'
+
 Sequel::Model.plugin :validation_helpers
 Sequel::Plugins::ValidationHelpers::DEFAULT_OPTIONS.merge!(
     :presence=>{:message=>'cannot be empty'}
@@ -55,6 +57,8 @@ end
 
 module HTTPCron
 
+  REALM = 'httpcron'
+
   module ModelWithTimezone
 
     def validate_timezone
@@ -78,14 +82,17 @@ module HTTPCron
 
     add_association_dependencies :tasks => :delete
 
-    def before_validation
+    def before_create
       super
       self.timezone ||= Config.server_timezone
+      if self.password && self.username
+        self.password = ::Digest::MD5.hexdigest([self.username, HTTPCron::REALM, self.password] * ':')
+      end
     end
 
     def validate
       super
-      validates_presence [:username, :timezone]
+      validates_presence [:username, :timezone, :password]
       validates_unique :username
       validate_timezone
       validates_max_length 250, :username
