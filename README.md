@@ -221,3 +221,8 @@ Get some server config
   "max_pagination_limit": 100
 }
 ```
+
+# Copyright
+- Copyright : 2011 Paris.rb
+- Authors : Julien Kirch [archiloque], Paul Chavard [tchak], Vincent Viaud
+- Released under the MIT license
