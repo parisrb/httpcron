@@ -13,7 +13,7 @@ class HTTPCron::Config
 
   # Max timeout
   def self.max_timeout
-    @@max_timeout ||= get_value_i('DEFAULT_TIMEOUT', 300)
+    @@max_timeout ||= get_value_i('MAX_TIMEOUT', 300)
   end
 
   # The engine to use, possible values are database or memory
