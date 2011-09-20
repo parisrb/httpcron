@@ -82,9 +82,14 @@ module HTTPCron
 
     add_association_dependencies :tasks => :delete
 
+    def before_validation
+      if new?
+        self.timezone ||= Config.server_timezone
+      end
+    end
+
     def before_create
       super
-      self.timezone ||= Config.server_timezone
       if self.password && self.username
         self.password = ::Digest::MD5.hexdigest([self.username, HTTPCron::REALM, self.password] * ':')
       end
