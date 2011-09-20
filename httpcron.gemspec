@@ -14,14 +14,14 @@ Gem::Specification.new do |s|
   s.rubyforge_project = 'httpcron'
 
   s.add_runtime_dependency 'sinatra', '~> 1.2'
-  s.add_runtime_dependency 'sequel', '~> 3.25'
+  s.add_runtime_dependency 'sequel', '~> 3.27'
   s.add_runtime_dependency 'sinatra-sequel', '~> 0.9'
   s.add_runtime_dependency 'rufus-scheduler', '~> 2.0'
   s.add_runtime_dependency 'tzinfo', '~> 0.3'
-  s.add_runtime_dependency 'slim', '~> 0.9'
+  s.add_runtime_dependency 'slim', '~> 1.0'
   s.add_runtime_dependency 'eventmachine', '1.0.0.beta.4'
   s.add_runtime_dependency 'em-http-request', '1.0.0'
-  s.add_runtime_dependency 'sinatra-assetpack', '~> 0.0.9'
+  s.add_runtime_dependency 'sinatra-assetpack', '~> 0.0.10'
 
   s.add_development_dependency 'sqlite3'
   s.add_development_dependency 'rake'
