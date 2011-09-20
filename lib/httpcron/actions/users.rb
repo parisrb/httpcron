@@ -50,11 +50,12 @@ module HTTPCron
 
     post '/users' do
       check_admin
-      check_parameter_for_blank :username, :password
+      check_parameter_for_blank :username, :password, :email_address
       user = User.new(:username => params[:username],
                       :admin => 'true' == params[:admin],
                       :timezone => (params[:timezone] || Config.server_timezone),
-                      :password => params[:password])
+                      :password => params[:password],
+                      :email_address => params[:email_address])
 
       save_user user
     end
@@ -129,9 +130,9 @@ module HTTPCron
     def send_password(user)
       user_name = user.username
       user_password = user.password
-      body = ERB.new(File.new('views/password_mail.erb').read).result(binding)
+      body = ERB.new(File.new('lib/httpcron/views/password_mail.erb').read).result(binding)
       Mail.deliver do
-        from    HttpCronConfig.sender_email_address
+        from    Config.sender_email_address
         to      user.email_address
         subject 'Your httpcron password'
         body    body

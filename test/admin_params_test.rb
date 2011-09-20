@@ -12,7 +12,7 @@ describe 'params' do
 
   it 'uses limit' do
     database.transaction do
-      post '/users', 'username' => 'testuser', 'password' => 'testpassword'
+      post '/users', 'username' => 'testuser', 'password' => 'testpassword', 'email_address' => 'test@toto.com'
 
       get '/users'
       last_response.status.must_equal 200
@@ -49,7 +49,7 @@ describe 'params' do
 
   it 'uses order' do
     database.transaction do
-      post '/users', 'username' => 'testuser', 'password' => 'testpassword'
+      post '/users', 'username' => 'testuser', 'password' => 'testpassword', 'email_address' => 'test@toto.com'
 
       get '/users', :order => 'id.desc'
       last_response.status.must_equal 200
@@ -90,7 +90,7 @@ describe 'params' do
 
   it 'uses page' do
     database.transaction do
-      post '/users', 'username' => 'testuser', 'password' => 'testpassword'
+      post '/users', 'username' => 'testuser', 'password' => 'testpassword', 'email_address' => 'test@toto.com'
 
       get '/users', :page => 0
       last_response.status.must_equal 200

@@ -51,7 +51,7 @@ class HTTPCron::Config
   end
 
   def self.sender_email_address
-    @@smtp_password ||= get_value('SENDER_EMAIL_ADDRESS', "noreply@#{HttpCronConfig.smtp_domain}")
+    @@smtp_password ||= get_value('SENDER_EMAIL_ADDRESS', "noreply@#{self.smtp_domain}")
   end
 
   private

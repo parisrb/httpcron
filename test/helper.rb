@@ -19,7 +19,7 @@ end
 # Create another user and authenticate with its identity
 # return the user id
 def create_non_admin_user_authenticate
-  post '/users', 'username' => 'testuser', 'password' => 'testpassword'
+  post '/users', 'username' => 'testuser', 'password' => 'testpassword', 'email_address' => 'test@toto.com'
   id_user = last_response.json_body['id']
   digest_authorize 'testuser', 'testpassword'
   id_user

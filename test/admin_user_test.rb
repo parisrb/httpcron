@@ -34,12 +34,17 @@ describe 'user basics' do
 
   it 'can send your password by email' do
     database.transaction do
+      post '/users', 'username' => 'testuser', 'password' => 'testpassword', 'email_address' => 'test@toto.com'
       Mail.defaults do
         delivery_method :test
       end
-      get "/user/password/#{HttpCronConfig.admin_email_address}"
+      get "/user/password/test@toto.com"
       Mail::TestMailer.deliveries.length.must_equal 1
-      Mail::TestMailer.clear
+      Mail::TestMailer.deliveries.clear
+      get "/user/password/test@titi.com"
+      last_response.status.must_equal 404
+      last_response.body.must_equal 'No user found with email address [test@titi.com]'
+      raise(Sequel::Rollback)
     end
   end
 
@@ -58,7 +63,7 @@ describe 'user creation' do
   it 'can create user' do
     database.transaction do
 
-      post '/users', 'username' => 'testuser', 'password' => 'testpassword'
+      post '/users', 'username' => 'testuser', 'password' => 'testpassword', 'email_address' => 'test@toto.com'
       last_response.status.must_equal 200
       last_response.json_body['username'].must_equal 'testuser'
       last_response.json_body['password'].must_equal nil
@@ -75,17 +80,22 @@ describe 'user creation' do
   it 'check for duplicates' do
     database.transaction do
 
-      post '/users', 'username' => 'testuser', 'password' => 'testpassword'
-      post '/users', 'username' => 'testuser', 'password' => 'testpassword'
+      post '/users', 'username' => 'testuser', 'password' => 'testpassword', 'email_address' => 'test@toto.com'
+      post '/users', 'username' => 'testuser', 'password' => 'testpassword', 'email_address' => 'test2@toto.com'
       last_response.status.must_equal 422
       last_response.body.must_equal 'username is already taken'
+
+      post '/users', 'username' => 'testuser2', 'password' => 'testpassword', 'email_address' => 'test@toto.com'
+      last_response.status.must_equal 422
+      last_response.body.must_equal 'email_address is already taken'
+
       raise(Sequel::Rollback)
     end
   end
 
   it 'requires a username' do
     database.transaction do
-      post '/users', 'password' => 'testpassword'
+      post '/users', 'password' => 'testpassword', 'email_address' => 'test@toto.com'
       last_response.status.must_equal 422
       last_response.body.must_equal 'username is missing'
       raise(Sequel::Rollback)
@@ -94,7 +104,7 @@ describe 'user creation' do
 
   it 'requires a not too long username' do
     database.transaction do
-      post '/users', 'username' => create_string(255), 'password' => 'testpassword'
+      post '/users', 'username' => create_string(255), 'password' => 'testpassword', 'email_address' => 'test@toto.com'
       last_response.status.must_equal 422
       last_response.body.must_equal 'username is longer than 250 characters'
       raise(Sequel::Rollback)
@@ -103,16 +113,25 @@ describe 'user creation' do
 
   it 'requires a password' do
     database.transaction do
-      post '/users', 'username' => 'testuser'
+      post '/users', 'username' => 'testuser', 'email_address' => 'test@toto.com'
       last_response.status.must_equal 422
       last_response.body.must_equal 'password is missing'
       raise(Sequel::Rollback)
     end
   end
 
-  it 'can delete a user' do
+  it 'requires an email address' do
     database.transaction do
       post '/users', 'username' => 'testuser', 'password' => 'testpassword'
+      last_response.status.must_equal 422
+      last_response.body.must_equal 'email_address is missing'
+      raise(Sequel::Rollback)
+    end
+  end
+
+  it 'can delete a user' do
+    database.transaction do
+      post '/users', 'username' => 'testuser', 'password' => 'testpassword', 'email_address' => 'test@toto.com'
       user_id = last_response_id
       delete "/users/#{user_id}"
       last_response.status.must_equal 200
@@ -135,7 +154,7 @@ describe 'user edition' do
   it 'can edit user' do
     database.transaction do
 
-      post '/users', 'username' => 'testuser', 'password' => 'testpassword'
+      post '/users', 'username' => 'testuser', 'password' => 'testpassword', 'email_address' => 'test@toto.com'
       last_response.status.must_equal 200
       user_id = last_response_id
 
@@ -150,7 +169,7 @@ describe 'user edition' do
   it 'requires a password when changing the username' do
     database.transaction do
 
-      post '/users', 'username' => 'testuser', 'password' => 'testpassword'
+      post '/users', 'username' => 'testuser', 'password' => 'testpassword', 'email_address' => 'test@toto.com'
       last_response.status.must_equal 200
       user_id = last_response_id
 

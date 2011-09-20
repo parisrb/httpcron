@@ -1,3 +1,5 @@
+require 'bundler/setup'
+
 require 'json'
 require 'logger'
 
@@ -23,11 +25,11 @@ Sequel::Model.raise_on_save_failure = true
 
 Mail.defaults do
   delivery_method :smtp, {
-    :address => HttpCronConfig.smtp_hostname,
-    :port => HttpCronConfig.smtp_port,
-    :domain => HttpCronConfig.smtp_domain,
-    :user_name => HttpCronConfig.smtp_user,
-    :password => HttpCronConfig.smtp_password,
+    :address => HTTPCron::Config.smtp_hostname,
+    :port => HTTPCron::Config.smtp_port,
+    :domain => HTTPCron::Config.smtp_domain,
+    :user_name => HTTPCron::Config.smtp_user,
+    :password => HTTPCron::Config.smtp_password,
     :authentication => 'plain',
     :enable_starttls_auto => true
   }

@@ -86,8 +86,8 @@ module HTTPCron
 
     def validate
       super
-      validates_presence [:username, :timezone]
-      validates_unique :username
+      validates_presence [:username, :timezone, :email_address]
+      validates_unique :username, :email_address
       validate_timezone
       validates_max_length 250, :username
       validates_max_length MAX_TIMEZONE_LENGTH, :timezone
@@ -188,7 +188,7 @@ module HTTPCron
   end
 
   if User.count == 0
-    User.create(:username => 'httpcronadmin', :admin => true, :password => 'httpcronadmin', :email_address => HttpCronConfig.admin_email_address)
+    User.create(:username => 'httpcronadmin', :admin => true, :password => 'httpcronadmin', :email_address => Config.admin_email_address)
   end
 
 end
