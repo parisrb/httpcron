@@ -37,11 +37,11 @@ module HTTPCron
     end
 
     def self.new(*)
-      app = Rack::Auth::Digest::MD5.new(super) do |username|
+      app = Rack::Auth::Digest::MD5.new(super, {:passwords_hashed => true}) do |username|
         user = User.filter(:username => username).first
         user.password if user
       end
-      app.realm = 'httpcron'
+      app.realm = ::HTTPCron::REALM
       app.opaque = '1hj540cdui23j43l3578nkm8634ruso5443lmg'
       app
     end
