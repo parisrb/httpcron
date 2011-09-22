@@ -12,6 +12,7 @@ require 'rufus-scheduler'
 require 'slim'
 require 'sinatra/assetpack'
 
+require 'keepass/password'
 require 'mail'
 require 'erb'
 

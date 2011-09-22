@@ -22,6 +22,9 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'eventmachine', '1.0.0.beta.4'
   s.add_runtime_dependency 'em-http-request', '1.0.0'
   s.add_runtime_dependency 'sinatra-assetpack', '~> 0.0.10'
+  s.add_runtime_dependency 'mail', '~> 2.3.0'
+  s.add_runtime_dependency 'activesupport', '2.3.14'
+  s.add_runtime_dependency 'keepass-password-generator', '~> 0.1.0'
 
   s.add_development_dependency 'sqlite3'
   s.add_development_dependency 'rake'

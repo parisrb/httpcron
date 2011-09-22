@@ -91,9 +91,7 @@ module HTTPCron
 
     def before_create
       super
-      if self.password && self.username
-        self.password = ::Digest::MD5.hexdigest([self.username, HTTPCron::REALM, self.password] * ':')
-      end
+      self.hash_password!
     end
 
     def validate
@@ -103,6 +101,12 @@ module HTTPCron
       validate_timezone
       validates_max_length 250, :username
       validates_max_length MAX_TIMEZONE_LENGTH, :timezone
+    end
+
+    def hash_password!
+      if self.password && self.username
+        self.password = ::Digest::MD5.hexdigest([self.username, HTTPCron::REALM, self.password] * ':')
+      end
     end
 
     def to_json(*a)

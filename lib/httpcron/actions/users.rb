@@ -45,7 +45,7 @@ module HTTPCron
       unless user
         halt 404, "No user found with email address [#{email_address}]"
       end
-      send_password user
+      generate_new_password user
     end
 
     post '/users' do
@@ -92,6 +92,8 @@ module HTTPCron
         user.admin = params[:admin]
       end
 
+      user.hash_password! if params[:password]
+
       save_user user
     end
 
@@ -112,7 +114,7 @@ module HTTPCron
 
     private
 
-    def save_user(user)
+    def save_user(user, &after_save)
       unless user.valid?
         halt 422, user.errors.full_messages.join("\n")
       end
@@ -123,13 +125,21 @@ module HTTPCron
         halt 500, e.message
       end
 
+      after_save.call if after_save
+
       content_type :json
       user.to_json
     end
 
-    def send_password(user)
+    def generate_new_password(user)
+      new_password = KeePass::Password.generate 'cdszC{6}'
+      user.password = new_password
+      user.hash_password!
+      save_user(user) { send_new_password user, new_password }
+    end
+
+    def send_new_password(user, new_password)
       user_name = user.username
-      user_password = user.password
       body = ERB.new(File.new('lib/httpcron/views/password_mail.erb').read).result(binding)
       Mail.deliver do
         from    Config.sender_email_address

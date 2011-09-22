@@ -27,11 +27,11 @@ class HTTPCron::Config
   end
 
   def self.admin_email_address
-    @@admin_email_address ||= get_value('ADMIN_EMAIL_ADDRESS', 'b.kerrien@gmail.com')
+    @@admin_email_address ||= get_value('ADMIN_EMAIL_ADDRESS', 'admin@yourdomain.org')
   end
 
   def self.smtp_hostname
-    @@smtp_hostname ||= get_value('SMTP_HOST', 'smtp.free.fr')
+    @@smtp_hostname ||= get_value('SMTP_HOST', 'your.smtp.host')
   end
 
   def self.smtp_port
@@ -39,7 +39,7 @@ class HTTPCron::Config
   end
 
   def self.smtp_domain
-    @@smtp_domain ||= get_value('SMTP_DOMAIN', 'kerrien.org')
+    @@smtp_domain ||= get_value('SMTP_DOMAIN', 'your_domain.org')
   end
 
   def self.smtp_user
@@ -52,6 +52,10 @@ class HTTPCron::Config
 
   def self.sender_email_address
     @@smtp_password ||= get_value('SENDER_EMAIL_ADDRESS', "noreply@#{self.smtp_domain}")
+  end
+
+  def self.password_pattern
+    @@password_pattern ||= get_value('PASSWORD_PATTERN', 'cdszC{6}')
   end
 
   private
