@@ -97,7 +97,8 @@ Get the user with the corresponding id
 "admin":true,
 "timezone":"UTC", // default timezone for the user's tasks
 "created_at":"2011-08-16T16:54:02+00:00",
-"updated_at":"2011-08-16T16:54:02+00:00"
+"updated_at":"2011-08-16T16:54:02+00:00",
+"email_address":"admin@example.com"
 }
 ```
 
@@ -113,6 +114,7 @@ Create a user, parameters:
 
 - `username` mandatory, max size 250, unique
 - `password` mandatory
+- `email_address` mandatory
 - `admin` optional, default to false
 - `timezone` optional, default to "UTC" #
 
@@ -207,11 +209,13 @@ Get the successful executions of the tasks owned by the user with the correspond
 ### delete /api/executions/:id
 Get the execution with the corresponding id, non-admin users can only delete the executions of their own tasks
 
-
-## Server config
+### get /user/password/:email
+Reset the password and send a new password by email
 
 ### get /config
 Get some server config
+
+## Server config
 
 ``` javascript
 {
