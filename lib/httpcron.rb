@@ -16,6 +16,8 @@ require 'keepass/password'
 require 'mail'
 require 'erb'
 
+require 'email_veracity'
+
 module HTTPCron
 end
 

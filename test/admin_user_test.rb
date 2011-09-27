@@ -129,6 +129,15 @@ describe 'user creation' do
     end
   end
 
+  it 'requires a valid email address' do
+    database.transaction do
+      post '/users', 'username' => 'testuser', 'password' => 'testpassword', 'email_address' => 'FAIL'
+      last_response.status.must_equal 422
+      last_response.body.must_equal 'email_address [FAIL] is invalid'
+      raise(Sequel::Rollback)
+    end
+  end
+
   it 'can delete a user' do
     database.transaction do
       post '/users', 'username' => 'testuser', 'password' => 'testpassword', 'email_address' => 'test@toto.com'

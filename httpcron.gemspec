@@ -25,6 +25,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'mail', '~> 2.3.0'
   s.add_runtime_dependency 'activesupport', '2.3.14'
   s.add_runtime_dependency 'keepass-password-generator', '~> 0.1.0'
+  s.add_runtime_dependency 'email_veracity', '~> 0.6.0'
 
   s.add_development_dependency 'sqlite3'
   s.add_development_dependency 'rake'

@@ -10,6 +10,8 @@ Sequel::Model.plugin :json_serializer, :naked => true
 Sequel::Model.plugin :association_dependencies
 Sequel.extension :pagination
 
+EmailVeracity::Config[:skip_lookup] = true
+
 MAX_TIMEZONE_LENGTH = TZInfo::Timezone.all_identifiers.max { |t1, t2| t1.length <=> t2.length }.length
 
 migration 'create tables tasks/users/executions' do
@@ -101,6 +103,9 @@ module HTTPCron
       validate_timezone
       validates_max_length 250, :username
       validates_max_length MAX_TIMEZONE_LENGTH, :timezone
+      unless EmailVeracity::Address.new(self.email_address).valid?
+        errors.add('email_address', "[#{self.email_address}] is invalid")
+      end
     end
 
     def hash_password!
@@ -166,7 +171,7 @@ module HTTPCron
 
     def after_create
       super
-       Engine.notify_create_task self
+      Engine.notify_create_task self
     end
 
     def after_destroy

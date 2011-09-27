@@ -12,6 +12,7 @@ gem 'sinatra-assetpack', '0.0.10'
 gem 'mail', '~> 2.3.0'
 gem 'activesupport', '2.3.14'
 gem 'keepass-password-generator', '~> 0.1.0'
+gem 'email_veracity', '~> 0.6.0'
 
 group :test, :development do
   gem 'sqlite3'
