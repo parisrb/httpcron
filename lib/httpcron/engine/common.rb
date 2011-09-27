@@ -81,12 +81,32 @@ module HTTPCron
     # task:: the corresponding task
     def self.task_ended http, content, start, task
       p "Ending task #{task.id} [#{task.name}] : #{http.response_header.status}"
-      Execution.create(:task => task,
+      execution = Execution.create(:task => task,
                        :status => http.response_header.status,
                        :started_at => start,
                        :duration => (SECONDS_IN_A_DAY * (DateTime.now - start)).to_i,
                        :response => response_content(http, content))
-
+      if Config.mails_for_tasks
+        if (200..210).include? execution.status
+          if task.mail_when_success
+            send_execution_mail execution, "Task #{task.name} is successful"
+          end
+        else
+          if task.mail_when_failure
+            send_execution_mail execution, "Task #{task.name} has failed"
+          end
+        end
+      end
     end
   end
+
+  def send_execution_mail execution, title
+    Mail.deliver do
+      from    Config.sender_email_address
+      to      execution.task.user.email_address
+      subject title
+      body    "The task started at #{execution.execution} run for #{execution.duration} seconds and returned #{execution.status}\n\n#{execution.response}"
+    end
+  end
+
 end

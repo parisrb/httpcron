@@ -136,6 +136,10 @@ Get the task with the corresponding id, non-admin users can only access their ow
   "cron":"0 0 1 1 *",
   "timezone":"UTC",
   "next_execution":"2012-01-01T00:00:00+00:00", // only available if task is enabled
+
+  "mail_when_success":false
+  "mail_when_failure":true
+
   "created_at":"2011-08-16T16:56:22+00:00",
   "updated_at":"2011-08-16T16:56:22+00:00"
 }
@@ -156,6 +160,8 @@ Create a task, parameters:
 - `timeout` optional, in seconds, default to 60#, max to 300#
 - `enabled` optional, default to false
 - `timezone` optional, default to the user's timezone
+- `mail_when_failure` optional, send a mail when the task has failed, default to false
+- `mail_when_success` optional, send a mail when the task is successful, default to false
 
 ### put /api/tasks/:id
 Edit the task with the specified id, non-admin users can only edit their own tasks, see above for parameters list, you can omit parameters that don't change

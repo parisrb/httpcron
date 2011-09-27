@@ -43,6 +43,9 @@ migration 'create tables tasks/users/executions' do
     String :timezone, :size => MAX_TIMEZONE_LENGTH, :null => false
     DateTime :next_execution, :null => true
 
+    boolean :mail_when_success, :null => false
+    boolean :mail_when_failure, :null => false
+
     DateTime :created_at, :null => false
     DateTime :updated_at, :null => false
   end

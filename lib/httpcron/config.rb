@@ -30,6 +30,10 @@ class HTTPCron::Config
     @@admin_email_address ||= get_value('ADMIN_EMAIL_ADDRESS', 'admin@yourdomain.org')
   end
 
+  def self.mails_for_tasks
+    @@mail_for_tasks ||= get_value_b('MAILS_FOR_TASKS', true)
+  end
+
   def self.smtp_hostname
     @@smtp_hostname ||= get_value('SMTP_HOST', 'your.smtp.host')
   end
@@ -66,6 +70,10 @@ class HTTPCron::Config
 
   def self.get_value_i env_name, default_value
     ENV[env_name] ? ENV[env_name].to_i : default_value
+  end
+
+  def self.get_value_b env_name, default_value
+    ENV[env_name] ? ENV[env_name] == 'true': default_value
   end
 
 end

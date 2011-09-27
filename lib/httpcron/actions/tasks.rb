@@ -49,6 +49,8 @@ module HTTPCron
       task.timezone = params[:timezone] || current_user.timezone
       task.enabled = params[:enabled] || true
       task.timeout = timeout
+      task.mail_when_success = params[:mail_when_success] || false
+      task.mail_when_failure = params[:mail_when_failure] || false
 
       save_task task
     end
@@ -71,7 +73,7 @@ module HTTPCron
         end
       end
 
-      [:name, :url, :cron, :enabled, :timezone].each do |s|
+      [:name, :url, :cron, :enabled, :timezone, :mail_when_success, :mail_when_failure].each do |s|
         if params[s]
           if params[s].blank?
             halt 422, "#{s} is blank"
