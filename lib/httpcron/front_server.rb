@@ -20,20 +20,20 @@ module HTTPCron
       js :application, '/js/application.js',
          [
             '/js/vendor/jquery.js',
-            '/js/vendor/jquery-ui.js',
+            '/js/vendor/metamorph.js',
             '/js/vendor/sproutcore.js',
-            '/js/vendor/sproutcore-jui.js',
-            '/js/vendor/bricks/toggle_view.js',
+            '/js/vendor/sproutcore-experimental.js',
             '/js/vendor/**/*.js',
             '/js/app/main.js',
+            '/js/app/models/*.js',
+            '/js/app/controllers/*.js',
             '/js/app/**/*.js'
          ]
 
       css :application, '/css/application.css',
           [
             '/css/normalize.css',
-            '/css/jquery-ui.css',
-            '/css/aristo.css',
+            '/css/bootstrap.css',
             '/css/style.css'
           ]
 

@@ -58,7 +58,7 @@ header {
   }
 }
 
-.new-task {
+.hc-new-record {
   .sc-checkbox {
     width:200px;
     float:left;
@@ -83,11 +83,11 @@ header {
   }
 }
 
-.show-task button {
+.hc-record button {
   display:none;
 }
 
-.list {
+.hc-list {
   list-style:none;
   padding-top:5px;
   margin:0;
@@ -102,7 +102,7 @@ header {
   }
 }
 
-.tasks-list {
+.hc-records-list {
   li {
     &.is-commiting {
       background:#ccc;
@@ -157,7 +157,7 @@ header {
   }
 }
 
-.executions-list li {
+.executions li {
   p {
     margin:0 0 5px 0;
   }

@@ -7,7 +7,7 @@
 *.sqlite3-journal
 *.db
 *.gem
-Gemfile.lock
+
 
 lib/httpcron/public
 config.ru
