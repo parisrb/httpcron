@@ -87,7 +87,7 @@ html
               {{#view SC.View isVisibleBinding="content.isError" messageBinding="content.errorMessage"}}
                 <div class="error">{{message}}</div>
               {{/view}}
-              {{view HttpCron.TextField valueBinding="content.name" placeholder="Name..."}}
+              {{view SC.TextField valueBinding="content.name" placeholder="Name..."}}
               {{view HttpCron.TextField valueBinding="content.cron" placeholder="Cron line..."}}
               {{view HttpCron.TextField type="url" valueBinding="content.formattedUrl" placeholder="URL..."}}
               {{view HttpCron.Checkbox title="Enabled" valueBinding="content.enabled"}}
@@ -112,7 +112,7 @@ html
     header
       h1 ="HTTP Cron"
 
-      div id='description' ="A ruby server to cron http requests"
-      a href='https://github.com/parisrb/httpcron' Website
+      div id="description" A ruby server to cron http requests
+      a href="https://github.com/parisrb/httpcron" Website
     .main[role="application"]
     footer
