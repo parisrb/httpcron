@@ -27,7 +27,8 @@ module HTTPCron
        :default_timeout => Config.default_timeout,
        :max_timeout => Config.max_timeout,
        :max_pagination_limit => Config.max_pagination_limit,
-       :valid_timezones => TZInfo::Timezone.all_identifiers.join(', ')
+       :valid_timezones => TZInfo::Timezone.all_identifiers.join(', '),
+       :mails_for_tasks => Config.mails_for_tasks
       }.to_json
     end
 

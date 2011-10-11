@@ -21,6 +21,7 @@ describe 'user basics' do
       content['max_timeout'].must_equal HTTPCron::Config.max_timeout
       content['max_pagination_limit'].must_equal HTTPCron::Config.max_pagination_limit
       content['valid_timezones'].must_equal TZInfo::Timezone.all_identifiers.join(', ')
+      content['mails_for_tasks'].must_equal HTTPCron::Config.mails_for_tasks
       raise(Sequel::Rollback)
     end
   end
