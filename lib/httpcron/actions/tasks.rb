@@ -101,41 +101,43 @@ module HTTPCron
       halt 200
     end
 
-    private
+    helpers do
 
-    def task_if_allowed id
-      task = Task[id]
-      if !task
-        halt 404, "task [#{id}] does not exist"
-      elsif (task.user != current_user) && (!current_user.admin)
-        halt 403, "task [#{id}] is not allowed to you"
-      else
-        task
-      end
-    end
-
-    TASKS_LIST_ORDER_FIELDS = [:id, :name, :url, :timeout, :enabled, :cron, :timezone, :next_execution, :created_at, :updated_at]
-    TASKS_LIST_ORDER_REGEX = create_order_regex(TASKS_LIST_ORDER_FIELDS)
-
-    def tasks_for_user user
-      apply_list_params(Task.filter(:user => user), TASKS_LIST_ORDER_FIELDS, TASKS_LIST_ORDER_REGEX)
-    end
-
-    def save_task task
-      unless task.valid?
-        halt 422, task.errors.full_messages.join("\n")
+      def task_if_allowed id
+        task = Task[id]
+        if !task
+          halt 404, "task [#{id}] does not exist"
+        elsif (task.user != current_user) && (!current_user.admin)
+          halt 403, "task [#{id}] is not allowed to you"
+        else
+          task
+        end
       end
 
-      begin
-        task.save
-      rescue Exception => e
-        halt 500, e.message
+      TASKS_LIST_ORDER_FIELDS = [:id, :name, :url, :timeout, :enabled, :cron, :timezone, :next_execution, :created_at, :updated_at]
+      TASKS_LIST_ORDER_REGEX = create_order_regex(TASKS_LIST_ORDER_FIELDS)
+
+      def tasks_for_user user
+        apply_list_params(Task.filter(:user => user), TASKS_LIST_ORDER_FIELDS, TASKS_LIST_ORDER_REGEX)
       end
 
-      Engine.notify_update_task task
+      def save_task task
+        unless task.valid?
+          halt 422, task.errors.full_messages.join("\n")
+        end
 
-      content_type :json
-      task.to_json
+        begin
+          task.save
+        rescue Exception => e
+          halt 500, e.message
+        end
+
+        Engine.notify_update_task task
+
+        content_type :json
+        task.to_json
+      end
+
     end
 
   end

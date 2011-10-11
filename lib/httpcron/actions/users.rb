@@ -112,35 +112,35 @@ module HTTPCron
       halt 200
     end
 
-    private
+    helpers do
 
-    def save_user(user, &after_save)
-      unless user.valid?
-        halt 422, user.errors.full_messages.join("\n")
+      def save_user(user, &after_save)
+        unless user.valid?
+          halt 422, user.errors.full_messages.join("\n")
+        end
+
+        begin
+          user.save
+        rescue Exception => e
+          halt 500, e.message
+        end
+
+        after_save.call if after_save
+
+        content_type :json
+        user.to_json
       end
 
-      begin
-        user.save
-      rescue Exception => e
-        halt 500, e.message
+      def generate_new_password(user)
+        new_password = KeePass::Password.generate 'cdszC{6}'
+        user.password = new_password
+        user.hash_password!
+        save_user(user) { send_new_password user, new_password }
       end
 
-      after_save.call if after_save
-
-      content_type :json
-      user.to_json
-    end
-
-    def generate_new_password(user)
-      new_password = KeePass::Password.generate 'cdszC{6}'
-      user.password = new_password
-      user.hash_password!
-      save_user(user) { send_new_password user, new_password }
-    end
-
-    def send_new_password(user, new_password)
-      user_name = user.username
-      body = <<END
+      def send_new_password(user, new_password)
+        user_name = user.username
+        body = <<END
 Hi #{user_name},
 
 It looks like you forgot your password and requested for a new one by email.
@@ -153,17 +153,20 @@ Regards,
 
 Your httpcron admin
 END
-      Mail.deliver do
-        from    Config.sender_email_address
-        to      user.email_address
-        subject 'Your httpcron password'
-        body    body
+        Mail.deliver do
+          from Config.sender_email_address
+          to user.email_address
+          subject 'Your httpcron password'
+          body body
+        end
       end
-    end
 
-    USERS_LIST_ORDER_FIELDS = [:id, :username, :admin, :timezone, :created_at, :updated_at]
-    USERS_LIST_ORDER_REGEX = create_order_regex(USERS_LIST_ORDER_FIELDS)
+      USERS_LIST_ORDER_FIELDS = [:id, :username, :admin, :timezone, :created_at, :updated_at]
+      USERS_LIST_ORDER_REGEX = create_order_regex(USERS_LIST_ORDER_FIELDS)
+
+    end
 
   end
 
 end
+

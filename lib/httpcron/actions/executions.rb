@@ -64,29 +64,31 @@ module HTTPCron
       halt 200, "Execution [#{id}] deleted"
     end
 
-    private
+    helpers do
 
-    def apply_successful_execution_filter dataset
-      dataset.filter(:status => 200..210)
-    end
-
-    def apply_failure_execution_filter dataset
-      dataset.filter(~{:status => 200..210})
-    end
-
-    def apply_list_params_executions dataset
-      apply_list_params(dataset, EXECUTIONS_LIST_ORDER_FIELDS, EXECUTIONS_LIST_ORDER_REGEX)
-    end
-
-    def execution_if_allowed id
-      execution = Execution[id]
-      if !execution
-        halt 404, "execution [#{id}] not found"
-      elsif (execution.task.user != current_user) && (!current_user.admin)
-        halt 403, "execution [#{id}] is not allowed to you"
-      else
-        execution
+      def apply_successful_execution_filter dataset
+        dataset.filter(:status => 200..210)
       end
+
+      def apply_failure_execution_filter dataset
+        dataset.filter(~{:status => 200..210})
+      end
+
+      def apply_list_params_executions dataset
+        apply_list_params(dataset, EXECUTIONS_LIST_ORDER_FIELDS, EXECUTIONS_LIST_ORDER_REGEX)
+      end
+
+      def execution_if_allowed id
+        execution = Execution[id]
+        if !execution
+          halt 404, "execution [#{id}] not found"
+        elsif (execution.task.user != current_user) && (!current_user.admin)
+          halt 403, "execution [#{id}] is not allowed to you"
+        else
+          execution
+        end
+      end
+
     end
 
   end
