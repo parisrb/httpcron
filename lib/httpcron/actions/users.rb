@@ -140,7 +140,19 @@ module HTTPCron
 
     def send_new_password(user, new_password)
       user_name = user.username
-      body = ERB.new(File.new('lib/httpcron/views/password_mail.erb').read).result(binding)
+      body = <<END
+Hi #{user_name},
+
+It looks like you forgot your password and requested for a new one by email.
+
+So, here it is! Your new httpcron password is: #{new_password}
+
+Don't forget it! ;)
+
+Regards,
+
+Your httpcron admin
+END
       Mail.deliver do
         from    Config.sender_email_address
         to      user.email_address
