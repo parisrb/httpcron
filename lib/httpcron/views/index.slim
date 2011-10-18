@@ -6,16 +6,17 @@ html
     == js :application
     == css :application
     erb:
+
       <script type="text/x-handlebars" data-template-name="executions">
         <h1>{{title}}</h1>
-        {{view JUI.Button label="Back" target="HttpCron.TasksPaneView" action="show"}}
+        {{view SC.Button title="Back" target="HC.TasksPaneView" action="show"}}
 
         <div class="pagination">
-          {{view SB.PreviousButton target="HttpCron.ExecutionsList"}}
-          {{view SB.NextButton target="HttpCron.ExecutionsList"}}
+          {{view SB.PreviousButton target="HC.ExecutionsList"}}
+          {{view SB.NextButton target="HC.ExecutionsList"}}
         </div>
 
-        {{#collection HttpCron.ExecutionsCollection}}
+        {{#collection HC.ExecutionsCollection}}
           <p><strong>Status :</strong> {{content.status}}</p>
           <p><strong>Start at :</strong> {{content.start_at}}</p>
           <p><strong>Duration :</strong> {{content.duration}}</p>
@@ -27,92 +28,151 @@ html
           Not executed yiet...
         {{/collection}}
       </script>
+
+
       <script type="text/x-handlebars" data-template-name="login">
         <div>
-          {{view HttpCron.LoginTextField
+          {{view HC.LoginTextField
               valueBinding="content.username"
               placeholder="Username..."}}
         </div>
         <div>
-          {{view HttpCron.LoginTextField
+          {{view HC.LoginTextField
               type="password"
               valueBinding="content.password"
               placeholder="Password..."}}
         </div>
         <div>
-          {{view JUI.Button label="LogIn" target="HttpCron.CurrentUser" action="login"}}
+          {{view SC.Button title="LogIn" target="HC.CurrentUser" action="login"}}
         </div>
       </script>
+
+
       <script type="text/x-handlebars" data-template-name="tasks">
-        {{view JUI.Button label="Log Out"
-          target="HttpCron.CurrentUser" action="logout"}}
-        {{view JUI.Button label="Add Task"
-          target="HttpCron.NewTask" action="toggle"
-          isVisibleBinding="HttpCron.NewTask.isInvisible"}}
+        {{view SC.Button title="Log Out"
+          target="HC.CurrentUser" action="logout"}}
+        {{view SC.Button title="Add Task"
+          target="HC.NewTask" action="toggle"
+          isVisibleBinding="HC.NewTask.isInvisible"}}
+        {{view SC.Button title="Manage Users" target="HC.UsersPaneView" action="show"}}
         
         <div class="pagination">
-          {{view SB.PreviousButton target="HttpCron.TasksList"}}
-          {{view SB.NextButton target="HttpCron.TasksList"}}
+          {{view SB.PreviousButton target="HC.TasksList"}}
+          {{view SB.NextButton target="HC.TasksList"}}
         </div>
         
-        {{#view HttpCron.NewTaskView}}
+        {{#view HC.NewRecordView contentBinding="HC.NewTask"}}
           <div class="fields">
             {{#view SC.View isVisibleBinding="content.isError" messageBinding="content.errorMessage"}}
               <div class="error">{{message}}</div>
             {{/view}}
-            {{view HttpCron.TextField valueBinding="content.name" placeholder="Name..."}}
-            {{view HttpCron.TextField valueBinding="content.cron" placeholder="Cron line..."}}
-            {{view HttpCron.TextField type="url" valueBinding="content.url" placeholder="URL..."}}
-            {{view HttpCron.Checkbox title="Enabled" valueBinding="content.enabled"}}
+            {{view SC.TextField valueBinding="content.name" placeholder="Name..."}}
+            {{view SC.TextField valueBinding="content.cron" placeholder="Cron line..."}}
+            {{view SC.TextField type="url" valueBinding="content.url" placeholder="URL..."}}
+            {{view SC.Checkbox title="Enabled" valueBinding="content.enabled"}}
           </div>
           <div class="buttons">
-            {{view JUI.Button label="Cancel" targetBinding="content" action="toggle"}}
-            {{view JUI.Button label="Save" targetBinding="content" action="save"}}
+            {{view SC.Button title="Cancel" targetBinding="content" action="toggle"}}
+            {{view SC.Button title="Save" targetBinding="content" action="save"}}
           </div>
         {{/view}}
         
-        {{#collection HttpCron.TasksCollection}}
-          {{#view HttpCron.ShowTaskView contentBinding="content"}}
+        {{#collection HC.TasksCollection}}
+          {{#view HC.RecordView contentBinding="content"}}
             <div class="content">
               {{content.name}}<br/>
               <em>{{content.cron}}</em><br/>
               <strong>http://</strong>{{content.formattedUrl}}
             </div>
-            {{view JUI.Button label="Destroy" targetBinding="content" action="destroy"}}
-            {{view JUI.Button label="Edit" targetBinding="content" action="toggle"}}
-            {{view JUI.Button label="Logs" targetBinding="content" action="logs"}}
+            {{view SC.Button title="Destroy" targetBinding="content" action="destroy"}}
+            {{view SC.Button title="Edit" targetBinding="content" action="toggle"}}
+            {{view SC.Button title="Logs" targetBinding="content" action="logs"}}
           {{/view}}
-          {{#view classNames="edit-task" isVisibleBinding="content.isEditing" contentBinding="content"}}
+          {{#view classNames="hc-edit-record" isVisibleBinding="content.isEditing" contentBinding="content"}}
             <div class="fields">
               {{#view SC.View isVisibleBinding="content.isError" messageBinding="content.errorMessage"}}
                 <div class="error">{{message}}</div>
               {{/view}}
-              {{view HttpCron.TextField valueBinding="content.name" placeholder="Name..."}}
-              {{view HttpCron.TextField valueBinding="content.cron" placeholder="Cron line..."}}
-              {{view HttpCron.TextField type="url" valueBinding="content.formattedUrl" placeholder="URL..."}}
-              {{view HttpCron.Checkbox title="Enabled" valueBinding="content.enabled"}}
+              {{view SC.TextField valueBinding="content.name" placeholder="Name..."}}
+              {{view SC.TextField valueBinding="content.cron" placeholder="Cron line..."}}
+              {{view SC.TextField type="url" valueBinding="content.formattedUrl" placeholder="URL..."}}
+              {{view SC.Checkbox title="Enabled" valueBinding="content.enabled"}}
             </div>
             <div class="buttons">
-              {{view JUI.Button label="Update" targetBinding="content" action="update"}}
-              {{view JUI.Button label="Cancel" targetBinding="content" action="cancel"}}
+              {{view SC.Button title="Update" targetBinding="content" action="update"}}
+              {{view SC.Button title="Cancel" targetBinding="content" action="cancel"}}
             </div>
           {{/view}}
         {{else}}
-          {{#if HttpCron.TasksList.isLoading}}
+          {{#if HC.TasksList.isLoading}}
             Loading...
-            {{view JUI.Throbber}}
           {{else}}
             No Tasks
           {{/if}}
         {{/collection}}
       </script>
+
+
       <script type="text/x-handlebars" data-template-name="users">
+        {{view SC.Button
+          title="Back" target="HC.TasksPaneView" action="show"}}
+        {{view SC.Button
+          title="Add User" target="HC.NewUser" action="toggle" isVisibleBinding="HC.NewUser.isInvisible"}}
+
+        <div class="pagination">
+          {{view SB.PreviousButton target="HC.UsersList"}}
+          {{view SB.NextButton target="HC.UsersList"}}
+        </div>
+
+        {{#view HC.NewRecordView contentBinding="HC.NewUser"}}
+          <div class="fields">
+            {{#view SC.View isVisibleBinding="content.isError" messageBinding="content.errorMessage"}}
+              <div class="error">{{message}}</div>
+            {{/view}}
+            {{view SC.TextField valueBinding="content.username" placeholder="Username..."}}
+            {{view SC.TextField type="email" valueBinding="content.email" placeholder="Email..."}}
+            {{view SC.TextField valueBinding="content.password" placeholder="Password..."}}
+            {{view SC.TextField valueBinding="content.confirm_password" placeholder="Confirm Password..."}}
+            {{view SC.Checkbox title="Admin" valueBinding="content.enabled"}}
+          </div>
+          <div class="buttons">
+            {{view SC.Button title="Cancel" targetBinding="content" action="toggle"}}
+            {{view SC.Button title="Save" targetBinding="content" action="save"}}
+          </div>
+        {{/view}}
+
+        {{#collection HC.UsersCollection}}
+          {{#view HC.RecordView contentBinding="content"}}
+            <div class="content">
+              {{content.username}}<br/>
+              {{content.email_address}}
+            </div>
+            {{view SC.Button title="Destroy" targetBinding="content" action="destroy"}}
+            {{view SC.Button title="Edit" targetBinding="content" action="toggle"}}
+          {{/view}}
+          {{#view classNames="hc-edit-record" isVisibleBinding="content.isEditing" contentBinding="content"}}
+            <div class="fields">
+              {{#view SC.View isVisibleBinding="content.isError" messageBinding="content.errorMessage"}}
+                <div class="error">{{message}}</div>
+              {{/view}}
+              {{view SC.TextField valueBinding="content.username" placeholder="Username..."}}
+              {{view SC.TextField type="email" valueBinding="content.email_address" placeholder="Email..."}}
+              {{view SC.TextField valueBinding="content.password" placeholder="Password..."}}
+              {{view SC.TextField valueBinding="content.confirm_password" placeholder="Confirm Password..."}}
+              {{view SC.Checkbox title="Admin" valueBinding="content.enabled"}}
+            </div>
+            <div class="buttons">
+              {{view SC.Button title="Update" targetBinding="content" action="update"}}
+              {{view SC.Button title="Cancel" targetBinding="content" action="cancel"}}
+            </div>
+          {{/view}}
+        {{/collection}}
       </script>
   body
     header
       h1 ="HTTP Cron"
 
-      div id='description' ="A ruby server to cron http requests"
-      a href='https://github.com/parisrb/httpcron' Website
+      div id="description" A ruby server to cron http requests
+      a href="https://github.com/parisrb/httpcron" Website
     .main[role="application"]
     footer
