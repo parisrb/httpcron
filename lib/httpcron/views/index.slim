@@ -66,10 +66,10 @@ html
             {{#view SC.View isVisibleBinding="content.isError" messageBinding="content.errorMessage"}}
               <div class="error">{{message}}</div>
             {{/view}}
-            {{view SC.TextField valueBinding="content.name" placeholder="Name..."}}
-            {{view SC.TextField valueBinding="content.cron" placeholder="Cron line..."}}
-            {{view SC.TextField type="url" valueBinding="content.url" placeholder="URL..."}}
-            {{view SC.Checkbox title="Enabled" valueBinding="content.enabled"}}
+            {{view HC.TextField valueBinding="content.name" placeholder="Name..."}}
+            {{view HC.TextField valueBinding="content.cron" placeholder="Cron line..."}}
+            {{view HC.TextField type="url" valueBinding="content.url" placeholder="URL..."}}
+            {{view HC.Checkbox title="Enabled" valueBinding="content.enabled"}}
           </div>
           <div class="buttons">
             {{view SC.Button title="Cancel" targetBinding="content" action="toggle"}}
@@ -93,10 +93,10 @@ html
               {{#view SC.View isVisibleBinding="content.isError" messageBinding="content.errorMessage"}}
                 <div class="error">{{message}}</div>
               {{/view}}
-              {{view SC.TextField valueBinding="content.name" placeholder="Name..."}}
-              {{view SC.TextField valueBinding="content.cron" placeholder="Cron line..."}}
-              {{view SC.TextField type="url" valueBinding="content.formattedUrl" placeholder="URL..."}}
-              {{view SC.Checkbox title="Enabled" valueBinding="content.enabled"}}
+              {{view HC.TextField valueBinding="content.name" placeholder="Name..."}}
+              {{view HC.TextField valueBinding="content.cron" placeholder="Cron line..."}}
+              {{view HC.TextField type="url" valueBinding="content.formattedUrl" placeholder="URL..."}}
+              {{view HC.Checkbox title="Enabled" valueBinding="content.enabled"}}
             </div>
             <div class="buttons">
               {{view SC.Button title="Update" targetBinding="content" action="update"}}
@@ -129,11 +129,11 @@ html
             {{#view SC.View isVisibleBinding="content.isError" messageBinding="content.errorMessage"}}
               <div class="error">{{message}}</div>
             {{/view}}
-            {{view SC.TextField valueBinding="content.username" placeholder="Username..."}}
-            {{view SC.TextField type="email" valueBinding="content.email_address" placeholder="Email..."}}
-            {{view SC.TextField type="password" valueBinding="content.password" placeholder="Password..."}}
-            {{view SC.TextField type="password" valueBinding="content.confirm_password" placeholder="Confirm Password..."}}
-            {{view SC.Checkbox title="Admin" valueBinding="content.enabled"}}
+            {{view HC.TextField valueBinding="content.username" placeholder="Username..."}}
+            {{view HC.TextField type="email" valueBinding="content.email_address" placeholder="Email..."}}
+            {{view HC.TextField type="password" valueBinding="content.password" placeholder="Password..."}}
+            {{view HC.TextField type="password" valueBinding="content.confirm_password" placeholder="Confirm Password..."}}
+            {{view HC.Checkbox title="Admin" valueBinding="content.enabled"}}
           </div>
           <div class="buttons">
             {{view SC.Button title="Cancel" targetBinding="content" action="toggle"}}
@@ -155,11 +155,11 @@ html
               {{#view SC.View isVisibleBinding="content.isError" messageBinding="content.errorMessage"}}
                 <div class="error">{{message}}</div>
               {{/view}}
-              {{view SC.TextField valueBinding="content.username" placeholder="Username..."}}
-              {{view SC.TextField type="email" valueBinding="content.email_address" placeholder="Email..."}}
-              {{view SC.TextField type="password" valueBinding="content.password" placeholder="Password..."}}
-              {{view SC.TextField type="password" valueBinding="content.confirm_password" placeholder="Confirm Password..."}}
-              {{view SC.Checkbox title="Admin" valueBinding="content.enabled"}}
+              {{view HC.TextField valueBinding="content.username" placeholder="Username..."}}
+              {{view HC.TextField type="email" valueBinding="content.email_address" placeholder="Email..."}}
+              {{view HC.TextField type="password" valueBinding="content.password" placeholder="Password..."}}
+              {{view HC.TextField type="password" valueBinding="content.confirm_password" placeholder="Confirm Password..."}}
+              {{view HC.Checkbox title="Admin" valueBinding="content.enabled"}}
             </div>
             <div class="buttons">
               {{view SC.Button title="Update" targetBinding="content" action="update"}}
