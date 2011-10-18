@@ -154,7 +154,7 @@ module HTTPCron
       if validate_timezone
         # don't validate the cron expression if the timezone is wrong
 
-        if changed_columns.include?(:cron) || changed_columns.include?(:timezone)
+        if [:cron, :timezone, :enabled].any?{ |c| changed_columns.include?(c) }
           @cronline = nil
 
           begin
