@@ -83,7 +83,7 @@ module HTTPCron
         end
       end
 
-      unless params[:enabled].nil?
+      if params[:enabled].nil?
         task.enabled = true
       end
 
