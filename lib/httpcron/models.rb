@@ -158,7 +158,6 @@ module HTTPCron
           @cronline = nil
 
           begin
-            cronline
             self.next_execution = self.enabled ? calculate_next_execution : nil
           rescue ArgumentError
             errors.add('cron', "[#{self.cron}] is invalid")
@@ -191,7 +190,7 @@ module HTTPCron
     end
 
     def to_s
-      "#{id}, name: [#{name}], user: #{user_id}, enabled: #{enabled}, cron: [#{cron}], timezone: [#{timezone}], url [#{url}]"
+      "#{id}, name: [#{name}], user: #{user_id}, enabled: #{enabled}, cron: [#{cron}], timezone: [#{timezone}], url [#{url}], next execution [#{next_execution}]"
     end
 
   end
