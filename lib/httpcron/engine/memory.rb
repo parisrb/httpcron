@@ -59,7 +59,7 @@ module HTTPCron
     end
 
     # Start all pending tasks
-    def self.setup_tasks
+    def self.start_tasks
       p "Start tasks"
       Task.filter('enabled = ?', true).order(:next_execution.asc).each do |t|
         @@tasks[t.id] = setup_next_execution(t)
@@ -76,19 +76,6 @@ module HTTPCron
       end
     end
 
-    # Start the engine
-    def self.start_engine
-      reschedule_tasks
-
-      Thread.start do
-        EventMachine.run do
-          begin
-            setup_tasks
-          rescue Exception => e
-            p e
-          end
-        end
-      end
-    end
   end
+
 end

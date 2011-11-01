@@ -12,8 +12,7 @@ module HTTPCron
     def self.notify_update_task task
     end
 
-    # Start the engine
-    def self.start_engine
+    def self.start_tasks
     end
 
   end

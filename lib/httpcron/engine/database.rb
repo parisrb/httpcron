@@ -117,19 +117,6 @@ module HTTPCron
       end
     end
 
-    # Start the engine
-    def self.start_engine
-      reschedule_tasks
-
-      Thread.start do
-        EventMachine.run do
-          begin
-            start_tasks
-          rescue Exception => e
-            p e
-          end
-        end
-      end
-    end
   end
+
 end
