@@ -9,7 +9,7 @@ html
 
       <script type="text/x-handlebars" data-template-name="executions">
         <h1>{{title}}</h1>
-        {{view SC.Button title="Back" target="HC.TasksPaneView" action="show"}}
+        {{view UI.Button title="Back" target="HC.TasksPaneView" action="show"}}
 
         <div class="pagination">
           {{view SB.PreviousButton target="HC.ExecutionsList"}}
@@ -49,12 +49,15 @@ html
 
 
       <script type="text/x-handlebars" data-template-name="tasks">
-        {{view SC.Button title="Log Out"
+        {{view UI.Button title="Log Out"
           target="HC.CurrentUser" action="logout"}}
-        {{view SC.Button title="Add Task"
+        {{view UI.Button title="Add Task"
           target="HC.NewTask" action="toggle"
           isVisibleBinding="HC.NewTask.isInvisible"}}
-        {{view SC.Button title="Manage Users" target="HC.UsersPaneView" action="show"}}
+        {{view UI.Button title="Manage Users" target="HC.UsersPaneView" action="show"}}
+
+        Sort: {{view UI.Select contentBinding="HC.tasksOrderBy" valueBinding="HC.TasksList.orderBy"}}
+        Order: {{view UI.Select contentBinding="HC.tasksInOrder" valueBinding="HC.TasksList.order"}}
         
         <div class="pagination">
           {{view SB.PreviousButton target="HC.TasksList"}}
@@ -66,14 +69,14 @@ html
             {{#view SC.View isVisibleBinding="content.isError" messageBinding="content.errorMessage"}}
               <div class="error">{{message}}</div>
             {{/view}}
-            {{view HC.TextField valueBinding="content.name" placeholder="Name..."}}
-            {{view HC.TextField valueBinding="content.cron" placeholder="Cron line..."}}
-            {{view HC.TextField type="url" valueBinding="content.url" placeholder="URL..."}}
+            {{view HC.TextField valueBinding="content.name" title="Name..."}}
+            {{view HC.TextField valueBinding="content.cron" title="Cron line..."}}
+            {{view HC.TextField type="url" valueBinding="content.url" title="URL..."}}
             {{view HC.Checkbox title="Enabled" valueBinding="content.enabled"}}
           </div>
           <div class="buttons">
-            {{view SC.Button title="Cancel" targetBinding="content" action="toggle"}}
-            {{view SC.Button title="Save" targetBinding="content" action="save"}}
+            {{view UI.Button title="Cancel" targetBinding="content" action="toggle"}}
+            {{view UI.Button title="Save" targetBinding="content" action="save"}}
           </div>
         {{/view}}
         
@@ -82,25 +85,28 @@ html
             <div class="content">
               {{content.name}}<br/>
               <em>{{content.cron}}</em><br/>
-              <strong>http://</strong>{{content.formattedUrl}}
+              http://<strong>{{content.formattedUrl}}</strong>
+              <p>Next Execution: {{content.formattedNextExecution}}</p>
+              <p>Created At: {{content.formattedCreatedAt}}</p>
+              <p>Updated At: {{content.formattedUpdatedAt}}</p>
             </div>
-            {{view SC.Button title="Destroy" targetBinding="content" action="destroy"}}
-            {{view SC.Button title="Edit" targetBinding="content" action="toggle"}}
-            {{view SC.Button title="Logs" targetBinding="content" action="logs"}}
+            {{view UI.Button title="Destroy" targetBinding="content" action="destroy"}}
+            {{view UI.Button title="Edit" targetBinding="content" action="toggle"}}
+            {{view UI.Button title="Logs" targetBinding="content" action="logs"}}
           {{/view}}
           {{#view classNames="hc-edit-record" isVisibleBinding="content.isEditing" contentBinding="content"}}
             <div class="fields">
               {{#view SC.View isVisibleBinding="content.isError" messageBinding="content.errorMessage"}}
                 <div class="error">{{message}}</div>
               {{/view}}
-              {{view HC.TextField valueBinding="content.name" placeholder="Name..."}}
-              {{view HC.TextField valueBinding="content.cron" placeholder="Cron line..."}}
-              {{view HC.TextField type="url" valueBinding="content.formattedUrl" placeholder="URL..."}}
+              {{view HC.TextField valueBinding="content.name" title="Name..."}}
+              {{view HC.TextField valueBinding="content.cron" title="Cron line..."}}
+              {{view HC.TextField type="url" valueBinding="content.formattedUrl" title="URL..."}}
               {{view HC.Checkbox title="Enabled" valueBinding="content.enabled"}}
             </div>
             <div class="buttons">
-              {{view SC.Button title="Update" targetBinding="content" action="update"}}
-              {{view SC.Button title="Cancel" targetBinding="content" action="cancel"}}
+              {{view UI.Button title="Update" targetBinding="content" action="update"}}
+              {{view UI.Button title="Cancel" targetBinding="content" action="cancel"}}
             </div>
           {{/view}}
         {{else}}
@@ -129,15 +135,15 @@ html
             {{#view SC.View isVisibleBinding="content.isError" messageBinding="content.errorMessage"}}
               <div class="error">{{message}}</div>
             {{/view}}
-            {{view HC.TextField valueBinding="content.username" placeholder="Username..."}}
-            {{view HC.TextField type="email" valueBinding="content.email_address" placeholder="Email..."}}
-            {{view HC.TextField type="password" valueBinding="content.password" placeholder="Password..."}}
-            {{view HC.TextField type="password" valueBinding="content.confirm_password" placeholder="Confirm Password..."}}
+            {{view HC.TextField valueBinding="content.username" title="Username..."}}
+            {{view HC.TextField type="email" valueBinding="content.email_address" title="Email..."}}
+            {{view HC.TextField type="password" valueBinding="content.password" title="Password..."}}
+            {{view HC.TextField type="password" valueBinding="content.confirm_password" title="Confirm Password..."}}
             {{view HC.Checkbox title="Admin" valueBinding="content.enabled"}}
           </div>
           <div class="buttons">
-            {{view SC.Button title="Cancel" targetBinding="content" action="toggle"}}
-            {{view SC.Button title="Save" targetBinding="content" action="save"}}
+            {{view UI.Button title="Cancel" targetBinding="content" action="toggle"}}
+            {{view UI.Button title="Save" targetBinding="content" action="save"}}
           </div>
         {{/view}}
 
@@ -147,8 +153,8 @@ html
               {{content.username}}<br/>
               {{content.email_address}}
             </div>
-            {{view SC.Button title="Destroy" targetBinding="content" action="destroy"}}
-            {{view SC.Button title="Edit" targetBinding="content" action="toggle"}}
+            {{view UI.Button title="Destroy" targetBinding="content" action="destroy"}}
+            {{view UI.Button title="Edit" targetBinding="content" action="toggle"}}
           {{/view}}
           {{#view classNames="hc-edit-record" isVisibleBinding="content.isEditing" contentBinding="content"}}
             <div class="fields">
@@ -162,8 +168,8 @@ html
               {{view HC.Checkbox title="Admin" valueBinding="content.enabled"}}
             </div>
             <div class="buttons">
-              {{view SC.Button title="Update" targetBinding="content" action="update"}}
-              {{view SC.Button title="Cancel" targetBinding="content" action="cancel"}}
+              {{view UI.Button title="Update" targetBinding="content" action="update"}}
+              {{view UI.Button title="Cancel" targetBinding="content" action="cancel"}}
             </div>
           {{/view}}
         {{/collection}}

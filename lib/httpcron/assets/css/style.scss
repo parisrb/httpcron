@@ -58,6 +58,10 @@ header {
   }
 }
 
+.ui-select {
+  width: 130px;
+}
+
 .hc-new-record {
   .sc-checkbox {
     width:200px;
@@ -79,8 +83,11 @@ header {
   }
 }
 
-.hc-record button {
-  display:none;
+.hc-record {
+  overflow: hidden;
+  button {
+    display:none;
+  }
 }
 
 .hc-list {
@@ -102,6 +109,9 @@ header {
   li {
     &.is-commiting {
       background:#ccc;
+    }
+    &:not(.enabled) .hc-record {
+      color: #ccc;
     }
     .content, .fields {
       float:left;

@@ -20,9 +20,9 @@ module HTTPCron
       js :application, '/js/application.js',
          [
             '/js/vendor/jquery.js',
-            '/js/vendor/metamorph.js',
             '/js/vendor/sproutcore.js',
-            '/js/vendor/sproutcore-experimental.js',
+            '/js/vendor/sproutcore-datetime.js',
+            '/js/vendor/sproutcore-ui.js',
             '/js/vendor/**/*.js',
             '/js/app/main.js',
             '/js/app/models/*.js',
